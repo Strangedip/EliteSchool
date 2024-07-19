@@ -5,7 +5,6 @@ import com.school.elite.DTO.UserCreateRequestDTO;
 import com.school.elite.repository.EliteTaskRepo;
 import com.school.elite.repository.EliteUserRepo;
 import com.school.elite.service.UserService;
-import com.school.elite.utils.Constants;
 import com.school.elite.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
