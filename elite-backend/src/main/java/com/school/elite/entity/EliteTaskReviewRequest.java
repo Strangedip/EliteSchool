@@ -1,7 +1,6 @@
-package com.school.elite.DTO;
+package com.school.elite.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

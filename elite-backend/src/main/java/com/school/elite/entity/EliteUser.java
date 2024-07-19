@@ -1,13 +1,9 @@
-package com.school.elite.DTO;
+package com.school.elite.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-
-import java.sql.Timestamp;
-import java.util.Date;
-import java.util.UUID;
 
 @Entity
 @Data
