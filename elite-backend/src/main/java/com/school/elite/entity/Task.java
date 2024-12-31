@@ -12,7 +12,7 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "tasks")
-public class EliteTask {
+public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long taskId;
@@ -22,7 +22,7 @@ public class EliteTask {
     private Integer taskReward;
     private Timestamp createdOn;
 
-    public EliteTask(String taskStatus, String taskName, String taskDetail, Integer taskReward, Timestamp createdOn) {
+    public Task(String taskStatus, String taskName, String taskDetail, Integer taskReward, Timestamp createdOn) {
         this.taskStatus = taskStatus;
         this.taskName = taskName;
         this.taskDetail = taskDetail;

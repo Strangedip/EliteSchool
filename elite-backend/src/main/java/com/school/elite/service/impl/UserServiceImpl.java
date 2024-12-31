@@ -1,8 +1,8 @@
 package com.school.elite.service.impl;
 
-import com.school.elite.DTO.EliteResponse;
+import com.school.elite.DTO.CommonResponseDto;
 import com.school.elite.DTO.UserCreateRequestDTO;
-import com.school.elite.entity.EliteUser;
+import com.school.elite.entity.User;
 import com.school.elite.repository.dbservice.EliteDBService;
 import com.school.elite.service.UserService;
 import com.school.elite.utils.Utils;
@@ -20,23 +20,23 @@ public class UserServiceImpl implements UserService {
     PasswordEncoder bcrypt;
 
     @Override
-    public EliteResponse createNewUser(UserCreateRequestDTO createRequestDTO) {
+    public CommonResponseDto createNewUser(UserCreateRequestDTO createRequestDTO) {
         try {
             eliteDBService.saveUser(convertRequestDtoToEntity(createRequestDTO));
-            return EliteResponse.builder()
+            return CommonResponseDto.builder()
                     .responseCode(HttpStatus.CREATED.value())
                     .responseMessage("Elite user created successfully.")
                     .build();
         } catch (Exception e) {
-            return EliteResponse.builder()
+            return CommonResponseDto.builder()
                     .responseCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
                     .errorMessage("An unexpected error occurred: " + e.getMessage())
                     .build();
         }
     }
 
-    private EliteUser convertRequestDtoToEntity(UserCreateRequestDTO requestDTO) {
-        return new EliteUser(
+    private User convertRequestDtoToEntity(UserCreateRequestDTO requestDTO) {
+        return new User(
                 Utils.createUUID(),
                 requestDTO.getName(),
                 requestDTO.getAge(),

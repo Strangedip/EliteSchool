@@ -1,26 +1,26 @@
 package com.school.elite.repository.dbservice;
 
-import com.school.elite.entity.EliteUser;
-import com.school.elite.repository.EliteAccountRepo;
-import com.school.elite.repository.EliteTaskRepo;
-import com.school.elite.repository.EliteTaskReviewRequestRepo;
-import com.school.elite.repository.EliteUserRepo;
+import com.school.elite.entity.User;
+import com.school.elite.repository.UserAccountRepo;
+import com.school.elite.repository.TaskRepo;
+import com.school.elite.repository.TaskReviewRequestRepo;
+import com.school.elite.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class EliteDBService {
     @Autowired
-    EliteUserRepo eliteUserRepo;
+    UserRepo userRepo;
     @Autowired
-    EliteAccountRepo eliteAccountRepo;
+    UserAccountRepo eliteAccountRepo;
     @Autowired
-    EliteTaskRepo eliteTaskRepo;
+    TaskRepo taskRepo;
     @Autowired
-    EliteTaskReviewRequestRepo eliteTaskReviewRequestRepo;
+    TaskReviewRequestRepo taskReviewRequestRepo;
 
-    public EliteUser saveUser(EliteUser user){
-        return eliteUserRepo.save(user);
+    public User saveUser(User user){
+        return userRepo.save(user);
     }
 
 

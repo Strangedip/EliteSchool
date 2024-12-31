@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class EliteResponse {
+public class CommonResponseDto {
     private Integer responseCode;
     private String responseMessage;
     private String errorMessage;

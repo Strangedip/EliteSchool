@@ -10,7 +10,7 @@ import java.sql.Timestamp;
 @Data
 @NoArgsConstructor
 @Table(name = "task_review_requests")
-public class EliteTaskReviewRequest {
+public class TaskReviewRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long requestId;
@@ -20,7 +20,7 @@ public class EliteTaskReviewRequest {
     private Timestamp createdOn;
     private Timestamp actionTakenOn;
 
-    public EliteTaskReviewRequest(Long taskId, String eliteId, String requestStatus, Timestamp createdOn, Timestamp actionTakenOn) {
+    public TaskReviewRequest(Long taskId, String eliteId, String requestStatus, Timestamp createdOn, Timestamp actionTakenOn) {
         this.taskId = taskId;
         this.eliteId = eliteId;
         this.requestStatus = requestStatus;

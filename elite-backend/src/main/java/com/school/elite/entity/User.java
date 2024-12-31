@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "elite_users")
-public class EliteUser {
+public class User {
     @Id
     private String eliteId;
     private String name;
