@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserCreateRequestDTO {
+public class UserCreateRequestDto {
     private String name;
     private Integer age;
     private String gender;

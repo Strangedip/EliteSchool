@@ -1,8 +1,9 @@
 package com.school.elite.service.impl;
 
 import com.school.elite.DTO.CommonResponseDto;
-import com.school.elite.DTO.UserCreateRequestDTO;
+import com.school.elite.DTO.UserCreateRequestDto;
 import com.school.elite.entity.User;
+import com.school.elite.exception.UserExceptions;
 import com.school.elite.repository.dbservice.EliteDBService;
 import com.school.elite.service.UserService;
 import com.school.elite.utils.Utils;
@@ -20,22 +21,24 @@ public class UserServiceImpl implements UserService {
     PasswordEncoder bcrypt;
 
     @Override
-    public CommonResponseDto createNewUser(UserCreateRequestDTO createRequestDTO) {
-        try {
-            eliteDBService.saveUser(convertRequestDtoToEntity(createRequestDTO));
-            return CommonResponseDto.builder()
-                    .responseCode(HttpStatus.CREATED.value())
-                    .responseMessage("Elite user created successfully.")
-                    .build();
-        } catch (Exception e) {
-            return CommonResponseDto.builder()
-                    .responseCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                    .errorMessage("An unexpected error occurred: " + e.getMessage())
-                    .build();
-        }
+    public CommonResponseDto createNewUser(UserCreateRequestDto createRequestDTO) {
+        eliteDBService.saveUser(convertRequestDtoToEntity(createRequestDTO));
+        return CommonResponseDto.builder()
+                .responseCode(HttpStatus.CREATED.value())
+                .responseMessage("Elite user created successfully.")
+                .build();
+
     }
 
-    private User convertRequestDtoToEntity(UserCreateRequestDTO requestDTO) {
+    @Override
+    public CommonResponseDto validateUserCredential(String username, String password) {
+        if (eliteDBService.isUserCredentialValid(username, password)) {
+            return CommonResponseDto.createCommonResponseDto(HttpStatus.OK.value(), "Valid Credentials", null, null);
+        }
+        throw new UserExceptions.InvalidUserCredentialException("Invalid Credentials");
+    }
+
+    private User convertRequestDtoToEntity(UserCreateRequestDto requestDTO) {
         return new User(
                 Utils.createUUID(),
                 requestDTO.getName(),

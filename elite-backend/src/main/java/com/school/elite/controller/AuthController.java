@@ -14,10 +14,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(path = "/api/user")
-public class UserController {
+@RequestMapping(path = "/api/auth")
+public class AuthController {
 
-    Logger logger = LoggerFactory.getLogger(UserController.class);
+    Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     @Autowired
     UserRepo userRepo;
@@ -28,10 +28,10 @@ public class UserController {
     @Autowired
     UserService eliteUserService;
 
-    @PostMapping(path = "/create")
-    public ResponseEntity<CommonResponseDto> create(@RequestBody UserCreateRequestDto userCreateRequestDTO) {
+    @GetMapping(path = "/login")
+    public ResponseEntity<CommonResponseDto> create(@RequestParam(name = "username") String username, @RequestParam(name = "password") String password) {
         logger.info(Utils.logSeparator());
-        logger.info("Received Request to create User : {}", userCreateRequestDTO);
-        return new ResponseEntity<>(eliteUserService.createNewUser(userCreateRequestDTO), HttpStatus.CREATED);
+        logger.info("Login request for username : {}", username);
+        return new ResponseEntity<>(eliteUserService.validateUserCredential(username, password), HttpStatus.OK);
     }
 }
