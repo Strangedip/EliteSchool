@@ -7,7 +7,7 @@ import { environment } from 'src/environments/environment';
 export class AuthService {
   private apiUrl = `${environment.apiUrl}/auth`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   login(username: string, password: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/login`, { params: { username, password } });
