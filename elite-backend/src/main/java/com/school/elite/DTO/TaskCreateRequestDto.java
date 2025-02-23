@@ -1,28 +1,22 @@
-package com.school.elite.entity;
+package com.school.elite.DTO;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 
-@Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "tasks")
-public class Task {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class TaskCreateRequestDto {
     private String status;
     private String name;
     private String detail;
     private Integer reward;
-    private LocalDateTime createdOn;
+    private Timestamp createdOn;
     private String createdBy;
-    private String completedBy;
+
 }

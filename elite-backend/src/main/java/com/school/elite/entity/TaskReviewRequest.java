@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
@@ -17,10 +17,10 @@ public class TaskReviewRequest {
     private Long taskId;
     private String eliteId;
     private String requestStatus;
-    private Timestamp createdOn;
-    private Timestamp actionTakenOn;
+    private LocalDateTime createdOn;
+    private LocalDateTime actionTakenOn;
 
-    public TaskReviewRequest(Long taskId, String eliteId, String requestStatus, Timestamp createdOn, Timestamp actionTakenOn) {
+    public TaskReviewRequest(Long taskId, String eliteId, String requestStatus, LocalDateTime createdOn, LocalDateTime actionTakenOn) {
         this.taskId = taskId;
         this.eliteId = eliteId;
         this.requestStatus = requestStatus;

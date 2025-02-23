@@ -19,7 +19,7 @@ public class TimeUtil {
         return utcDateTime.atZone(ZoneId.of("UTC")).withZoneSameInstant(indiaZone).toLocalDateTime();
     }
 
-    public static Date getTime() {
-        return new Date();
+    public static LocalDateTime getTime() {
+        return LocalDateTime.now();
     }
 }

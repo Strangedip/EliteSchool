@@ -1,6 +1,6 @@
 package com.school.elite.exception;
 
-public class UserExceptions {
+public class UserExceptions extends Throwable {
 
     public static class UserNotFoundException extends RuntimeException {
         public UserNotFoundException(String message) {

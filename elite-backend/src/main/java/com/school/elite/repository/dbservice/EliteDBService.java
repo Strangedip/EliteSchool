@@ -2,50 +2,31 @@ package com.school.elite.repository.dbservice;
 
 import com.school.elite.entity.User;
 import com.school.elite.exception.UserExceptions;
-import com.school.elite.repository.UserAccountRepo;
-import com.school.elite.repository.TaskRepo;
-import com.school.elite.repository.TaskReviewRequestRepo;
-import com.school.elite.repository.UserRepo;
+import com.school.elite.repository.UserAccountRepository;
+import com.school.elite.repository.TaskRepository;
+import com.school.elite.repository.TaskReviewRequestRepository;
+import com.school.elite.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class EliteDBService {
 
     // Repo section
     @Autowired
-    UserRepo userRepo;
+    UserRepository userRepository;
 
     @Autowired
-    UserAccountRepo eliteAccountRepo;
+    UserAccountRepository eliteAccountRepo;
 
     @Autowired
-    TaskRepo taskRepo;
+    TaskRepository taskRepository;
 
     @Autowired
-    TaskReviewRequestRepo taskReviewRequestRepo;
+    TaskReviewRequestRepository taskReviewRequestRepository;
 
-    // Utility section
-    @Autowired
-    PasswordEncoder bcrypt;
-
-
-    // User related methods
-    public User saveUser(User user) {
-        return userRepo.save(user);
-    }
-
-    public boolean isUserCredentialValid(String username, String password) {
-        User user = userRepo.findByUsername(username).orElseThrow(
-                () -> new UserExceptions.UserNotFoundException("User with username '" + username + "' not found"));
-        if (!bcrypt.matches(password, user.getPassword())) {
-            throw new UserExceptions.InvalidUserCredentialException("Invalid credentials. Please check and retry.");
-        }
-        return true;
-    }
-
-    // Task related methods
-
-
+    //todo add db methods if needed
 }
