@@ -7,61 +7,64 @@ import com.school.elite.exception.UserException;
 import com.school.elite.repository.UserRepository;
 import com.school.elite.service.UserService;
 import com.school.elite.utils.Utils;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    @Autowired
-    UserRepository userRepository;
 
-    @Autowired
-    PasswordEncoder bcrypt;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public CommonResponseDto createNewUser(UserCreateRequestDto createRequestDTO) {
-        userRepository.save(convertRequestDtoToEntity(createRequestDTO));
+        if (userRepository.findByUsername(createRequestDTO.getUsername()).isPresent()) {
+            throw new UserException.InvalidUserException("Username already exists.");
+        }
+
+        if (userRepository.findByEmail(createRequestDTO.getEmail()).isPresent()) {
+            throw new UserException.InvalidUserException("Email already exists.");
+        }
+
+        User newUser = convertRequestDtoToEntity(createRequestDTO);
+        userRepository.save(newUser);
+
         return CommonResponseDto.builder()
                 .responseCode(HttpStatus.CREATED.value())
                 .responseMessage("Elite user created successfully.")
                 .build();
-
     }
 
     @Override
     public CommonResponseDto validateUserCredential(String username, String password) {
-        if (isUserCredentialValid(username, password)) {
-            return CommonResponseDto.createCommonResponseDto(HttpStatus.OK.value(), "Valid Credentials", null, null);
-        }
-        throw new UserException.InvalidUserCredentialException("Invalid Credentials");
-    }
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserException.UserNotFoundException("User with username '"+ username +"' not found"));
 
-    public boolean isUserCredentialValid(String username, String password) {
-        User user = userRepository.findByUsername(username).orElseThrow(
-                () -> new UserException.UserNotFoundException("User with username '" + username + "' not found"));
-        if (!bcrypt.matches(password, user.getPassword())) {
+        if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new UserException.InvalidUserCredentialException("Invalid credentials. Please check and retry.");
         }
-        return true;
+
+        return CommonResponseDto.createCommonResponseDto(HttpStatus.OK.value(), "Valid Credentials", null, null);
     }
 
     private User convertRequestDtoToEntity(UserCreateRequestDto requestDTO) {
-        return new User(
-                Utils.createUUID(),
-                requestDTO.getName(),
-                requestDTO.getAge(),
-                requestDTO.getGender(),
-                requestDTO.getEmail(),
-                requestDTO.getMobileNumber(),
-                requestDTO.getPosition(),
-                requestDTO.getUsername(),
-                encryptPassword(requestDTO.getPassword())
-        );
+        return User.builder()
+                .eliteId(Utils.createUUID())  // Generate UUID or another unique identifier
+                .name(requestDTO.getName())
+                .age(requestDTO.getAge())
+                .gender(requestDTO.getGender())
+                .email(requestDTO.getEmail())
+                .mobileNumber(requestDTO.getMobileNumber())
+                .position(requestDTO.getPosition())
+                .username(requestDTO.getUsername())
+                .password(encryptPassword(requestDTO.getPassword()))
+                .build();
     }
 
     private String encryptPassword(String password) {
-        return bcrypt.encode(password);
+        return passwordEncoder.encode(password);
     }
 }
