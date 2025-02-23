@@ -13,37 +13,53 @@ public class GlobalExceptionHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-    @ExceptionHandler(UserExceptions.UserNotFoundException.class)
-    public ResponseEntity<CommonResponseDto> handleUserNotFoundException(UserExceptions.UserNotFoundException ex) {
+    private ResponseEntity<CommonResponseDto> buildErrorResponse(HttpStatus status, String errorMessage) {
+        return ResponseEntity.status(status)
+                .body(CommonResponseDto.createCommonResponseDto(status.value(), null, errorMessage, null));
+    }
+
+    /*** 🔹 User Exceptions Handling ***/
+    @ExceptionHandler(UserException.UserNotFoundException.class)
+    public ResponseEntity<CommonResponseDto> handleUserNotFoundException(UserException.UserNotFoundException ex) {
         logger.error("User not found: {}", ex.getMessage());
-        return new ResponseEntity<>(createCommonResponseForException(HttpStatus.NOT_FOUND.value(), ex.getMessage()), HttpStatus.NOT_FOUND);
+        return buildErrorResponse(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
-    @ExceptionHandler(UserExceptions.InvalidUserException.class)
-    public ResponseEntity<CommonResponseDto> handleInvalidUserException(UserExceptions.InvalidUserException ex) {
+    @ExceptionHandler(UserException.InvalidUserException.class)
+    public ResponseEntity<CommonResponseDto> handleInvalidUserException(UserException.InvalidUserException ex) {
         logger.error("Invalid user: {}", ex.getMessage());
-        return new ResponseEntity<>(createCommonResponseForException(HttpStatus.BAD_REQUEST.value(), ex.getMessage()), HttpStatus.BAD_REQUEST);
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
-    @ExceptionHandler(UserExceptions.InvalidUserCredentialException.class)
-    public ResponseEntity<CommonResponseDto> handleInvalidUserCredentialException(UserExceptions.InvalidUserCredentialException ex) {
+    @ExceptionHandler(UserException.InvalidUserCredentialException.class)
+    public ResponseEntity<CommonResponseDto> handleInvalidUserCredentialException(UserException.InvalidUserCredentialException ex) {
         logger.error("Invalid user credentials: {}", ex.getMessage());
-        return new ResponseEntity<>(createCommonResponseForException(HttpStatus.UNAUTHORIZED.value(), ex.getMessage()), HttpStatus.UNAUTHORIZED);
+        return buildErrorResponse(HttpStatus.UNAUTHORIZED, ex.getMessage());
     }
 
-    @ExceptionHandler(UserExceptions.MissingFieldException.class)
-    public ResponseEntity<CommonResponseDto> handleMissingFieldException(UserExceptions.MissingFieldException ex) {
+    @ExceptionHandler(UserException.MissingFieldException.class)
+    public ResponseEntity<CommonResponseDto> handleMissingFieldException(UserException.MissingFieldException ex) {
         logger.error("Missing field: {}", ex.getMessage());
-        return new ResponseEntity<>(createCommonResponseForException(HttpStatus.BAD_REQUEST.value(), ex.getMessage()), HttpStatus.BAD_REQUEST);
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
+    /*** 🔹 Task Exceptions Handling ***/
+    @ExceptionHandler(TaskException.ResourceNotFoundException.class)
+    public ResponseEntity<CommonResponseDto> handleTaskResourceNotFoundException(TaskException.ResourceNotFoundException ex) {
+        logger.error("Task not found: {}", ex.getMessage());
+        return buildErrorResponse(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(TaskException.InvalidRequestException.class)
+    public ResponseEntity<CommonResponseDto> handleTaskInvalidRequestException(TaskException.InvalidRequestException ex) {
+        logger.error("Invalid task request: {}", ex.getMessage());
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+    /*** 🔹 Global Exception Handling ***/
     @ExceptionHandler(Exception.class)
     public ResponseEntity<CommonResponseDto> handleGenericException(Exception ex) {
         logger.error("An unexpected error occurred: {}", ex.getMessage(), ex);
-        return new ResponseEntity<>(createCommonResponseForException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "An unexpected error occurred: " + ex.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-    private CommonResponseDto createCommonResponseForException(Integer statusCode, String errorMessage) {
-        return CommonResponseDto.createCommonResponseDto(statusCode, null, errorMessage, null);
+        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred: " + ex.getMessage());
     }
 }

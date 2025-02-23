@@ -2,7 +2,7 @@ package com.school.elite.service.impl;
 
 import com.school.elite.DTO.TaskRequestDto;
 import com.school.elite.entity.Task;
-import com.school.elite.exception.ResourceNotFoundException;
+import com.school.elite.exception.TaskException;
 import com.school.elite.repository.TaskRepository;
 import com.school.elite.service.TaskService;
 import com.school.elite.utils.Constants;
@@ -42,7 +42,7 @@ public class TaskServiceImpl implements TaskService {
         return taskRepository.findById(id)
                 .orElseThrow(() -> {
                     logger.error("Task not found with ID: {}", id);
-                    return new ResourceNotFoundException("Task not found with id: " + id);
+                    return new TaskException.ResourceNotFoundException("Task not found with id: " + id);
                 });
     }
 

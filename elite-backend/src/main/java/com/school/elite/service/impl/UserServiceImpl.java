@@ -3,7 +3,7 @@ package com.school.elite.service.impl;
 import com.school.elite.DTO.CommonResponseDto;
 import com.school.elite.DTO.UserCreateRequestDto;
 import com.school.elite.entity.User;
-import com.school.elite.exception.UserExceptions;
+import com.school.elite.exception.UserException;
 import com.school.elite.repository.UserRepository;
 import com.school.elite.service.UserService;
 import com.school.elite.utils.Utils;
@@ -35,14 +35,14 @@ public class UserServiceImpl implements UserService {
         if (isUserCredentialValid(username, password)) {
             return CommonResponseDto.createCommonResponseDto(HttpStatus.OK.value(), "Valid Credentials", null, null);
         }
-        throw new UserExceptions.InvalidUserCredentialException("Invalid Credentials");
+        throw new UserException.InvalidUserCredentialException("Invalid Credentials");
     }
 
     public boolean isUserCredentialValid(String username, String password) {
         User user = userRepository.findByUsername(username).orElseThrow(
-                () -> new UserExceptions.UserNotFoundException("User with username '" + username + "' not found"));
+                () -> new UserException.UserNotFoundException("User with username '" + username + "' not found"));
         if (!bcrypt.matches(password, user.getPassword())) {
-            throw new UserExceptions.InvalidUserCredentialException("Invalid credentials. Please check and retry.");
+            throw new UserException.InvalidUserCredentialException("Invalid credentials. Please check and retry.");
         }
         return true;
     }
