@@ -11,7 +11,7 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class TaskCreateRequestDto {
+public class TaskRequestDto {
     private String status;
     private String name;
     private String detail;
