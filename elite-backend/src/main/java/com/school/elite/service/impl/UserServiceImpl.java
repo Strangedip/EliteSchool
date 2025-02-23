@@ -2,6 +2,7 @@ package com.school.elite.service.impl;
 
 import com.school.elite.DTO.CommonResponseDto;
 import com.school.elite.DTO.UserCreateRequestDto;
+import com.school.elite.DTO.UserUpdateRequestDto;
 import com.school.elite.entity.User;
 import com.school.elite.exception.UserException;
 import com.school.elite.repository.UserRepository;
@@ -17,21 +18,11 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder bcrypt;
 
     @Override
     public CommonResponseDto createNewUser(UserCreateRequestDto createRequestDTO) {
-        if (userRepository.findByUsername(createRequestDTO.getUsername()).isPresent()) {
-            throw new UserException.InvalidUserException("Username already exists.");
-        }
-
-        if (userRepository.findByEmail(createRequestDTO.getEmail()).isPresent()) {
-            throw new UserException.InvalidUserException("Email already exists.");
-        }
-
-        User newUser = convertRequestDtoToEntity(createRequestDTO);
-        userRepository.save(newUser);
-
+        userRepository.save(convertRequestDtoToEntity(createRequestDTO));
         return CommonResponseDto.builder()
                 .responseCode(HttpStatus.CREATED.value())
                 .responseMessage("Elite user created successfully.")
@@ -39,32 +30,42 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public CommonResponseDto validateUserCredential(String username, String password) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UserException.UserNotFoundException("User with username '"+ username +"' not found"));
+    public CommonResponseDto updateUser(String eliteId, UserUpdateRequestDto userUpdateRequestDto) {
+        User user = userRepository.findById(eliteId)
+                .orElseThrow(() -> new UserException.UserNotFoundException("User with ID '" + eliteId + "' not found"));
 
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new UserException.InvalidUserCredentialException("Invalid credentials. Please check and retry.");
-        }
+        // Update user details
+        if (userUpdateRequestDto.getName() != null) user.setName(userUpdateRequestDto.getName());
+        if (userUpdateRequestDto.getAge() != null) user.setAge(userUpdateRequestDto.getAge());
+        if (userUpdateRequestDto.getGender() != null) user.setGender(userUpdateRequestDto.getGender());
+        if (userUpdateRequestDto.getEmail() != null) user.setEmail(userUpdateRequestDto.getEmail());
+        if (userUpdateRequestDto.getMobileNumber() != null) user.setMobileNumber(userUpdateRequestDto.getMobileNumber());
+        if (userUpdateRequestDto.getPosition() != null) user.setPosition(userUpdateRequestDto.getPosition());
+        if (userUpdateRequestDto.getUsername() != null) user.setUsername(userUpdateRequestDto.getUsername());
 
-        return CommonResponseDto.createCommonResponseDto(HttpStatus.OK.value(), "Valid Credentials", null, null);
-    }
+        userRepository.save(user);
 
-    private User convertRequestDtoToEntity(UserCreateRequestDto requestDTO) {
-        return User.builder()
-                .eliteId(Utils.createUUID())  // Generate UUID or another unique identifier
-                .name(requestDTO.getName())
-                .age(requestDTO.getAge())
-                .gender(requestDTO.getGender())
-                .email(requestDTO.getEmail())
-                .mobileNumber(requestDTO.getMobileNumber())
-                .position(requestDTO.getPosition())
-                .username(requestDTO.getUsername())
-                .password(encryptPassword(requestDTO.getPassword()))
+        return CommonResponseDto.builder()
+                .responseCode(HttpStatus.OK.value())
+                .responseMessage("User updated successfully.")
                 .build();
     }
 
+    private User convertRequestDtoToEntity(UserCreateRequestDto requestDTO) {
+        return new User(
+                Utils.createUUID(),
+                requestDTO.getName(),
+                requestDTO.getAge(),
+                requestDTO.getGender(),
+                requestDTO.getEmail(),
+                requestDTO.getMobileNumber(),
+                requestDTO.getPosition(),
+                requestDTO.getUsername(),
+                encryptPassword(requestDTO.getPassword())
+        );
+    }
+
     private String encryptPassword(String password) {
-        return passwordEncoder.encode(password);
+        return bcrypt.encode(password);
     }
 }

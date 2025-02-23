@@ -1,6 +1,7 @@
 package com.school.elite.controller;
 
 import com.school.elite.DTO.CommonResponseDto;
+import com.school.elite.service.AuthService;
 import com.school.elite.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
-    private final UserService userService;
+    private final AuthService authService;
 
     /**
      * Endpoint to validate user credentials (Login).
@@ -25,7 +26,7 @@ public class AuthController {
             @RequestParam String password) {
 
         logger.info("Login request received for username: {}", username);
-        CommonResponseDto response = userService.validateUserCredential(username, password);
+        CommonResponseDto response = authService.validateUserCredential(username, password);
         return ResponseEntity.ok(response);
     }
 }
