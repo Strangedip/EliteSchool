@@ -2,25 +2,30 @@ package com.school.elite.controller;
 
 import com.school.elite.DTO.CommonResponseDto;
 import com.school.elite.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(path = "/api/auth")
+@RequiredArgsConstructor
 public class AuthController {
 
-    Logger logger = LoggerFactory.getLogger(AuthController.class);
+    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
+    private final UserService userService;
 
-    @Autowired
-    UserService eliteUserService;
+    /**
+     * Endpoint to validate user credentials (Login).
+     */
+    @GetMapping("/login")
+    public ResponseEntity<CommonResponseDto> validateUserCredential(
+            @RequestParam String username,
+            @RequestParam String password) {
 
-    @GetMapping(path = "/login")
-    public ResponseEntity<CommonResponseDto> validateUserCredential(@RequestParam(name = "username") String username, @RequestParam(name = "password") String password) {
-        logger.info("Login request for username : {}", username);
-        return new ResponseEntity<>(eliteUserService.validateUserCredential(username, password), HttpStatus.OK);
+        logger.info("Login request received for username: {}", username);
+        CommonResponseDto response = userService.validateUserCredential(username, password);
+        return ResponseEntity.ok(response);
     }
 }
