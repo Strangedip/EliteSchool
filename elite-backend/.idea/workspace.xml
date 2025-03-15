@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="0b203c44-13b9-4b82-a17c-878dedd4fafe" name="Changes" comment="added reward-service and test dependencies">
+      <change afterPath="$PROJECT_DIR$/api-gateway/src/main/java/com/eliteschool/api_gateway/security/JwtAuthenticationFilter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api-gateway/src/main/java/com/eliteschool/api_gateway/security/JwtUtil.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api-gateway/src/main/resources/application.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/store-service/src/main/java/com/eliteschool/store_service/controller/StoreController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/store-service/src/main/java/com/eliteschool/store_service/model/StoreItem.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/store-service/src/main/java/com/eliteschool/store_service/repository/StoreItemRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/store-service/src/main/java/com/eliteschool/store_service/service/StoreService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mvnw" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mvnw.cmd" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/DTO/CommonResponseDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/DTO/TaskRequestDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/DTO/UserCreateRequestDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/DTO/UserUpdateRequestDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/EliteApplication.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/common/CommonBean.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/config/SecurityConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/controller/AdminController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/controller/AuthController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/controller/TaskController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/controller/UserAccountController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/controller/UserController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/entity/Task.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/entity/TaskReviewRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/entity/User.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/entity/UserAccount.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/exception/GlobalExceptionHandler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/exception/TaskException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/exception/UserException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/repository/TaskRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/repository/TaskReviewRequestRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/repository/UserAccountRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/repository/UserRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/repository/dbservice/EliteDBService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/service/AuthService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/service/TaskService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/service/UserService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/service/impl/AuthServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/service/impl/TaskServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/service/impl/UserServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/utils/Constants.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/utils/TimeUtil.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/utils/Utils.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/school/elite/EliteApplicationTests.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/school/elite/controller/UserControllerTest.java" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Exception" />
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$/.." value="main" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Strangedip&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Strangedip/EliteSchool.git&quot;,
+    &quot;accountId&quot;: &quot;c49bd578-e6d1-4aef-bc57-1dc44b7b26c6&quot;
+  }
+}</component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 8
+}</component>
+  <component name="ProjectId" id="2qzshk7dLRu5sLTdUAAfSs1e7A0" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.Elite.executor": "Debug",
+    "Application.EliteApplication.executor": "Debug",
+    "Application.TimeUtil.executor": "Debug",
+    "JUnit.EliteApplicationTests.contextLoads.executor": "Run",
+    "Maven.elite-backend [clean,install,-DskipTests].executor": "Run",
+    "Maven.elite-backend [clean,install].executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "restructure-to-microservice",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/sg022/OneDrive/Desktop/Git/EliteSchool/elite-backend/store-service/src/main/java/com/eliteschool/store_service"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\sg022\OneDrive\Desktop\Git\EliteSchool\elite-backend\store-service\src\main\java\com\eliteschool\store_service" />
+    </key>
+  </component>
+  <component name="RunAnythingCache">
+    <option name="myCommands">
+      <command value="mvn clean install" />
+      <command value="mvn clean install -DskipTests" />
+    </option>
+  </component>
+  <component name="RunManager" selected="Application.TimeUtil">
+    <configuration name="Elite" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="com.school.elite.EliteApplication" />
+      <module name="elite-backend" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="TimeUtil" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.school.elite.utils.TimeUtil" />
+      <module name="elite-backend" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.school.elite.utils.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="EliteApplicationTests.contextLoads" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="elite-backend" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.school.elite.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.school.elite" />
+      <option name="MAIN_CLASS_NAME" value="com.school.elite.EliteApplicationTests" />
+      <option name="METHOD_NAME" value="contextLoads" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.EliteApplicationTests.contextLoads" />
+        <item itemvalue="Application.TimeUtil" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="0b203c44-13b9-4b82-a17c-878dedd4fafe" name="Changes" comment="" />
+      <created>1735676860264</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1735676860264</updated>
+    </task>
+    <task id="LOCAL-00001" summary="refactored file names">
+      <option name="closed" value="true" />
+      <created>1735677724575</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1735677724575</updated>
+    </task>
+    <task id="LOCAL-00002" summary="added login and Custom Exceptions">
+      <option name="closed" value="true" />
+      <created>1735688167618</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1735688167618</updated>
+    </task>
+    <task id="LOCAL-00003" summary="minor standardization">
+      <option name="closed" value="true" />
+      <created>1740340898359</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1740340898359</updated>
+    </task>
+    <task id="LOCAL-00004" summary="renamed Task request">
+      <option name="closed" value="true" />
+      <created>1740341120253</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1740341120253</updated>
+    </task>
+    <task id="LOCAL-00005" summary="added Tasks">
+      <option name="closed" value="true" />
+      <created>1740341693333</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1740341693333</updated>
+    </task>
+    <task id="LOCAL-00006" summary="refactored Users">
+      <option name="closed" value="true" />
+      <created>1740341909938</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1740341909938</updated>
+    </task>
+    <task id="LOCAL-00007" summary="refactored Users">
+      <option name="closed" value="true" />
+      <created>1740342057591</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1740342057591</updated>
+    </task>
+    <task id="LOCAL-00008" summary="refactored Users with auth separation">
+      <option name="closed" value="true" />
+      <created>1740342422679</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1740342422679</updated>
+    </task>
+    <task id="LOCAL-00009" summary="added reward-service and test dependencies">
+      <option name="closed" value="true" />
+      <created>1742072121035</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1742072121035</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="refactored file names" />
+    <MESSAGE value="added login and Custom Exceptions" />
+    <MESSAGE value="minor standardization" />
+    <MESSAGE value="renamed Task request" />
+    <MESSAGE value="added Tasks" />
+    <MESSAGE value="refactored Users" />
+    <MESSAGE value="refactored Users with auth separation" />
+    <MESSAGE value="added reward-service and test dependencies" />
+    <option name="LAST_COMMIT_MESSAGE" value="added reward-service and test dependencies" />
+  </component>
+</project>
