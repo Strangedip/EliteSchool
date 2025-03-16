@@ -3,47 +3,51 @@ spring:
     gateway:
       discovery:
         locator:
-          enabled: true  # Enables automatic service discovery in Eureka
-          lower-case-service-id: true  # Ensures service IDs are in lowercase
+          enabled: true
+          lower-case-service-id: true
       routes:
-        - id: auth-service
+        - id: auth-service-auth
           uri: lb://auth-service
           predicates:
-            - Path=/api/auth/**  # Public routes for Login & Registration
+            - Path=/api/auth/**
           filters:
-            - PreserveHostHeader  # Ensures correct host forwarding
+            - PreserveHostHeader
+
+        - id: auth-service-users
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/users/**
+          filters:
+            - PreserveHostHeader
 
         - id: task-service
           uri: lb://task-service
           predicates:
             - Path=/api/tasks/**
           filters:
-            - RemoveRequestHeader=Cookie  # Ensures clean requests
-            - RewritePath=/api/tasks/(?<path>.*), /$\{path}  # Rewrites path
+            - PreserveHostHeader
 
         - id: reward-service
           uri: lb://reward-service
           predicates:
             - Path=/api/rewards/**
           filters:
-            - RemoveRequestHeader=Cookie
-            - RewritePath=/api/rewards/(?<path>.*), /$\{path}
+            - PreserveHostHeader
 
         - id: store-service
           uri: lb://store-service
           predicates:
             - Path=/api/store/**
           filters:
-            - RemoveRequestHeader=Cookie
-            - RewritePath=/api/store/(?<path>.*), /$\{path}
+            - PreserveHostHeader
 
       default-filters:
-        - PreserveHostHeader  # Ensures proper forwarding of headers
-        - RemoveRequestHeader=Cookie  # Avoids unnecessary cookies being passed
+        - PreserveHostHeader
+        - RemoveRequestHeader=Cookie
 
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka/  # Eureka Server URL
+      defaultZone: http://localhost:8761/eureka/
   instance:
-    prefer-ip-address: true  # Uses IP address instead of hostname
+    prefer-ip-address: true

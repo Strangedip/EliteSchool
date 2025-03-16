@@ -1,9 +1,9 @@
 package com.eliteschool.api_gateway.security;
 
 import io.jsonwebtoken.Claims;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -14,12 +14,23 @@ import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.ReactiveSecurityContextHolder;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import java.util.List;
+
 @Component
-@RequiredArgsConstructor
 public class JwtAuthenticationFilter implements WebFilter {
 
     private final JwtUtil jwtUtil;
     private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
+
+    @Autowired
+    public JwtAuthenticationFilter(JwtUtil jwtUtil) {
+        this.jwtUtil = jwtUtil;
+    }
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
@@ -48,12 +59,16 @@ public class JwtAuthenticationFilter implements WebFilter {
         String username = claims.getSubject();
         logger.info("User '{}' authenticated successfully via JWT.", username);
 
-        // Modify request to forward Authorization header properly
-        ServerHttpRequest modifiedRequest = exchange.getRequest().mutate()
-                .header(HttpHeaders.AUTHORIZATION, authHeader) // Forward the token
-                .build();
+        // 🔹 Create authentication object and set it in Security Context
+        UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken(username, null, List.of(new SimpleGrantedAuthority("ROLE_USER")));
 
-        return chain.filter(exchange.mutate().request(modifiedRequest).build());
+        SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
+        securityContext.setAuthentication(authentication);
+
+        // 🔹 Attach security context to the request
+        return chain.filter(exchange)
+                .contextWrite(ReactiveSecurityContextHolder.withSecurityContext(Mono.just(securityContext)));
     }
 
     private Mono<Void> unauthorizedResponse(ServerWebExchange exchange) {
@@ -62,3 +77,4 @@ public class JwtAuthenticationFilter implements WebFilter {
         return response.setComplete();
     }
 }
+
