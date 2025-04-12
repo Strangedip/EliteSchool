@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.2.2</version> <!-- Correct Spring Boot version -->
+		<version>3.2.12</version> <!-- Updated to Spring Boot version supporting JDK 21 -->
 		<relativePath/>
 	</parent>
 
@@ -19,9 +19,9 @@
 	<description>User Authentication Service</description>
 
 	<properties>
-		<java.version>17</java.version>
+		<java.version>21</java.version> <!-- Updated to JDK 21 -->
 		<spring-cloud.version>2023.0.1</spring-cloud.version>
-		<hibernate.version>6.4.2.Final</hibernate.version> <!-- Added Hibernate version -->
+		<hibernate.version>6.4.2.Final</hibernate.version> <!-- Updated Hibernate version -->
 	</properties>
 
 	<dependencies>
@@ -70,7 +70,6 @@
 			<version>0.11.5</version>
 			<scope>runtime</scope>
 		</dependency>
-
 
 		<!-- Lombok -->
 		<dependency>

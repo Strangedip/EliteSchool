@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.6</version>
+        <version>3.2.12</version> <!-- Updated to a version supporting JDK 21 -->
         <relativePath/>
     </parent>
 
@@ -18,7 +18,7 @@
     <description>Microservice for managing student rewards</description>
 
     <properties>
-        <java.version>17</java.version>
+        <java.version>21</java.version> <!-- Updated to JDK 21 -->
         <spring-cloud.version>2023.0.1</spring-cloud.version>
     </properties>
 
@@ -103,6 +103,17 @@
 
     <build>
         <plugins>
+            <!-- Add Maven Compiler Plugin to set JDK 21 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.10.1</version>
+                <configuration>
+                    <release>21</release> <!-- Set JDK 21 -->
+                </configuration>
+            </plugin>
+
+            <!-- Spring Boot Maven Plugin -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>

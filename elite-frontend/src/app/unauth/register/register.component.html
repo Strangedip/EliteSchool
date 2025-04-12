@@ -1,7 +1,28 @@
-<form (ngSubmit)="register()">
-    <input type="text" [(ngModel)]="userData.name" name="name" placeholder="Name" required>
-    <input type="email" [(ngModel)]="userData.email" name="email" placeholder="Email" required>
-    <input type="text" [(ngModel)]="userData.username" name="username" placeholder="Username" required>
-    <input type="password" [(ngModel)]="userData.password" name="password" placeholder="Password" required>
-    <button type="submit">Register</button>
-</form>
+<div class="d-flex justify-content-center align-items-center min-vh-100 text-white">
+    <form (ngSubmit)="register()" class="p-fluid p-4 shadow-lg rounded bg-dark border-light" style="width: 100%; max-width: 400px;">
+        <h3 class="text-center text-light">Register</h3>
+        <div class="p-field">
+            <label for="name" class="p-d-block text-light">Name</label>
+            <input pInputText id="name" type="text" [(ngModel)]="userData.name" name="name" placeholder="Name" required class="p-inputtext-dark" />
+        </div>
+
+        <div class="p-field">
+            <label for="email" class="p-d-block text-light">Email</label>
+            <input pInputText id="email" type="email" [(ngModel)]="userData.email" name="email" placeholder="Email" required class="p-inputtext-dark" />
+        </div>
+
+        <div class="p-field">
+            <label for="username" class="p-d-block text-light">Username</label>
+            <input pInputText id="username" type="text" [(ngModel)]="userData.username" name="username" placeholder="Username" required class="p-inputtext-dark" />
+        </div>
+
+        <div class="p-field mb-3">
+            <label for="password" class="p-d-block text-light">Password</label>
+            <p-password id="password" [(ngModel)]="userData.password" name="password" placeholder="Password" [feedback]="false" [toggleMask]="true" required class="p-inputtext-dark"></p-password>
+        </div>
+
+        <div class="p-field">
+            <button pButton type="submit" label="Register" class="p-button-raised p-button-primary"></button>
+        </div>
+    </form>
+</div>
