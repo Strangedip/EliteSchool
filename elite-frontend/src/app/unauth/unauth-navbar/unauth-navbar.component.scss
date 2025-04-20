@@ -1,0 +1,48 @@
+.unauth-navbar {
+    padding: 0.5rem 1.5rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+
+    .navbar-left {
+        display: flex;
+        align-items: center;
+
+        .brand-icon {
+            font-size: 1.8rem;
+            color: #007ad9;
+            margin-right: 0.5rem;
+        }
+
+        .brand-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+    }
+
+    .navbar-right {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    // Show desktop buttons, hide mobile menu
+    .desktop-buttons {
+        display: flex;
+    }
+
+    .mobile-menu {
+        display: none;
+    }
+
+    // Responsive for screen ≤ 768px
+    @media (max-width: 768px) {
+        .desktop-buttons {
+            display: none !important;
+        }
+
+        .mobile-menu {
+            display: flex !important;
+        }
+    }
+}

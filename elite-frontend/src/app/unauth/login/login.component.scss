@@ -1,3 +1,14 @@
-input{
+input {
     font-family: "Inter var", "sans-serif" !important;
+}
+
+.bg-dark {
+    background-color: #071426 !important;
+    border: 1px solid #0b213f !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37) !important; // soft shadow
+    transition: all 0.3s ease; // smooth hover or transition
+
+    h3 {
+        color: #93C5FD !important;
+    }
 }

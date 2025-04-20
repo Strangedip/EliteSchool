@@ -1,28 +1,96 @@
-<div class="d-flex justify-content-center align-items-center min-vh-100 text-white">
-    <form (ngSubmit)="register()" class="p-fluid p-4 shadow-lg rounded bg-dark border-light" style="width: 100%; max-width: 400px;">
-        <h3 class="text-center text-light">Register</h3>
-        <div class="p-field">
-            <label for="name" class="p-d-block text-light">Name</label>
-            <input pInputText id="name" type="text" [(ngModel)]="userData.name" name="name" placeholder="Name" required class="p-inputtext-dark" />
-        </div>
+<div class="p-5 d-flex justify-content-center align-items-center min-vh-100 text-white">
+    <form #registerForm="ngForm" (ngSubmit)="register()" class="p-fluid p-4 shadow-lg rounded bg-dark border-light bg-glassmorphic"
+        style="width: 100%; max-width: 600px;" novalidate>
+        <h3 class="text-center mb-4">Elite's Registeration</h3>
 
-        <div class="p-field">
-            <label for="email" class="p-d-block text-light">Email</label>
-            <input pInputText id="email" type="email" [(ngModel)]="userData.email" name="email" placeholder="Email" required class="p-inputtext-dark" />
-        </div>
-
-        <div class="p-field">
-            <label for="username" class="p-d-block text-light">Username</label>
-            <input pInputText id="username" type="text" [(ngModel)]="userData.username" name="username" placeholder="Username" required class="p-inputtext-dark" />
-        </div>
-
+        <!-- Name -->
         <div class="p-field mb-3">
-            <label for="password" class="p-d-block text-light">Password</label>
-            <p-password id="password" [(ngModel)]="userData.password" name="password" placeholder="Password" [feedback]="false" [toggleMask]="true" required class="p-inputtext-dark"></p-password>
+            <label for="name" class="text-light form-label">Name</label>
+            <input pInputText id="name" name="name" type="text" class="p-inputtext-dark" [(ngModel)]="userData.name"
+                placeholder="Name" required #name="ngModel" />
+            <small class="text-danger" *ngIf="name.invalid && name.touched">Name is required</small>
         </div>
 
-        <div class="p-field">
-            <button pButton type="submit" label="Register" class="p-button-raised p-button-primary"></button>
+        <!-- Age -->
+        <div class="p-field mb-3">
+            <label for="age" class="text-light form-label">Age</label>
+            <input pInputText id="age" name="age" type="number" class="p-inputtext-dark" [(ngModel)]="userData.age"
+                placeholder="Age" min="1" #age="ngModel" />
+            <small class="text-danger" *ngIf="age.invalid && age.touched">Valid age is required</small>
+        </div>
+
+        <!-- Gender -->
+        <div class="p-field mb-3">
+            <label for="gender" class="text-light form-label">Gender</label>
+            <p-dropdown id="gender" name="gender" [options]="genders" [(ngModel)]="userData.gender"
+                (onChange)="onDropdownChange($event, 'gender')" placeholder="Select Gender" [required]="true"
+                #gender="ngModel" class="w-100">
+            </p-dropdown>
+            <small class="text-danger" *ngIf="gender.invalid && gender.touched">
+                Gender is required
+            </small>
+        </div>
+
+        <!-- Email -->
+        <div class="p-field mb-3">
+            <label for="email" class="text-light form-label">Email</label>
+            <input pInputText id="email" name="email" type="email" class="p-inputtext-dark" [(ngModel)]="userData.email"
+                placeholder="Email" required email #email="ngModel" />
+            <small class="text-danger" *ngIf="email.errors?.['required'] && email.touched">Email is required</small>
+            <small class="text-danger" *ngIf="email.errors?.['email'] && email.touched">Invalid email format</small>
+        </div>
+
+        <!-- Mobile Number -->
+        <div class="p-field mb-3">
+            <label for="mobileNumber" class="text-light form-label">Mobile Number</label>
+            <input pInputText id="mobileNumber" name="mobileNumber" type="tel" class="p-inputtext-dark"
+                [(ngModel)]="userData.mobileNumber" placeholder="Mobile Number" required pattern="^[6-9]\d{9}$"
+                #mobileNumber="ngModel" />
+            <small class="text-danger" *ngIf="mobileNumber.errors?.['required'] && mobileNumber.touched">Mobile number
+                is required</small>
+            <small class="text-danger" *ngIf="mobileNumber.errors?.['pattern'] && mobileNumber.touched">Enter valid
+                10-digit number</small>
+        </div>
+
+        <!-- Username -->
+        <div class="p-field mb-3">
+            <label for="username" class="text-light form-label">Username</label>
+            <input pInputText id="username" name="username" type="text" class="p-inputtext-dark"
+                [(ngModel)]="userData.username" placeholder="Set username" required #username="ngModel" />
+            <small class="text-danger" *ngIf="username.invalid && username.touched">Username is required</small>
+        </div>
+
+        <!-- Password -->
+        <div class="p-field mb-3">
+            <label for="password" class="text-light form-label">Password</label>
+            <p-password id="password" name="password" class="p-inputtext-dark" [(ngModel)]="userData.password"
+                placeholder="Set password" [feedback]="false" [toggleMask]="true" required minlength="5"
+                #password="ngModel">
+            </p-password>
+            <small class="text-danger" *ngIf="password.errors?.['required'] && password.touched">Password is
+                required</small>
+            <small class="text-danger" *ngIf="password.errors?.['minlength'] && password.touched">Min 5 characters
+                required</small>
+        </div>
+
+
+        <!-- Role -->
+        <div class="p-field mb-4">
+            <label for="role" class="text-light form-label">Role</label>
+            <p-dropdown id="role" name="role" [options]="roles" [(ngModel)]="userData.role"
+                (onChange)="onDropdownChange($event, 'role')" placeholder="Select Role" [required]="true"
+                #role="ngModel" class="w-100">
+            </p-dropdown>
+            <small class="text-danger" *ngIf="role.invalid && role.touched">
+                Role is required
+            </small>
+        </div>
+
+        <!-- Submit -->
+        <div class="p-field d-flex justify-content-center">
+            <button pButton type="submit" label="Register" class="p-button-raised p-button-primary w-50"
+                [disabled]="registerForm.invalid">
+            </button>
         </div>
     </form>
 </div>
