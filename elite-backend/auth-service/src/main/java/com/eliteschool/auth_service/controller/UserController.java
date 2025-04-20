@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/user")
 public class UserController {
 
     private final UserService userService;
@@ -70,7 +70,7 @@ public class UserController {
     @PostMapping("/create")
     public ResponseEntity<User> createUser(@RequestBody User user) {
         if (userService.emailExists(user.getEmail()) || userService.usernameExists(user.getUsername())) {
-            return ResponseEntity.badRequest().build(); // Avoid duplicate users
+            return ResponseEntity.internalServerError().build();
         }
         return ResponseEntity.ok(userService.saveUser(user));
     }

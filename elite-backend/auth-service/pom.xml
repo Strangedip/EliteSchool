@@ -25,6 +25,13 @@
 	</properties>
 
 	<dependencies>
+		<!--internal dependency-->
+		<dependency>
+			<groupId>com.eliteschool</groupId>
+			<artifactId>common-utils</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
 		<!-- Spring Boot Starters -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

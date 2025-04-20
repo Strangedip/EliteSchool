@@ -17,12 +17,13 @@ public class SecurityConfig {
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         return http
-                .csrf(ServerHttpSecurity.CsrfSpec::disable) // 🔹 Disable CSRF
+                .cors(corsSpec -> {})
+                .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(auth -> auth
-                        .pathMatchers("/api/auth/**").permitAll()  // 🔹 Allow public access to Auth APIs
-                        .anyExchange().authenticated()  // 🔹 Secure other endpoints (JWT required)
+                        .pathMatchers("/api/auth/**").permitAll()
+                        .anyExchange().authenticated()
                 )
-                .addFilterBefore(jwtAuthenticationFilter, SecurityWebFiltersOrder.AUTHENTICATION) // 🔹 Apply JWT filter
+                .addFilterBefore(jwtAuthenticationFilter, SecurityWebFiltersOrder.AUTHENTICATION)
                 .build();
     }
 }

@@ -54,7 +54,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // 🔹 Disable CSRF
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll() // 🔹 Block all other requests (Auth service should not expose other APIs)
+                        .anyRequest().permitAll()
                 );
 
         return http.build();
