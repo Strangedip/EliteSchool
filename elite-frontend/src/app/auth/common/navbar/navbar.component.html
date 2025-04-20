@@ -1,0 +1,17 @@
+<p-toolbar class="unauth-navbar">
+    <!-- Left: Logo / Brand -->
+    <div class="navbar-left">
+        <i class="pi brand-icon" style="margin-top:-0.5rem; cursor:pointer">EliteSchool</i>
+        <span class="brand-name" style="font-size: small; margin-top:0.5rem;">School for telents</span>
+    </div>
+
+    <!-- Right: Hamburger Menu (shown on mobile only)
+    <div class="navbar-right mobile-menu">
+        <button pButton icon="pi pi-bars" class="p-button-text" (click)="menu.toggle($event)"></button>
+        <p-menu #menu [popup]="true" [model]="menuItems"></p-menu>
+    </div> -->
+
+    <div class="navbar-right desktop-menu">
+        <button pButton icon="pi pi-sign-out" class="p-button-text" (click)="logout()"> <span class="p-1">Logout</span> </button>
+    </div>
+</p-toolbar>

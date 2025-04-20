@@ -1,12 +1,25 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { AuthLayoutComponent } from './auth-layout.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { StoreComponent } from './store/store.component';
+import { TaskboardComponent } from './taskboard/taskboard.component';
+import { UserProfileComponent } from './user-profile/user-profile.component';
 
-import { TaskCreateComponent } from './task-create/task-create.component';
-import { TaskListComponent } from './task-list/task-list.component';
+
 
 const routes: Routes = [
-  { path: 'task-create', component: TaskCreateComponent },
-  { path: 'task-list', component: TaskListComponent }
+  {
+    path: '',
+    component: AuthLayoutComponent,
+    children: [
+      { path: 'dashboard', component: DashboardComponent },
+      { path: 'store', component: StoreComponent },
+      { path: 'taskboard', component: TaskboardComponent },
+      { path: 'profile', component: UserProfileComponent },
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
+    ]
+  }
 ];
 
 @NgModule({

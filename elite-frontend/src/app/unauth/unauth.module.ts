@@ -10,7 +10,7 @@ import { PasswordModule } from 'primeng/password';
 import { DropdownModule } from 'primeng/dropdown';
 import {  RouterModule } from '@angular/router';
 import { UnauthLayoutComponent } from './unauth-layout.component';
-import { UnauthNavbarComponent } from './unauth-navbar/unauth-navbar.component';
+import { UnauthNavbarComponent } from './navbar/unauth-navbar.component';
 import { ToolbarModule } from 'primeng/toolbar';
 import { MenuModule } from 'primeng/menu';
 

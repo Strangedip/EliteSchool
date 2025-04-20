@@ -1,4 +1,8 @@
-import { Component } from '@angular/core';
+import { AuthService } from './service/auth.service';
+import { Component, OnInit } from '@angular/core';
+import { ToastService } from './service/toast.service';
+import { Router } from '@angular/router';
+import { CommonResponseDto } from './model/common-response.model';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +10,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'elite-frontend';
+  title = 'elite-school';
 }
