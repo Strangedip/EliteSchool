@@ -3,11 +3,17 @@ package com.eliteschool.auth_service.controller;
 import com.eliteschool.auth_service.model.User;
 import com.eliteschool.auth_service.security.JwtUtil;
 import com.eliteschool.auth_service.service.UserService;
+import com.eliteschool.common_utils.dto.CommonResponseDto;
 import com.eliteschool.common_utils.util.ResponseUtil;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -35,7 +41,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@RequestBody Map<String, String> credentials) {
+    public ResponseEntity<?> loginUser(@RequestBody Map<String, String> credentials, HttpServletResponse response) {
         String username = credentials.get("username");
         String password = credentials.get("password");
 
@@ -43,10 +49,41 @@ public class AuthController {
                 .filter(user -> passwordEncoder.matches(password, user.getPassword()))
                 .map(user -> {
                     String token = jwtUtil.generateToken(username);
+                    response.setHeader("Authorization", "Bearer " + token);
                     return ResponseUtil.success("Login successful", Map.of("token", token));
                 })
                 .orElseGet(() -> ResponseUtil.error(
                         HttpStatus.UNAUTHORIZED, "INVALID_CREDENTIALS",
                         "Invalid username or password", "Login failed"));
+    }
+
+    @GetMapping("/validate-token")
+    public ResponseEntity<?> validateToken(HttpServletRequest request, HttpServletResponse response) {
+        String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseUtil.error(HttpStatus.UNAUTHORIZED, "FAILED_AUTHORIZATION", "Token missing", null);
+        }
+
+        String token = authHeader.substring(7);
+        String username = jwtUtil.extractUsername(token);
+
+        if (ObjectUtils.isEmpty(username)) {
+            return ResponseUtil.error(HttpStatus.UNAUTHORIZED, "FAILED_AUTHORIZATION", "Invalid Token", null);
+        }
+
+        if (!jwtUtil.validateToken(token, username)) {
+            return ResponseUtil.error(HttpStatus.UNAUTHORIZED, "FAILED_AUTHORIZATION", "Invalid Token", null);
+        }
+
+        return ResponseUtil.success("User validated successfully", null);
+    }
+
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logoutUser(HttpServletRequest request, HttpServletResponse response) {
+        // Clear the JWT token by setting the cookie to expire
+        jwtUtil.clearTokenCookie(response);
+        return ResponseUtil.success("User logged out successfully", null);
     }
 }
