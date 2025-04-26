@@ -1,15 +1,13 @@
-import { ToastService } from './../service/toast.service';
-// unauth/unauth-layout.component.ts
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import { NavbarComponent } from '../components/navbar/navbar.component';
 
 @Component({
     selector: 'app-auth-layout',
-    templateUrl: './auth-layout.component.html',
-    styleUrls: ['./auth-layout.component.scss']
+    standalone: true,
+    imports: [RouterOutlet, NavbarComponent],
+    templateUrl: './auth-layout.component.html'
 })
-export class AuthLayoutComponent implements OnInit {
-    constructor(private toastService: ToastService) { }
-
-    ngOnInit(): void {
-    }
+export class AuthLayoutComponent {
+    // Component logic
 }
