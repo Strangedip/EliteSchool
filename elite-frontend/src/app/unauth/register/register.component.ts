@@ -110,7 +110,20 @@ export class RegisterComponent implements OnInit {
               detail: 'Account created successfully',
               life: 3000
             });
-            this.navigateToLogin();
+            // Auto login after successful registration
+            this.authService.login(this.userData.username, this.userData.password)
+              .subscribe({
+                next: (loginResponse: CommonResponseDto<any>) => {
+                  if (loginResponse.success) {
+                    this.navigateToDashboard();
+                  } else {
+                    this.navigateToLogin();
+                  }
+                },
+                error: () => {
+                  this.navigateToLogin();
+                }
+              });
           } else {
             // This handles successful HTTP requests with business logic errors
             const errorMessage = response.error 
@@ -165,6 +178,10 @@ export class RegisterComponent implements OnInit {
 
   navigateToLogin(): void {
     this.router.navigate(['/unauth/login']);
+  }
+
+  navigateToDashboard(): void {
+    this.router.navigate(['/auth/dashboard']);
   }
 
   info(): void {

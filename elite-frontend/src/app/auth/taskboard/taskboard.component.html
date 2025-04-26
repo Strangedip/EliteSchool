@@ -1,1 +1,89 @@
-<p>taskboard works!</p>
+<div class="taskboard-container">
+    <div class="taskboard-header">
+        <h2>Task Board</h2>
+        <div class="header-actions">
+            <div class="search-box">
+                <input type="text" placeholder="Search tasks..." (input)="onSearch($event)" />
+                <i class="pi pi-search"></i>
+            </div>
+            <button pButton 
+                type="button" 
+                icon="pi pi-plus" 
+                label="Add Task" 
+                class="p-button-primary"
+                (click)="addTask()">
+            </button>
+        </div>
+    </div>
+
+    <div class="task-columns">
+        <div class="task-column">
+            <div class="column-header">
+                <h3>To Do</h3>
+                <span class="task-count">{{ todoTasks.length }}</span>
+            </div>
+            <div class="column-content">
+                <div class="task-card" *ngFor="let task of todoTasks">
+                    <div class="task-priority" [ngClass]="'priority-' + task.priority"></div>
+                    <div class="task-content">
+                        <h4 class="task-title">{{ task.title }}</h4>
+                        <p class="task-description">{{ task.description }}</p>
+                        <div class="task-meta">
+                            <span class="task-course">{{ task.course }}</span>
+                            <span class="task-due-date">Due: {{ formatDate(task.dueDate) }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="empty-message" *ngIf="todoTasks.length === 0">
+                    No tasks to do
+                </div>
+            </div>
+        </div>
+
+        <div class="task-column">
+            <div class="column-header">
+                <h3>In Progress</h3>
+                <span class="task-count">{{ inProgressTasks.length }}</span>
+            </div>
+            <div class="column-content">
+                <div class="task-card" *ngFor="let task of inProgressTasks">
+                    <div class="task-priority" [ngClass]="'priority-' + task.priority"></div>
+                    <div class="task-content">
+                        <h4 class="task-title">{{ task.title }}</h4>
+                        <p class="task-description">{{ task.description }}</p>
+                        <div class="task-meta">
+                            <span class="task-course">{{ task.course }}</span>
+                            <span class="task-due-date">Due: {{ formatDate(task.dueDate) }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="empty-message" *ngIf="inProgressTasks.length === 0">
+                    No tasks in progress
+                </div>
+            </div>
+        </div>
+
+        <div class="task-column">
+            <div class="column-header">
+                <h3>Completed</h3>
+                <span class="task-count">{{ completedTasks.length }}</span>
+            </div>
+            <div class="column-content">
+                <div class="task-card task-completed" *ngFor="let task of completedTasks">
+                    <div class="task-priority" [ngClass]="'priority-' + task.priority"></div>
+                    <div class="task-content">
+                        <h4 class="task-title">{{ task.title }}</h4>
+                        <p class="task-description">{{ task.description }}</p>
+                        <div class="task-meta">
+                            <span class="task-course">{{ task.course }}</span>
+                            <span class="task-due-date">Completed</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="empty-message" *ngIf="completedTasks.length === 0">
+                    No completed tasks
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

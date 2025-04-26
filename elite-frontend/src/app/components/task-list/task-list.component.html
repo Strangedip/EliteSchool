@@ -1,0 +1,62 @@
+<div class="container">
+  <h2>Task List</h2>
+  
+  <div class="filters">
+    <div class="filter-group">
+      <label>Status:</label>
+      <select (change)="onStatusFilterChange($event)">
+        <option value="all">All</option>
+        <option value="todo">To Do</option>
+        <option value="in-progress">In Progress</option>
+        <option value="completed">Completed</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label>Priority:</label>
+      <select (change)="onPriorityFilterChange($event)">
+        <option value="all">All</option>
+        <option value="high">High</option>
+        <option value="medium">Medium</option>
+        <option value="low">Low</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label>Course:</label>
+      <select (change)="onCourseFilterChange($event)">
+        <option value="all">All</option>
+        <option *ngFor="let course of courses" [value]="course">{{ course }}</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="task-list">
+    <div *ngIf="filteredTasks.length === 0" class="empty-state">
+      No tasks found with the selected filters.
+    </div>
+    
+    <div *ngFor="let task of filteredTasks" class="task-card" [ngClass]="getTaskPriorityClass(task.priority)">
+      <div class="task-header">
+        <h3>{{ task.title }}</h3>
+        <span class="task-course">{{ task.course }}</span>
+      </div>
+      
+      <p class="task-description">{{ task.description }}</p>
+      
+      <div class="task-footer">
+        <div class="task-due-date">
+          <strong>Due:</strong> {{ task.dueDate | date:'mediumDate' }}
+        </div>
+        
+        <div class="task-status">
+          <select [value]="task.status" (change)="updateTaskStatus(task, $event)">
+            <option value="todo">To Do</option>
+            <option value="in-progress">In Progress</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

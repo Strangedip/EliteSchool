@@ -1,1 +1,117 @@
-<p>dashboard works!</p>
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h1 class="dashboard-title">Welcome to Elite School Dashboard</h1>
+        <p class="dashboard-subtitle">Your educational journey at a glance</p>
+    </div>
+
+    <div class="dashboard-grid">
+        <!-- Summary Cards -->
+        <div class="card summary-card">
+            <div class="card-icon assignments">
+                <i class="pi pi-book"></i>
+            </div>
+            <div class="card-content">
+                <h3>Assignments</h3>
+                <div class="card-stat">12</div>
+                <p>5 due soon</p>
+            </div>
+        </div>
+
+        <div class="card summary-card">
+            <div class="card-icon courses">
+                <i class="pi pi-list"></i>
+            </div>
+            <div class="card-content">
+                <h3>Courses</h3>
+                <div class="card-stat">4</div>
+                <p>2 in progress</p>
+            </div>
+        </div>
+
+        <div class="card summary-card">
+            <div class="card-icon grades">
+                <i class="pi pi-chart-bar"></i>
+            </div>
+            <div class="card-content">
+                <h3>Performance</h3>
+                <div class="card-stat">A-</div>
+                <p>Term average</p>
+            </div>
+        </div>
+
+        <div class="card summary-card">
+            <div class="card-icon events">
+                <i class="pi pi-calendar"></i>
+            </div>
+            <div class="card-content">
+                <h3>Events</h3>
+                <div class="card-stat">7</div>
+                <p>This month</p>
+            </div>
+        </div>
+
+        <!-- Upcoming Tasks -->
+        <div class="card tasks-card">
+            <div class="card-header">
+                <h2>Upcoming Tasks</h2>
+                <a href="/dashboard/taskboard" class="view-all">View All</a>
+            </div>
+            <div class="task-list">
+                <div class="task-item">
+                    <div class="task-status urgent"></div>
+                    <div class="task-content">
+                        <h4>Math Assignment</h4>
+                        <p>Due tomorrow at 11:59 PM</p>
+                    </div>
+                    <button class="task-action"><i class="pi pi-check"></i></button>
+                </div>
+                <div class="task-item">
+                    <div class="task-status medium"></div>
+                    <div class="task-content">
+                        <h4>Science Lab Report</h4>
+                        <p>Due in 3 days</p>
+                    </div>
+                    <button class="task-action"><i class="pi pi-check"></i></button>
+                </div>
+                <div class="task-item">
+                    <div class="task-status normal"></div>
+                    <div class="task-content">
+                        <h4>History Essay Draft</h4>
+                        <p>Due next week</p>
+                    </div>
+                    <button class="task-action"><i class="pi pi-check"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="card activity-card">
+            <div class="card-header">
+                <h2>Recent Activity</h2>
+            </div>
+            <div class="activity-list">
+                <div class="activity-item">
+                    <div class="activity-icon"><i class="pi pi-file"></i></div>
+                    <div class="activity-content">
+                        <p><strong>Assignment Submitted:</strong> English Literature Essay</p>
+                        <span class="activity-time">2 hours ago</span>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon"><i class="pi pi-star"></i></div>
+                    <div class="activity-content">
+                        <p><strong>Grade Posted:</strong> Chemistry Quiz - 92%</p>
+                        <span class="activity-time">Yesterday</span>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon"><i class="pi pi-comments"></i></div>
+                    <div class="activity-content">
+                        <p><strong>Discussion:</strong> You posted in "Physics Chapter 5 Questions"</p>
+                        <span class="activity-time">2 days ago</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

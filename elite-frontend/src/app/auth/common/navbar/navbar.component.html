@@ -1,0 +1,28 @@
+<nav class="navbar">
+    <div class="container">
+        <!-- Left: Logo / Brand -->
+        <div class="navbar-brand">
+            <div class="logo-container">
+                <div class="logo-inner">
+                    <span class="logo-text">E</span>
+                </div>
+            </div>
+            <div class="brand-text">
+                <h1 class="brand-name">Elite School</h1>
+                <span class="brand-tagline">Excellence in Education</span>
+            </div>
+        </div>
+
+        <!-- Right: Tabbed Navigation -->
+        <div class="navbar-menu">
+            <p-tabMenu [model]="items" [activeItem]="activeItem"></p-tabMenu>
+            <button pButton 
+                type="button" 
+                icon="pi pi-sign-out" 
+                class="p-button-text logout-btn" 
+                (click)="logout()">
+                <span class="p-1">Logout</span>
+            </button>
+        </div>
+    </div>
+</nav> 

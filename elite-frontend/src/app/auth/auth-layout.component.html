@@ -1,2 +1,52 @@
-<app-navbar></app-navbar>
-<router-outlet></router-outlet>
+<div class="app-layout">
+    <!-- Side navigation -->
+    <aside class="side-nav">
+        <div class="brand">
+            <div class="logo">
+                <span>E</span>
+            </div>
+            <h1 class="brand-name">Elite School</h1>
+        </div>
+        
+        <nav class="nav-menu">
+            <ul>
+                <li *ngFor="let item of items; let i = index" 
+                    [class.active]="activeIndex === i"
+                    (click)="handleTabChange(i)">
+                    <a>
+                        <i [class]="item.icon"></i>
+                        <span>{{item.label}}</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        
+        <div class="nav-footer">
+            <button pButton 
+                type="button" 
+                icon="pi pi-sign-out" 
+                class="logout-btn" 
+                (click)="logout()">
+                <span>Logout</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main content area -->
+    <main class="main-content">
+        <header class="header">
+            <h2 class="page-title">{{pageTitle}}</h2>
+            <div class="user-info">
+                <span class="welcome-text">Welcome, {{userName}}</span>
+                <span class="user-badge" (click)="userMenu.toggle($event)">
+                    <i class="pi pi-user"></i>
+                </span>
+                <p-menu #userMenu [popup]="true" [model]="userMenuItems"></p-menu>
+            </div>
+        </header>
+        
+        <div class="content-container">
+            <router-outlet></router-outlet>
+        </div>
+    </main>
+</div>

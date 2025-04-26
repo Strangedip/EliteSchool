@@ -48,17 +48,28 @@ export class LoginComponent {
   ) {}
 
   ngOnInit(): void {
-    this.authService.validateToken().subscribe({
-      next: (response: CommonResponseDto<any>) => {
-        if (response.success) {
-          this.navigateToDashboard();
+    // First check if user is already authenticated based on local state
+    if (this.authService.getAuthStatus()) {
+      this.navigateToDashboard();
+      return;
+    }
+
+    // Otherwise, validate token if one exists - important for cases where 
+    // an authenticated user tries to access the login page directly
+    const token = this.authService.getToken();
+    if (token) {
+      this.authService.validateToken().subscribe({
+        next: (response: CommonResponseDto<any>) => {
+          if (response.success) {
+            this.navigateToDashboard();
+          }
+        },
+        error: (error) => {
+          console.log('Token validation failed:', error);
+          // We don't show error toast for token validation failures
         }
-      },
-      error: (error) => {
-        console.log('Token validation failed:', error);
-        // We don't show error toast for token validation failures
-      }
-    });
+      });
+    }
   }
 
   login() {

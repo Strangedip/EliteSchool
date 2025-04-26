@@ -5,8 +5,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { StoreComponent } from './store/store.component';
 import { TaskboardComponent } from './taskboard/taskboard.component';
 import { UserProfileComponent } from './user-profile/user-profile.component';
-
-
+import { SettingsComponent } from './settings/settings.component';
 
 const routes: Routes = [
   {
@@ -17,6 +16,7 @@ const routes: Routes = [
       { path: 'store', component: StoreComponent },
       { path: 'taskboard', component: TaskboardComponent },
       { path: 'profile', component: UserProfileComponent },
+      { path: 'settings', component: SettingsComponent },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   }
