@@ -9,13 +9,13 @@ import { AuthService } from 'src/app/service/auth.service';
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-navbar',
+  selector: 'app-top-navbar',
   standalone: true,
   imports: [CommonModule, ButtonModule, MenuModule, RouterModule, ToolbarModule],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss']
 })
-export class NavbarComponent implements OnInit, OnDestroy {
+export class TopNavbarComponent implements OnInit, OnDestroy {
   isAuthenticated = false;
   menuItems: MenuItem[] = [];
   private authSubscription: Subscription | null = null;

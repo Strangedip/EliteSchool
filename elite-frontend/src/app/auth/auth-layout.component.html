@@ -1,6 +1,6 @@
 <div class="app-layout">
-    <!-- Side navigation -->
-    <aside class="side-nav">
+    <!-- Sidebar navigation -->
+    <aside class="side-nav" [ngClass]="{'mobile-open': isMobileMenuOpen}">
         <div class="brand">
             <div class="logo">
                 <span>E</span>
@@ -34,8 +34,15 @@
 
     <!-- Main content area -->
     <main class="main-content">
+        <!-- Mobile menu toggle button moved inside header -->
         <header class="header">
-            <h2 class="page-title">{{pageTitle}}</h2>
+            <div class="header-left">
+                <!-- Mobile menu toggle button -->
+                <button class="mobile-menu-toggle" (click)="toggleMobileMenu()">
+                    <i class="pi" [ngClass]="isMobileMenuOpen ? 'pi-times' : 'pi-bars'"></i>
+                </button>
+                <h2 class="page-title">{{pageTitle}}</h2>
+            </div>
             <div class="user-info">
                 <span class="welcome-text">Welcome, {{userName}}</span>
                 <span class="user-badge" (click)="userMenu.toggle($event)">

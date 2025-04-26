@@ -21,6 +21,7 @@ export class AuthLayoutComponent implements OnInit, OnDestroy {
     userMenuItems: MenuItem[] = [];
     pageTitle: string = 'Dashboard';
     userName: string = 'Student';
+    isMobileMenuOpen: boolean = false;
     private authSubscription: Subscription | undefined;
 
     constructor(private router: Router, private authService: AuthService) {}
@@ -65,6 +66,8 @@ export class AuthLayoutComponent implements OnInit, OnDestroy {
         if (route) {
             this.router.navigate([route]);
             this.updatePageTitle();
+            // Close mobile menu when a tab is selected
+            this.isMobileMenuOpen = false;
         }
     }
 
@@ -72,6 +75,10 @@ export class AuthLayoutComponent implements OnInit, OnDestroy {
         if (this.items[this.activeIndex]) {
             this.pageTitle = this.items[this.activeIndex].label || 'Dashboard';
         }
+    }
+
+    toggleMobileMenu(): void {
+        this.isMobileMenuOpen = !this.isMobileMenuOpen;
     }
 
     logout(): void {
