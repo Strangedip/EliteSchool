@@ -31,8 +31,7 @@
             ],
             "styles": [
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "node_modules/primeng/resources/themes/lara-dark-blue/theme.css",
-              "node_modules/primeng/resources/primeng.min.css",
+              "node_modules/primeflex/primeflex.min.css",
               "node_modules/primeicons/primeicons.css",
               "src/styles.scss"
             ],
@@ -69,10 +68,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "elite-frontend:build:production"
+              "buildTarget": "elite-frontend:build:production"
             },
             "development": {
-              "browserTarget": "elite-frontend:build:development"
+              "buildTarget": "elite-frontend:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -80,7 +79,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "elite-frontend:build"
+            "buildTarget": "elite-frontend:build"
           }
         },
         "test": {

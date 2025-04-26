@@ -4,15 +4,13 @@ import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { UnauthLayoutComponent } from './unauth-layout.component';
 
-
 const routes: Routes = [
   {
-    path: '',
+    path: 'unauth',
     component: UnauthLayoutComponent,
     children: [
       { path: 'login', component: LoginComponent },
       { path: 'register', component: RegisterComponent },
-      // { path: 'home', component: HomeComponent },
       { path: '', redirectTo: 'login', pathMatch: 'full' }
     ]
   }
@@ -22,4 +20,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class UnauthRoutingModule { }
+export class UnauthRoutingModule { } 

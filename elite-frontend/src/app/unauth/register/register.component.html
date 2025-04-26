@@ -1,91 +1,169 @@
-<div class="p-5 d-flex justify-content-center align-items-center min-vh-50 text-white">
-    <form #registerForm="ngForm" (ngSubmit)="register()"
-        class="p-fluid p-4 shadow-lg rounded bg-dark border-light bg-glassmorphic"
-        style="width: 100%; max-width: 700px;" novalidate>
-        
-        <h3 class="text-center mb-4">Elite's Registration</h3>
-
-        <div class="row">
-            <!-- Name -->
-            <div class="col-md-6 mb-3">
-                <label for="name" class="form-label text-light">Name</label>
-                <input pInputText id="name" name="name" type="text" class="p-inputtext-dark w-100"
-                    [(ngModel)]="userData.name" placeholder="Name" required #name="ngModel" />
-                <small class="text-danger" *ngIf="name.invalid && name.touched">Name is required</small>
+<div class="register-container">
+    <div class="register-wrapper">
+        <p-card styleClass="register-card">
+            <div class="text-center mb-6">
+                <h2>Create Account</h2>
+                <p>Join Elite School today</p>
             </div>
 
-            <!-- Age -->
-            <div class="col-md-6 mb-3">
-                <label for="age" class="form-label text-light">Age</label>
-                <input pInputText id="age" name="age" type="number" class="p-inputtext-dark w-100"
-                    [(ngModel)]="userData.age" placeholder="Age" min="1" #age="ngModel" />
-                <small class="text-danger" *ngIf="age.invalid && age.touched">Valid age is required</small>
-            </div>
+            <form #registerForm="ngForm" (ngSubmit)="register()" class="p-fluid">
+                <!-- Name -->
+                <div class="field">
+                    <p-floatLabel variant='on'>
+                        <input pInputText id="name" name="name" type="text"
+                            [(ngModel)]="userData.name"
+                            [ngClass]="{'ng-invalid ng-dirty': name.invalid && name.touched}"
+                            required #name="ngModel" />
+                        <label for="name">Name</label>
+                    </p-floatLabel>
+                    <small class="p-error" *ngIf="name.invalid && name.touched">
+                        Name is required
+                    </small>
+                </div>
 
-            <!-- Gender -->
-            <div class="col-md-6 mb-3">
-                <label for="gender" class="form-label text-light">Gender</label>
-                <p-dropdown id="gender" name="gender" [options]="genders" [(ngModel)]="userData.gender"
-                    (onChange)="onDropdownChange($event, 'gender')" placeholder="Select Gender"
-                    [required]="true" #gender="ngModel" class="w-100">
-                </p-dropdown>
-                <small class="text-danger" *ngIf="gender.invalid && gender.touched">Gender is required</small>
-            </div>
+                <!-- Age -->
+                <div class="field">
+                    <p-floatLabel variant='on'>
+                        <input pInputText id="age" name="age" type="number"
+                            [(ngModel)]="userData.age"
+                            [ngClass]="{'ng-invalid ng-dirty': age.invalid && age.touched}"
+                            min="1" #age="ngModel" />
+                        <label for="age">Age</label>
+                    </p-floatLabel>
+                    <small class="p-error" *ngIf="age.invalid && age.touched">
+                        Valid age is required
+                    </small>
+                </div>
 
-            <!-- Role -->
-            <div class="col-md-6 mb-3">
-                <label for="role" class="form-label text-light">Role</label>
-                <p-dropdown id="role" name="role" [options]="roles" [(ngModel)]="userData.role"
-                    (onChange)="onDropdownChange($event, 'role')" placeholder="Select Role"
-                    [required]="true" #role="ngModel" class="w-100">
-                </p-dropdown>
-                <small class="text-danger" *ngIf="role.invalid && role.touched">Role is required</small>
-            </div>
+                <!-- Email -->
+                <div class="field">
+                    <p-floatLabel variant='on'>
+                        <input pInputText id="email" name="email" type="email"
+                            [(ngModel)]="userData.email"
+                            [ngClass]="{'ng-invalid ng-dirty': email.invalid && email.touched}"
+                            required email #email="ngModel" />
+                        <label for="email">Email</label>
+                    </p-floatLabel>
+                    <small class="p-error" *ngIf="email.errors?.['required'] && email.touched">
+                        Email is required
+                    </small>
+                    <small class="p-error" *ngIf="email.errors?.['email'] && email.touched">
+                        Invalid email format
+                    </small>
+                </div>
 
-            <!-- Email -->
-            <div class="col-md-6 mb-3">
-                <label for="email" class="form-label text-light">Email</label>
-                <input pInputText id="email" name="email" type="email" class="p-inputtext-dark w-100"
-                    [(ngModel)]="userData.email" placeholder="Email" required email #email="ngModel" />
-                <small class="text-danger" *ngIf="email.errors?.['required'] && email.touched">Email is required</small>
-                <small class="text-danger" *ngIf="email.errors?.['email'] && email.touched">Invalid email format</small>
-            </div>
+                <!-- Mobile Number -->
+                <div class="field">
+                    <p-floatLabel variant='on'>
+                        <input pInputText id="mobileNumber" name="mobileNumber" type="tel"
+                            [(ngModel)]="userData.mobileNumber"
+                            [ngClass]="{'ng-invalid ng-dirty': mobileNumber.invalid && mobileNumber.touched}"
+                            required pattern="^[6-9]\d{9}$" #mobileNumber="ngModel" />
+                        <label for="mobileNumber">Mobile Number</label>
+                    </p-floatLabel>
+                    <small class="p-error" *ngIf="mobileNumber.errors?.['required'] && mobileNumber.touched">
+                        Mobile number is required
+                    </small>
+                    <small class="p-error" *ngIf="mobileNumber.errors?.['pattern'] && mobileNumber.touched">
+                        Enter valid number
+                    </small>
+                </div>
 
-            <!-- Mobile Number -->
-            <div class="col-md-6 mb-3">
-                <label for="mobileNumber" class="form-label text-light">Mobile Number</label>
-                <input pInputText id="mobileNumber" name="mobileNumber" type="tel" class="p-inputtext-dark w-100"
-                    [(ngModel)]="userData.mobileNumber" placeholder="Mobile Number" required pattern="^[6-9]\d{9}$"
-                    #mobileNumber="ngModel" />
-                <small class="text-danger" *ngIf="mobileNumber.errors?.['required'] && mobileNumber.touched">Mobile number required</small>
-                <small class="text-danger" *ngIf="mobileNumber.errors?.['pattern'] && mobileNumber.touched">Enter valid number</small>
-            </div>
+                
+                <!-- Username -->
+                <div class="field">
+                    <p-floatLabel variant='on'>
+                        <input pInputText id="username" name="username" type="text"
+                            [(ngModel)]="userData.username"
+                            [ngClass]="{'ng-invalid ng-dirty': username.invalid && username.touched}"
+                            required #username="ngModel" />
+                        <label for="username">Username</label>
+                    </p-floatLabel>
+                    <small class="p-error" *ngIf="username.invalid && username.touched">
+                        Username is required
+                    </small>
+                </div>
 
-            <!-- Username -->
-            <div class="col-md-6 mb-3">
-                <label for="username" class="form-label text-light">Username</label>
-                <input pInputText id="username" name="username" type="text" class="p-inputtext-dark w-100"
-                    [(ngModel)]="userData.username" placeholder="Set username" required #username="ngModel" />
-                <small class="text-danger" *ngIf="username.invalid && username.touched">Username is required</small>
-            </div>
+                <!-- Password -->
+                <div class="field">
+                    <p-floatLabel variant='on'>
+                        <p-password id="password" name="password"
+                            [(ngModel)]="userData.password"
+                            [feedback]="false"
+                            [toggleMask]="true"
+                            [ngClass]="{'ng-invalid ng-dirty': password.invalid && password.touched}"
+                            required
+                            #password="ngModel">
+                        </p-password>
+                        <label for="password">Password</label>
+                    </p-floatLabel>
+                    <small class="p-error" *ngIf="password.invalid && password.touched">
+                        Password is required
+                    </small>
+                </div>
 
-            <!-- Password -->
-            <div class="col-md-6 mb-4">
-                <label for="password" class="form-label text-light">Password</label>
-                <p-password id="password" name="password" [(ngModel)]="userData.password" class="p-inputtext-dark w-100"
-                    placeholder="Set password" [feedback]="false" [toggleMask]="true" required minlength="5"
-                    #password="ngModel">
-                </p-password>
-                <small class="text-danger" *ngIf="password.errors?.['required'] && password.touched">Password is required</small>
-                <small class="text-danger" *ngIf="password.errors?.['minlength'] && password.touched">Min 5 characters</small>
-            </div>
-        </div>
+                <!-- Two-column layout for Gender and Role -->
+                <div class="field-row">
+                    <!-- Gender -->
+                    <div class="field-col">
+                        <p-floatLabel variant='on'>
+                            <p-select 
+                                inputId="gender"
+                                [options]="genders"
+                                [(ngModel)]="userData.gender"
+                                name="gender"
+                                [required]="true"
+                                #gender="ngModel"
+                                [ngClass]="{'ng-invalid ng-dirty': gender.invalid && gender.touched}"
+                                appendTo="body"
+                                optionLabel="label"
+                                optionValue="value">
+                            </p-select>
+                            <label for="gender">Gender</label>
+                        </p-floatLabel>
+                        <small class="p-error" *ngIf="gender.invalid && gender.touched">
+                            Gender is required
+                        </small>
+                    </div>
 
-        <!-- Submit -->
-        <div class="text-center">
-            <button pButton type="submit" label="Register" class="p-button-raised p-button-primary w-50"
-                [disabled]="registerForm.invalid">
-            </button>
-        </div>
-    </form>
+                    <!-- Role -->
+                    <div class="field-col">
+                        <p-floatLabel variant='on'>
+                            <p-select 
+                                inputId="role"
+                                [options]="roles"
+                                [(ngModel)]="userData.role"
+                                name="role"
+                                [required]="true"
+                                #role="ngModel"
+                                [ngClass]="{'ng-invalid ng-dirty': role.invalid && role.touched}"
+                                appendTo="body"
+                                optionLabel="label"
+                                optionValue="value">
+                            </p-select>
+                            <label for="role">Role</label>
+                        </p-floatLabel>
+                        <small class="p-error" *ngIf="role.invalid && role.touched">
+                            Role is required
+                        </small>
+                    </div>
+                </div>
+
+                <div class="button-container">
+                    <button pButton type="submit" label="Create Account"
+                        [loading]="loading"
+                        [disabled]="registerForm.invalid || loading"
+                        class="submit-button">
+                    </button>
+                    
+                    <div class="sign-in-link">
+                        <span>Already have an account?</span>
+                        <a (click)="navigateToLogin()">
+                            Sign in
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </p-card>
+    </div>
 </div>

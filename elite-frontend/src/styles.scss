@@ -1,9 +1,64 @@
-/* You can add global styles to this file, and also import other style files */
+/* Global Styles */
 body {
-    background-color: #040d19;
+    background-color: var(--surface-ground);
+    color: var(--text-color);
+    font-family: var(--font-family);
+    margin: 0;
+    padding: 0;
 }
 
-ul,ol{
-    margin: 1px ;
-    padding: 2px ;
+/* PrimeNG 18 Component Styles */
+.p-component {
+    font-family: var(--font-family);
+    font-size: 1rem;
+}
+
+/* Field Spacing */
+.field {
+    margin-bottom: 1.5rem;
+    width: 100%;
+}
+
+/* Input fields and buttons alignment */
+.p-inputtext, 
+.p-password, 
+.p-button {
+    width: 100%;
+    border-radius: 6px;
+}
+
+/* Button styling consistency */
+.p-button {
+    justify-content: center;
+}
+
+/* Basic text helper classes */
+.text-surface-400 {
+    color: #94a3b8;
+}
+
+.text-primary {
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    
+    &:hover {
+        color: #60a5fa;
+        text-decoration: underline;
+    }
+}
+
+/* Utility Classes */
+ul, ol {
+    margin: 1px;
+    padding: 2px;
+}
+
+/* Error Styling */
+.p-error {
+    color: #ef4444;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+    display: block;
 }

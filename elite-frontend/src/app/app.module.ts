@@ -1,26 +1,30 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { AppRoutingModule } from './app-routing.module';
-import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { providePrimeNG } from 'primeng/config';
+import Aura from '@primeng/themes/aura';
 import { AppComponent } from './app.component';
-import { UnauthRoutingModule } from './unauth/unauth-routing.module';
-import { ToastModule } from 'primeng/toast';
-import { MessageService } from 'primeng/api';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
     AppComponent
   ],
   imports: [
-    BrowserModule,           
+    BrowserModule,
     BrowserAnimationsModule,
-    AppRoutingModule,
-    HttpClientModule,
-    UnauthRoutingModule,
-    ToastModule
+    FormsModule
   ],
-  providers: [MessageService],
-  bootstrap: [AppComponent]
+  providers: [
+    providePrimeNG({
+      theme: {
+        preset: Aura
+      }
+    })
+  ],
+  bootstrap: [AppComponent],
+  exports: [
+    FormsModule
+  ]
 })
-export class AppModule { }
+export class AppModule { } 

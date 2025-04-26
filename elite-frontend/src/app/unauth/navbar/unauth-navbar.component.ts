@@ -1,9 +1,15 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { MenuItem } from 'primeng/api';
+import { ButtonModule } from 'primeng/button';
+import { ToolbarModule } from 'primeng/toolbar';
+import { MenuModule } from 'primeng/menu';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-unauth-navbar',
+  standalone: true,
+  imports: [CommonModule, ButtonModule, ToolbarModule, MenuModule],
   templateUrl: './unauth-navbar.component.html',
   styleUrls: ['./unauth-navbar.component.scss']
 })
@@ -26,10 +32,10 @@ export class UnauthNavbarComponent {
   }
 
   navigateToLogin() {
-    this.router.navigate(['/unauth/login']);
+    this.router.navigate(['/login']);
   }
 
   navigateToRegister() {
-    this.router.navigate(['/unauth/register']);
+    this.router.navigate(['/register']);
   }
 }

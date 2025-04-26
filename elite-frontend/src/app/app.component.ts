@@ -1,13 +1,15 @@
-import { AuthService } from './service/auth.service';
-import { Component, OnInit } from '@angular/core';
-import { ToastService } from './service/toast.service';
-import { Router } from '@angular/router';
-import { CommonResponseDto } from './model/common-response.model';
+import { Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-root',
+  standalone: true,
+  imports: [RouterOutlet, ToastModule],
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
+  providers: [MessageService]
 })
 export class AppComponent {
   title = 'elite-school';

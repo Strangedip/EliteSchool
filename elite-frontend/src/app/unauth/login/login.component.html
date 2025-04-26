@@ -1,28 +1,52 @@
-<div class="p-5 d-flex justify-content-center align-items-center">
-    <form #loginForm="ngForm" (ngSubmit)="login()" class="p-fluid p-4 shadow-sm rounded bg-dark text-white"
-        style="width: 100%; max-width: 400px;">
-        <h3 class="text-center mb-4">Login</h3>
+<div class="login-container">
+    <div class="login-wrapper">
+        <p-card styleClass="login-card">
+            <div class="text-center mb-6">
+                <h2>Welcome Back</h2>
+                <p>Sign in to continue to Elite School</p>
+            </div>
 
-        <div class="p-field mb-3">
-            <label for="username" class="text-light form-label">Username</label>
-            <input pInputText id="username" name="username" type="text" class="p-inputtext-dark" [(ngModel)]="username"
-                placeholder="Username" required #usernameModel="ngModel" />
-            <small class="text-danger" *ngIf="usernameModel.invalid && usernameModel.touched">Username is
-                required</small>
-        </div>
+            <form #loginForm="ngForm" (ngSubmit)="login()" class="p-fluid">
+                <div class="field">
+                    <p-floatLabel variant='on'>
+                        <input pInputText id="username" name="username" type="text" [(ngModel)]="username"
+                            [ngClass]="{'ng-invalid ng-dirty': usernameModel.invalid && usernameModel.touched}" required
+                            #usernameModel="ngModel" autocomplete="username" />
+                        <label for="username">Username</label>
+                    </p-floatLabel>
+                    <small class="p-error" *ngIf="usernameModel.invalid && usernameModel.touched">
+                        Username is required
+                    </small>
+                </div>
 
-        <div class="p-field mb-3">
-            <label for="password" class="text-light form-label">Password</label>
-            <p-password id="password" name="password" class="p-inputtext-dark" [(ngModel)]="password"
-                placeholder="Enter password" [feedback]="false" [toggleMask]="true" required #passwordModel="ngModel">
-            </p-password>
-            <small class="text-danger" *ngIf="passwordModel.errors?.['required'] && passwordModel.touched">Password is
-                required</small>
-        </div>
+                <div class="field">
+                    <p-floatLabel variant='on'>
+                        <p-password id="password" name="password" [(ngModel)]="password" [feedback]="false"
+                            [toggleMask]="true"
+                            [ngClass]="{'ng-invalid ng-dirty': passwordModel.invalid && passwordModel.touched}" required
+                            #passwordModel="ngModel"
+                            autocomplete="current-password">
+                        </p-password>
+                        <label for="password">Password</label>
+                    </p-floatLabel>
+                    <small class="p-error" *ngIf="passwordModel.invalid && passwordModel.touched">
+                        Password is required
+                    </small>
+                </div>
 
-        <div class="p-field d-flex justify-content-center">
-            <button pButton type="submit" label="Login" class="w-50 p-button-raised p-button-primary mt-2"
-                [disabled]="loginForm.invalid"></button>
-        </div>
-    </form>
+                <div class="button-container">
+                    <button pButton type="submit" label="Sign In" [loading]="loading"
+                        [disabled]="loginForm.invalid || loading" class="submit-button">
+                    </button>
+                    
+                    <div class="sign-in-link">
+                        <span>Don't have an account?</span>
+                        <a (click)="navigateToRegister()">
+                            Create one
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </p-card>
+    </div>
 </div>
