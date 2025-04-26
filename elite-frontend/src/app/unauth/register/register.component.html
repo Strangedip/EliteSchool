@@ -1,6 +1,6 @@
-<div class="register-container">
-    <div class="register-wrapper">
-        <p-card styleClass="register-card">
+<div class="auth-container">
+    <div class="auth-wrapper">
+        <p-card styleClass="auth-card">
             <div class="text-center mb-6">
                 <h2>Create Account</h2>
                 <p>Join Elite School today</p>
@@ -14,10 +14,10 @@
                             [(ngModel)]="userData.name"
                             [ngClass]="{'ng-invalid ng-dirty': name.invalid && name.touched}"
                             required #name="ngModel" />
-                        <label for="name">Name</label>
+                        <label for="name">Full Name</label>
                     </p-floatLabel>
                     <small class="p-error" *ngIf="name.invalid && name.touched">
-                        Name is required
+                        <i class="pi pi-exclamation-circle"></i> Name is required
                     </small>
                 </div>
 
@@ -31,7 +31,7 @@
                         <label for="age">Age</label>
                     </p-floatLabel>
                     <small class="p-error" *ngIf="age.invalid && age.touched">
-                        Valid age is required
+                        <i class="pi pi-exclamation-circle"></i> Valid age is required
                     </small>
                 </div>
 
@@ -42,13 +42,13 @@
                             [(ngModel)]="userData.email"
                             [ngClass]="{'ng-invalid ng-dirty': email.invalid && email.touched}"
                             required email #email="ngModel" />
-                        <label for="email">Email</label>
+                        <label for="email">Email Address</label>
                     </p-floatLabel>
                     <small class="p-error" *ngIf="email.errors?.['required'] && email.touched">
-                        Email is required
+                        <i class="pi pi-exclamation-circle"></i> Email is required
                     </small>
                     <small class="p-error" *ngIf="email.errors?.['email'] && email.touched">
-                        Invalid email format
+                        <i class="pi pi-exclamation-circle"></i> Invalid email format
                     </small>
                 </div>
 
@@ -62,10 +62,10 @@
                         <label for="mobileNumber">Mobile Number</label>
                     </p-floatLabel>
                     <small class="p-error" *ngIf="mobileNumber.errors?.['required'] && mobileNumber.touched">
-                        Mobile number is required
+                        <i class="pi pi-exclamation-circle"></i> Mobile number is required
                     </small>
                     <small class="p-error" *ngIf="mobileNumber.errors?.['pattern'] && mobileNumber.touched">
-                        Enter valid number
+                        <i class="pi pi-exclamation-circle"></i> Enter valid number
                     </small>
                 </div>
 
@@ -80,7 +80,7 @@
                         <label for="username">Username</label>
                     </p-floatLabel>
                     <small class="p-error" *ngIf="username.invalid && username.touched">
-                        Username is required
+                        <i class="pi pi-exclamation-circle"></i> Username is required
                     </small>
                 </div>
 
@@ -89,7 +89,7 @@
                     <p-floatLabel variant='on'>
                         <p-password id="password" name="password"
                             [(ngModel)]="userData.password"
-                            [feedback]="false"
+                            [feedback]="true"
                             [toggleMask]="true"
                             [ngClass]="{'ng-invalid ng-dirty': password.invalid && password.touched}"
                             required
@@ -98,7 +98,7 @@
                         <label for="password">Password</label>
                     </p-floatLabel>
                     <small class="p-error" *ngIf="password.invalid && password.touched">
-                        Password is required
+                        <i class="pi pi-exclamation-circle"></i> Password is required
                     </small>
                 </div>
 
@@ -122,7 +122,7 @@
                             <label for="gender">Gender</label>
                         </p-floatLabel>
                         <small class="p-error" *ngIf="gender.invalid && gender.touched">
-                            Gender is required
+                            <i class="pi pi-exclamation-circle"></i> Required
                         </small>
                     </div>
 
@@ -144,13 +144,13 @@
                             <label for="role">Role</label>
                         </p-floatLabel>
                         <small class="p-error" *ngIf="role.invalid && role.touched">
-                            Role is required
+                            <i class="pi pi-exclamation-circle"></i> Required
                         </small>
                     </div>
                 </div>
 
                 <div class="button-container">
-                    <button pButton type="submit" label="Create Account"
+                    <button pButton type="submit" label="Create Account" icon="pi pi-user-plus" iconPos="left"
                         [loading]="loading"
                         [disabled]="registerForm.invalid || loading"
                         class="submit-button">
