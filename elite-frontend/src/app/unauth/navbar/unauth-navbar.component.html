@@ -1,19 +1,36 @@
-<p-toolbar class="unauth-navbar">
-    <!-- Left: Logo / Brand -->
-    <div class="navbar-left">
-        <i class="pi brand-icon" style="margin-top:-0.5rem; cursor:pointer">EliteSchool</i>
-        <span class="brand-name" style="font-size: small; margin-top:0.5rem;">School for telents</span>
-    </div>
+<div class="unauth-navbar">
+    <div class="navbar-content">
+        <!-- Logo and brand -->
+        <div class="brand">
+            <div class="logo-container">
+                <div class="logo-inner">
+                    <span class="logo-text">E</span>
+                </div>
+            </div>
+            <div class="brand-text">
+                <h1 class="brand-name">Elite School</h1>
+                <span class="brand-tagline">Excellence in Education</span>
+            </div>
+        </div>
 
-    <!-- Right: Buttons (shown on desktop only) -->
-    <div class="navbar-right desktop-buttons">
-        <button pButton label="Login" class="p-button-text" (click)="navigateToLogin()"><i class="p-1 pi pi-sign-in"></i></button>
-        <button pButton label="Register" class="p-button-text" (click)="navigateToRegister()"><i class="p-1 pi pi-user-plus"></i></button>
-    </div>
+        <!-- Navigation links (desktop) -->
+        <div class="nav-links desktop-only">
+            <a [routerLink]="['/unauth/login']" routerLinkActive="active" class="nav-link">
+                <i class="pi pi-sign-in"></i>
+                <span>Login</span>
+            </a>
+            <a [routerLink]="['/unauth/register']" routerLinkActive="active" class="nav-link">
+                <i class="pi pi-user-plus"></i>
+                <span>Register</span>
+            </a>
+        </div>
 
-    <!-- Right: Hamburger Menu (shown on mobile only) -->
-    <div class="navbar-right mobile-menu">
-        <button pButton icon="pi pi-bars" class="p-button-text" (click)="menu.toggle($event)"></button>
-        <p-menu #menu [popup]="true" [model]="menuItems"></p-menu>
+        <!-- Mobile menu toggle -->
+        <div class="mobile-menu-toggle mobile-only">
+            <button class="menu-button" (click)="menu.toggle($event)">
+                <span class="menu-icon"></span>
+            </button>
+            <p-menu #menu [popup]="true" [model]="menuItems"></p-menu>
+        </div>
     </div>
-</p-toolbar>
+</div>

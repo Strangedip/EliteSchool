@@ -27,11 +27,11 @@
                         <input pInputText id="age" name="age" type="number"
                             [(ngModel)]="userData.age"
                             [ngClass]="{'ng-invalid ng-dirty': age.invalid && age.touched}"
-                            min="1" #age="ngModel" />
+                            required min="12" max="100" #age="ngModel" />
                         <label for="age">Age</label>
                     </p-floatLabel>
                     <small class="p-error" *ngIf="age.invalid && age.touched">
-                        <i class="pi pi-exclamation-circle"></i> Valid age is required
+                        <i class="pi pi-exclamation-circle"></i> Valid age is required, min. 12
                     </small>
                 </div>
 
@@ -166,4 +166,5 @@
             </form>
         </p-card>
     </div>
+    <p-toast position="top-right"></p-toast>
 </div>

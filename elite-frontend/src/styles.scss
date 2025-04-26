@@ -1,37 +1,109 @@
-/* Import Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+/* Import Fonts */
+@import 'assets/fonts.scss';
+
+/* Import Typography Utilities */
+@import 'assets/typography.scss';
 
 /* Global Styles */
 body {
     background-color: var(--surface-ground);
     color: var(--text-color);
-    font-family: 'Inter', var(--font-family);
+    font-family: var(--font-secondary);
+    font-size: var(--text-base);
+    line-height: var(--leading-normal);
     margin: 0;
     padding: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 /* PrimeNG 18 Component Styles */
 .p-component {
-    font-family: 'Inter', var(--font-family);
-    font-size: 1rem;
+    font-family: var(--font-secondary);
+    font-size: var(--text-base);
 }
 
-/* Typography */
+/* Typography System */
 h1, h2, h3, h4, h5, h6 {
-    font-family: 'Poppins', var(--font-family);
-    letter-spacing: -0.02em;
+    font-family: var(--font-primary);
+    letter-spacing: var(--tracking-tight);
+    line-height: var(--leading-tight);
+    font-weight: var(--font-bold);
+    margin-top: 0;
+}
+
+h1 {
+    font-size: var(--text-4xl);
+    margin-bottom: 1.5rem;
+}
+
+h2 {
+    font-size: var(--text-3xl);
+    margin-bottom: 1.25rem;
+}
+
+h3 {
+    font-size: var(--text-2xl);
+    margin-bottom: 1rem;
+}
+
+h4 {
+    font-size: var(--text-xl);
+    margin-bottom: 0.75rem;
+}
+
+h5 {
+    font-size: var(--text-lg);
+    margin-bottom: 0.5rem;
+}
+
+h6 {
+    font-size: var(--text-md);
+    margin-bottom: 0.5rem;
 }
 
 .subtitle {
-    font-family: 'Inter', var(--font-family);
-    font-weight: 400;
+    font-family: var(--font-secondary);
+    font-weight: var(--font-regular);
     color: #94a3b8;
+    font-size: var(--text-base);
 }
+
+.text-accent {
+    font-family: var(--font-accent);
+}
+
+.text-xs { font-size: var(--text-xs); }
+.text-sm { font-size: var(--text-sm); }
+.text-base { font-size: var(--text-base); }
+.text-md { font-size: var(--text-md); }
+.text-lg { font-size: var(--text-lg); }
+.text-xl { font-size: var(--text-xl); }
+.text-2xl { font-size: var(--text-2xl); }
+.text-3xl { font-size: var(--text-3xl); }
+.text-4xl { font-size: var(--text-4xl); }
+
+.font-light { font-weight: var(--font-light); }
+.font-regular { font-weight: var(--font-regular); }
+.font-medium { font-weight: var(--font-medium); }
+.font-semibold { font-weight: var(--font-semibold); }
+.font-bold { font-weight: var(--font-bold); }
+.font-extrabold { font-weight: var(--font-extrabold); }
+
+.tracking-tight { letter-spacing: var(--tracking-tight); }
+.tracking-normal { letter-spacing: var(--tracking-normal); }
+.tracking-wide { letter-spacing: var(--tracking-wide); }
+
+.leading-tight { line-height: var(--leading-tight); }
+.leading-normal { line-height: var(--leading-normal); }
+.leading-loose { line-height: var(--leading-loose); }
 
 /* Field Spacing */
 .field {
     margin-bottom: 1.5rem;
     width: 100%;
+    position: relative;
+    min-height: 4.5rem; /* Fixed height to accommodate input and error message */
 }
 
 /* Input fields and buttons alignment */
@@ -49,7 +121,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Auth Layout Styles */
 .auth-container {
-    min-height: 100vh;
+    min-height: calc(100vh - 62px); /* Account for navbar height */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -103,21 +175,21 @@ h1, h2, h3, h4, h5, h6 {
 
     h2 {
         color: #f8fafc !important;
-        font-size: 2.125rem !important;
-        font-weight: 700 !important;
+        font-size: var(--text-3xl) !important;
+        font-weight: var(--font-bold) !important;
         margin-bottom: 0.5rem !important;
         background: linear-gradient(90deg, #6366f1, #8b5cf6);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        font-family: 'Poppins', var(--font-family) !important;
-        letter-spacing: -0.02em !important;
+        font-family: var(--font-primary) !important;
+        letter-spacing: var(--tracking-tight) !important;
     }
 
     p {
         color: #94a3b8 !important;
-        font-size: 1rem !important;
-        font-family: 'Inter', var(--font-family) !important;
-        font-weight: 400 !important;
+        font-size: var(--text-base) !important;
+        font-family: var(--font-secondary) !important;
+        font-weight: var(--font-regular) !important;
     }
 }
 
@@ -131,15 +203,19 @@ h1, h2, h3, h4, h5, h6 {
 .field-col {
     flex: 1;
     width: 50%;
+    position: relative;
+    min-height: 4rem; /* Fixed height to accommodate input and error message */
 }
 
-/* Form field styling */
+/* Form field styling - consolidated base styles */
 .p-inputtext, .p-password, .p-select {
     background-color: rgba(30, 41, 59, 0.6) !important;
     border: 1px solid rgba(99, 102, 241, 0.2) !important;
     border-radius: 0.75rem !important;
     transition: all 0.3s ease !important;
-    font-family: 'Inter', var(--font-family) !important;
+    font-family: var(--font-secondary) !important;
+    font-size: var(--text-base) !important;
+    height: 3.25rem !important; /* Consistent height for all inputs */
     
     &:hover, &:focus {
         border-color: rgba(99, 102, 241, 0.6) !important;
@@ -147,25 +223,91 @@ h1, h2, h3, h4, h5, h6 {
     }
 }
 
-.p-float-label label {
-    font-family: 'Inter', var(--font-family) !important;
-    font-weight: 400 !important;
-    letter-spacing: 0.01em !important;
+/* Base Float Label styling */
+.p-float-label {
+    position: relative;
+    
+    label {
+        font-family: var(--font-secondary) !important;
+        font-weight: var(--font-regular) !important;
+        letter-spacing: var(--tracking-normal) !important;
+        font-size: var(--text-sm) !important;
+        color: #94a3b8 !important;
+        transition: all 0.3s ease !important;
+    }
+}
+
+/* Main password field fixes - adjusted for lower label */
+p-floatLabel[variant='on'] {
+    position: relative;
+    display: block;
+    
+    /* Basic label styling - adjusted position */
+    > label {
+        position: absolute !important;
+        top: 1.6rem !important; /* Adjusted lower */
+        left: 0.75rem !important; 
+        color: #94a3b8 !important;
+        font-family: var(--font-secondary) !important;
+        font-size: var(--text-sm) !important;
+        background-color: transparent;
+        pointer-events: none;
+        transition: all 0.15s ease;
+        z-index: 2;
+    }
+}
+
+/* Float label for select components - adjusted for lower label */
+p-floatLabel[variant='on'] p-select {
+    display: block;
+    width: 100%;
+    margin-bottom: 0 !important;
+    
+    .p-select {
+        width: 100%;
+        margin-bottom: 0 !important;
+    }
+    
+    & ~ label {
+        top: 1.25rem !important; /* Adjusted lower */
+    }
+}
+
+/* Password panel styling */
+.p-password .p-password-panel {
+    background: rgba(30, 41, 59, 0.95) !important;
+    border-radius: 0.75rem !important;
+    border: 1px solid rgba(99, 102, 241, 0.2) !important;
+}
+
+.p-password-meter {
+    background: rgba(30, 41, 59, 0.8) !important;
+}
+
+.p-password-info {
+    color: #94a3b8 !important;
+    font-family: var(--font-secondary) !important;
 }
 
 .p-select-panel {
-    background-color: #1e293b !important;
+    background-color: rgba(30, 41, 59, 0.95) !important;
     border-radius: 0.75rem !important;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3) !important;
+    border: 1px solid rgba(99, 102, 241, 0.2) !important;
+    margin-top: 0.5rem !important;
+    padding: 0.5rem !important;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3) !important;
     
     .p-select-items {
-        padding: 0.5rem !important;
+        padding: 0.25rem !important;
     }
     
     .p-select-item {
         border-radius: 0.5rem !important;
         margin-bottom: 0.25rem !important;
-        font-family: 'Inter', var(--font-family) !important;
+        padding: 0.75rem !important;
+        font-family: var(--font-secondary) !important;
+        font-size: var(--text-base) !important;
+        color: #f8fafc !important;
         
         &:hover {
             background-color: rgba(99, 102, 241, 0.1) !important;
@@ -174,6 +316,7 @@ h1, h2, h3, h4, h5, h6 {
         &.p-highlight {
             background-color: rgba(99, 102, 241, 0.2) !important;
             color: #f8fafc !important;
+            font-weight: var(--font-medium) !important;
         }
     }
 }
@@ -192,11 +335,13 @@ h1, h2, h3, h4, h5, h6 {
         background: linear-gradient(90deg, #6366f1, #8b5cf6) !important;
         border: none !important;
         border-radius: 0.75rem !important;
-        font-weight: 600 !important;
+        font-weight: var(--font-semibold) !important;
         letter-spacing: 0.5px !important;
         transition: all 0.3s ease !important;
-        font-family: 'Inter', var(--font-family) !important;
-        font-size: 1rem !important;
+        font-family: var(--font-secondary) !important;
+        font-size: var(--text-base) !important;
+        text-transform: uppercase;
+        letter-spacing: var(--tracking-wide) !important;
         
         &:hover {
             transform: translateY(-2px) !important;
@@ -214,18 +359,20 @@ h1, h2, h3, h4, h5, h6 {
 
         span {
             color: #94a3b8;
-            font-family: 'Inter', var(--font-family) !important;
+            font-family: var(--font-secondary) !important;
+            font-size: var(--text-sm) !important;
         }
 
         a {
             color: #818cf8;
-            font-weight: 500;
+            font-weight: var(--font-medium);
             margin-left: 0.5rem;
             cursor: pointer;
             transition: all 0.2s ease;
             text-decoration: none;
             position: relative;
-            font-family: 'Inter', var(--font-family) !important;
+            font-family: var(--font-secondary) !important;
+            font-size: var(--text-sm) !important;
             
             &::after {
                 content: '';
@@ -252,13 +399,25 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Error message styling */
 .p-error {
+    position: absolute;
+    bottom: -0.45rem;
+    left: 0.5rem;
     color: #fb7185 !important;
     font-size: 0.8rem !important;
-    margin-top: 0.35rem !important;
     display: block !important;
     transition: all 0.2s ease !important;
     font-family: 'Inter', var(--font-family) !important;
     font-weight: 400 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.35rem !important;
+    
+    .pi {
+        font-size: 0.875rem !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
 }
 
 /* Responsive styles for two-column layout */
@@ -304,4 +463,443 @@ h1, h2, h3, h4, h5, h6 {
 ul, ol {
     margin: 1px;
     padding: 2px;
+}
+
+/* Page Headings and Section Titles */
+.page-title {
+    font-family: var(--font-primary);
+    font-size: var(--text-3xl);
+    font-weight: var(--font-bold);
+    letter-spacing: var(--tracking-tight);
+    color: #f1f5f9;
+    margin-bottom: 1rem;
+    
+    &.gradient-text {
+        background: linear-gradient(90deg, #6366f1, #8b5cf6, #d946ef);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+}
+
+.section-title {
+    font-family: var(--font-primary);
+    font-size: var(--text-xl);
+    font-weight: var(--font-semibold);
+    letter-spacing: var(--tracking-tight);
+    color: #e2e8f0;
+    margin-bottom: 1rem;
+}
+
+/* Card and Panel Typography */
+.card-title {
+    font-family: var(--font-primary);
+    font-size: var(--text-lg);
+    font-weight: var(--font-semibold);
+    letter-spacing: var(--tracking-tight);
+    color: #f1f5f9;
+    margin-bottom: 0.75rem;
+}
+
+.accent-heading {
+    font-family: var(--font-accent);
+    font-weight: var(--font-bold);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+}
+
+/* Button Typography Variations */
+.btn-primary {
+    font-family: var(--font-secondary);
+    font-weight: var(--font-semibold);
+    letter-spacing: var(--tracking-normal);
+}
+
+.btn-accent {
+    font-family: var(--font-accent);
+    font-weight: var(--font-medium);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+}
+
+/* Table Typography */
+.p-datatable {
+    .p-datatable-header {
+        font-family: var(--font-primary);
+        font-weight: var(--font-semibold);
+        font-size: var(--text-md);
+    }
+    
+    .p-datatable-thead > tr > th {
+        font-family: var(--font-secondary);
+        font-weight: var(--font-medium);
+        font-size: var(--text-sm);
+        text-transform: uppercase;
+        letter-spacing: var(--tracking-wide);
+    }
+    
+    .p-datatable-tbody > tr > td {
+        font-family: var(--font-secondary);
+        font-size: var(--text-sm);
+    }
+}
+
+/* Menu Typography */
+.p-menu {
+    .p-menuitem-text {
+        font-family: var(--font-secondary);
+        font-size: var(--text-sm);
+        font-weight: var(--font-medium);
+    }
+}
+
+.p-menubar {
+    .p-menubar-root-list > .p-menuitem > .p-menuitem-link .p-menuitem-text {
+        font-family: var(--font-secondary);
+        font-weight: var(--font-medium);
+        font-size: var(--text-sm);
+    }
+}
+
+/* Callout/Info Box Typography */
+.info-box {
+    .info-title {
+        font-family: var(--font-primary);
+        font-size: var(--text-md);
+        font-weight: var(--font-semibold);
+    }
+    
+    .info-content {
+        font-family: var(--font-secondary);
+        font-size: var(--text-sm);
+        line-height: var(--leading-normal);
+    }
+}
+
+/* Responsive Typography Adjustments */
+@media (max-width: 768px) {
+    :root {
+        --text-4xl: 2.5rem;
+        --text-3xl: 2rem;
+        --text-2xl: 1.75rem;
+        --text-xl: 1.25rem;
+    }
+    
+    .page-title {
+        font-size: var(--text-2xl);
+    }
+    
+    .section-title {
+        font-size: var(--text-lg);
+    }
+}
+
+/* Ensure focus/filled styles for select match other components */
+p-floatLabel[variant='on'] p-select.p-inputwrapper-focus ~ label,
+p-floatLabel[variant='on'] p-select.p-inputwrapper-filled ~ label {
+    top: -0.5rem !important;
+    font-size: 0.75rem !important;
+    padding: 0 0.375rem !important;
+    background-color: rgba(15, 23, 42, 0.9) !important;
+    color: #818cf8 !important;
+    transform: translateY(0) !important;
+    border-radius: 4px;
+}
+
+/* Select component specific styling */
+.p-select {
+    display: flex !important;
+    align-items: center !important;
+    color: #f8fafc !important;
+    
+    .p-select-label {
+        padding: 0.75rem !important;
+        color: #f8fafc !important;
+        line-height: 1.5 !important;
+        height: auto !important;
+        overflow: visible !important;
+        text-overflow: clip !important;
+        white-space: normal !important;
+    }
+    
+    .p-select-trigger {
+        width: 3rem !important;
+        padding-right: 0.75rem !important;
+        color: #818cf8 !important;
+    }
+}
+
+/* Fixed panel styling for dropdowns */
+.p-select-panel {
+    background-color: rgba(30, 41, 59, 0.95) !important;
+    border-radius: 0.75rem !important;
+    border: 1px solid rgba(99, 102, 241, 0.2) !important;
+    margin-top: 0.5rem !important;
+    padding: 0.5rem !important;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3) !important;
+    
+    .p-select-items {
+        padding: 0.25rem !important;
+    }
+    
+    .p-select-item {
+        border-radius: 0.5rem !important;
+        margin-bottom: 0.25rem !important;
+        padding: 0.75rem !important;
+        font-family: var(--font-secondary) !important;
+        font-size: var(--text-base) !important;
+        color: #f8fafc !important;
+        
+        &:hover {
+            background-color: rgba(99, 102, 241, 0.1) !important;
+        }
+        
+        &.p-highlight {
+            background-color: rgba(99, 102, 241, 0.2) !important;
+            color: #f8fafc !important;
+            font-weight: var(--font-medium) !important;
+        }
+    }
+}
+
+/* Direct selector for password component */
+p-floatLabel[variant='on'] p-password {
+    display: block;
+    width: 100%;
+    
+    .p-password {
+        width: 100%;
+    }
+    
+    input.p-inputtext {
+        width: 100%;
+        background-color: rgba(30, 41, 59, 0.6) !important;
+        border: 1px solid rgba(99, 102, 241, 0.2) !important;
+        color: #f8fafc !important;
+        border-radius: 0.75rem !important;
+        padding: 0.75rem !important;
+        font-family: var(--font-secondary) !important;
+        font-size: var(--text-base) !important;
+    }
+}
+
+/* Move label to top when fields are focused/filled */
+p-floatLabel[variant='on']:has(p-password:focus) > label,
+p-floatLabel[variant='on']:has(p-password.p-inputwrapper-filled) > label,
+p-floatLabel[variant='on']:has(input:focus) > label,
+p-floatLabel[variant='on']:has(input.p-filled) > label {
+    top: -0.5rem !important;
+    font-size: 0.75rem !important;
+    padding: 0 0.375rem !important;
+    background-color: rgba(15, 23, 42, 0.9) !important;
+    color: #818cf8 !important;
+    transform: translateY(0) !important;
+    border-radius: 4px;
+}
+
+/* Alternative approach for older browsers without :has() support */
+p-floatLabel[variant='on'] p-password:focus ~ label,
+p-floatLabel[variant='on'] p-password.p-inputwrapper-focus ~ label,
+p-floatLabel[variant='on'] p-password.p-inputwrapper-filled ~ label,
+p-floatLabel[variant='on'] input:focus ~ label,
+p-floatLabel[variant='on'] input.p-filled ~ label {
+    top: -0.5rem !important;
+    font-size: 0.75rem !important;
+    padding: 0 0.375rem !important;
+    background-color: rgba(15, 23, 42, 0.9) !important;
+    color: #818cf8 !important;
+    transform: translateY(0) !important;
+    border-radius: 4px;
+}
+
+.field-col .p-error {
+    position: absolute;
+    bottom: -1.2rem;
+    left: 0;
+}
+
+/* Button icon alignment */
+.p-button {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    
+    .p-button-icon {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        margin-right: 0.5rem !important;
+    }
+}
+
+/* Custom Toast Styling */
+.p-toast {
+  width: 300px !important;
+  
+  .p-toast-message {
+    border-radius: 0.75rem !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+    backdrop-filter: blur(8px) !important;
+    border-left: 4px solid transparent !important;
+    margin-bottom: 0.75rem !important;
+    padding: 0 !important;
+    min-height: auto !important;
+    max-width: 300px !important;
+    overflow: hidden !important;
+    
+    &.p-toast-message-success {
+      background: rgba(22, 101, 52, 0.9) !important;
+      border-left-color: #4ade80 !important;
+      
+      &::before {
+        background: linear-gradient(90deg, #4ade80, #10b981);
+      }
+      
+      .p-toast-icon-close {
+        color: #dcfce7 !important;
+        
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.1) !important;
+        }
+      }
+    }
+    
+    &.p-toast-message-info {
+      background: rgba(30, 58, 138, 0.9) !important;
+      border-left-color: #60a5fa !important;
+      
+      &::before {
+        background: linear-gradient(90deg, #60a5fa, #3b82f6);
+      }
+      
+      .p-toast-icon-close {
+        color: #dbeafe !important;
+        
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.1) !important;
+        }
+      }
+    }
+    
+    &.p-toast-message-warn {
+      background: rgba(146, 64, 14, 0.9) !important;
+      border-left-color: #fb923c !important;
+      
+      &::before {
+        background: linear-gradient(90deg, #fb923c, #f97316);
+      }
+      
+      .p-toast-icon-close {
+        color: #ffedd5 !important;
+        
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.1) !important;
+        }
+      }
+    }
+    
+    &.p-toast-message-error {
+      background: rgba(153, 27, 27, 0.9) !important;
+      border-left-color: #f87171 !important;
+      
+      &::before {
+        background: linear-gradient(90deg, #f87171, #ef4444);
+      }
+      
+      .p-toast-icon-close {
+        color: #fee2e2 !important;
+        
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.1) !important;
+        }
+      }
+    }
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      z-index: 1;
+    }
+    
+    .p-toast-message-content {
+      padding: 0.875rem 1rem !important;
+      display: flex !important;
+      align-items: center !important;
+      
+      .p-toast-message-icon {
+        font-size: 1.25rem !important;
+        margin-right: 0.75rem !important;
+      }
+      
+      .p-toast-summary {
+        font-family: var(--font-primary) !important;
+        font-weight: var(--font-semibold) !important;
+        font-size: 0.875rem !important;
+        margin-bottom: 0.125rem !important;
+        color: white !important;
+      }
+      
+      .p-toast-detail {
+        font-family: var(--font-secondary) !important;
+        font-weight: var(--font-regular) !important;
+        font-size: 0.75rem !important;
+        line-height: 1.3 !important;
+        color: rgba(255, 255, 255, 0.9) !important;
+      }
+    }
+    
+    .p-toast-icon-close {
+      width: 1.5rem !important;
+      height: 1.5rem !important;
+      border-radius: 0.375rem !important;
+      background: transparent !important;
+      transition: background-color 0.2s ease !important;
+      opacity: 0.7 !important;
+      top: 0.5rem !important;
+      right: 0.5rem !important;
+      
+      &:hover {
+        opacity: 1 !important;
+      }
+      
+      &:focus {
+        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1) !important;
+      }
+    }
+    
+    /* Add slide-in animation */
+    animation: toast-slide-in 0.3s ease-out forwards;
+  }
+  
+  @keyframes toast-slide-in {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+}
+
+/* Adjust toast container position */
+.p-toast-top-right {
+  top: 1rem !important;
+  right: 1rem !important;
+}
+
+/* Mobile adjustments for toast */
+@media (max-width: 768px) {
+  .p-toast {
+    width: calc(100% - 2rem) !important;
+    max-width: 300px !important;
+    
+    .p-toast-message {
+      width: 100% !important;
+    }
+  }
 }

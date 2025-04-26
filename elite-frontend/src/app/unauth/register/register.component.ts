@@ -2,10 +2,9 @@ import { Component, OnInit, ChangeDetectorRef, inject, NO_ERRORS_SCHEMA } from '
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/service/auth.service';
 import { UserService } from 'src/app/service/user.service';
-import { ToastService } from 'src/app/service/toast.service';
 import { UserData } from 'src/app/model/user-data.model';
 import { Gender, Role } from 'src/app/model/common.model';
-import { SelectItem } from 'primeng/api';
+import { SelectItem, MessageService } from 'primeng/api';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
@@ -15,6 +14,9 @@ import { PasswordModule } from 'primeng/password';
 import { CardModule } from 'primeng/card';
 import { RippleModule } from 'primeng/ripple';
 import { FloatLabelModule } from 'primeng/floatlabel';
+import { ToastModule } from 'primeng/toast';
+import { finalize } from 'rxjs';
+import { CommonResponseDto } from 'src/app/model/common-response.model';
 
 @Component({
   selector: 'app-register',
@@ -31,15 +33,17 @@ import { FloatLabelModule } from 'primeng/floatlabel';
     PasswordModule,
     CardModule,
     RippleModule,
-    FloatLabelModule
-  ]
+    FloatLabelModule,
+    ToastModule
+  ],
+  providers: [MessageService]
 })
 export class RegisterComponent implements OnInit {
   private userService = inject(UserService);
   private authService = inject(AuthService);
-  private toastService = inject(ToastService);
   private cdr = inject(ChangeDetectorRef);
   private router = inject(Router);
+  private messageService = inject(MessageService);
 
   loading: boolean = false;
 
@@ -77,32 +81,74 @@ export class RegisterComponent implements OnInit {
 
   register(): void {
     if (!this.isFormValid()) {
-      this.toastService.showError('Please fill in all required fields correctly');
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Incomplete Form',
+        detail: 'Please fill all required fields',
+        life: 3000
+      });
       return;
     }
 
     this.loading = true;
-    this.toastService.showInfo('Registering user...');
-    this.authService.signup(this.userData).subscribe({
-      next: (response) => {
-        this.loading = false;
-        if (response.success) {
-          this.toastService.showSuccess(response.message || 'Registration successful');
-          this.navigateToLogin();
-        } else {
-          const errorMessage = response.error
-            ? `${response.error.errorCode}: ${response.error.errorDescription}`
-            : 'Registration failed';
-          this.toastService.showError(errorMessage);
-        }
-      },
-      error: (error) => {
-        this.loading = false;
-        let errorResponse = error.error && error.error.error ? error.error.error : null;
-        const errorMessage = errorResponse ? `${errorResponse.errorCode}: ${errorResponse.errorDescription}` : 'An error occurred. Please try again later.';
-        this.toastService.showError(errorMessage);
-      }
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Registering',
+      detail: 'Creating your account...',
+      life: 2000
     });
+    
+    this.authService.signup(this.userData)
+      .pipe(finalize(() => this.loading = false))
+      .subscribe({
+        next: (response: CommonResponseDto<any>) => {
+          if (response.success) {
+            this.messageService.clear();
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Registration Complete',
+              detail: 'Account created successfully',
+              life: 3000
+            });
+            this.navigateToLogin();
+          } else {
+            // This handles successful HTTP requests with business logic errors
+            const errorMessage = response.error 
+              ? `${response.error.errorCode}: ${response.error.errorDescription}` 
+              : (response.message || 'Registration failed');
+            
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Registration Failed',
+              detail: errorMessage,
+              life: 5000
+            });
+          }
+        },
+        error: (error) => {
+          // HTTP errors will be handled by the interceptor
+          // This is a fallback in case the interceptor doesn't catch it
+          console.error('Registration error:', error);
+          
+          // Check if we have a specific error response structure
+          let errorMessage = 'Registration failed. Please try again.';
+          
+          if (error.error) {
+            if (error.error.error && error.error.error.errorDescription) {
+              errorMessage = `${error.error.error.errorCode}: ${error.error.error.errorDescription}`;
+            } else if (error.error.message) {
+              errorMessage = error.error.message;
+            }
+          }
+          
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: errorMessage,
+            life: 5000
+          });
+        }
+      });
   }
 
   private isFormValid(): boolean {
@@ -118,10 +164,31 @@ export class RegisterComponent implements OnInit {
   }
 
   navigateToLogin(): void {
-    this.router.navigate(['/login']);
+    this.router.navigate(['/unauth/login']);
   }
 
   info(): void {
     console.log(this.userData);  // Display user data for debugging
+  }
+
+  testToast() {
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Test Toast',
+      detail: 'This is a test toast message'
+    });
+  }
+
+  validateForm(): boolean {
+    // Additional validation logic beyond template-driven validation
+    if (this.userData.age && this.userData.age < 12) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Validation Error',
+        detail: 'Age must be at least 12 years'
+      });
+      return false;
+    }
+    return true;
   }
 }

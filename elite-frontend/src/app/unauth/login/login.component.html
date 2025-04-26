@@ -22,8 +22,8 @@
                 <div class="field">
                     <p-floatLabel variant='on'>
                         <p-password id="password" name="password" [(ngModel)]="password" 
-                            [feedback]="true"
                             [toggleMask]="true"
+                            [feedback]="false"
                             [ngClass]="{'ng-invalid ng-dirty': passwordModel.invalid && passwordModel.touched}" required
                             #passwordModel="ngModel"
                             autocomplete="current-password">
@@ -51,4 +51,5 @@
             </form>
         </p-card>
     </div>
+    <p-toast position="top-right"></p-toast>
 </div>
