@@ -1,5 +1,6 @@
 package com.eliteschool.api_gateway.security;
 
+import com.eliteschool.api_gateway.util.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,6 @@ import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
-
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.core.context.SecurityContext;
@@ -21,6 +21,7 @@ import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class JwtAuthenticationFilter implements WebFilter {
@@ -36,47 +37,57 @@ public class JwtAuthenticationFilter implements WebFilter {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
-        String authHeader = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+        String token = null;
 
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            logger.warn("No Authorization header found or invalid format");
+        String authHeader = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            token = authHeader.substring(7);
+        } else {
+            Optional<String> cookieToken = jwtUtil.extractTokenFromCookies(request);
+            if (cookieToken.isPresent()) {
+                token = cookieToken.get();
+            }
+        }
+
+        if (token == null) {
             return chain.filter(exchange);
         }
 
-        String token = authHeader.substring(7); // Extract token from header
-        logger.info("Extracted Token: {}", token);
-
-        // Extract username from the token
-        String username = jwtUtil.extractUsername(token);
-        if (ObjectUtils.isEmpty(username)) {
-            logger.error("Failed to extract claims from JWT token.");
+        String username;
+        String role;
+        try {
+            username = jwtUtil.extractUsername(token);
+            role = jwtUtil.extractRole(token);
+        } catch (Exception e) {
             return unauthorizedResponse(exchange);
         }
 
-        // Validate the token
-        if (!jwtUtil.validateToken(token, username)) {
-            logger.error("Invalid JWT token detected!");
+        if (ObjectUtils.isEmpty(username) || !jwtUtil.validateToken(token, username)) {
             return unauthorizedResponse(exchange);
         }
 
-        logger.info("User '{}' authenticated successfully via JWT.", username);
+        // Create a new mutated request with username and role added in header
+        ServerHttpRequest mutatedRequest = exchange.getRequest().mutate()
+                .header("e-username", username)
+                .header("e-user-role", role)
+                .build();
 
-        // Create authentication object and set it in the Security Context
+        ServerWebExchange mutatedExchange = exchange.mutate()
+                .request(mutatedRequest)
+                .build();
+
         UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(username, null, List.of(new SimpleGrantedAuthority("ROLE_USER")));
+                new UsernamePasswordAuthenticationToken(username, null, List.of(new SimpleGrantedAuthority("ELITE")));
 
-        // Manually create a SecurityContext
-        SecurityContext securityContext = new SecurityContextImpl();
-        securityContext.setAuthentication(authentication);
+        SecurityContext securityContext = new SecurityContextImpl(authentication);
 
-        // Attach security context to the request
-        return chain.filter(exchange)
+        return chain.filter(mutatedExchange)
                 .contextWrite(ReactiveSecurityContextHolder.withSecurityContext(Mono.just(securityContext)));
     }
 
     private Mono<Void> unauthorizedResponse(ServerWebExchange exchange) {
         ServerHttpResponse response = exchange.getResponse();
         response.setStatusCode(HttpStatus.UNAUTHORIZED);
-        return response.setComplete(); // Returns a Mono<Void> that completes the response
+        return response.setComplete();
     }
 }

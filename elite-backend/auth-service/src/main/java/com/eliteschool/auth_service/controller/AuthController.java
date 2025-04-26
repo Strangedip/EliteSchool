@@ -3,7 +3,6 @@ package com.eliteschool.auth_service.controller;
 import com.eliteschool.auth_service.model.User;
 import com.eliteschool.auth_service.security.JwtUtil;
 import com.eliteschool.auth_service.service.UserService;
-import com.eliteschool.common_utils.dto.CommonResponseDto;
 import com.eliteschool.common_utils.util.ResponseUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -11,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
@@ -48,7 +46,7 @@ public class AuthController {
         return userService.findByUsername(username)
                 .filter(user -> passwordEncoder.matches(password, user.getPassword()))
                 .map(user -> {
-                    String token = jwtUtil.generateToken(username);
+                    String token = jwtUtil.generateToken(user.getUsername(),user.getRole() );
                     response.setHeader("Authorization", "Bearer " + token);
                     return ResponseUtil.success("Login successful", Map.of("token", token));
                 })

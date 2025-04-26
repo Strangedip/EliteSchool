@@ -1,5 +1,6 @@
 package com.eliteschool.auth_service.security;
 
+import com.eliteschool.auth_service.model.enums.RoleType;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -29,6 +30,8 @@ public class JwtUtil {
 
     private Key key;
 
+    private static final String ROLE_CLAIM_KEY = "role";
+
     @PostConstruct
     public void init() {
         this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
@@ -38,6 +41,17 @@ public class JwtUtil {
     public String generateToken(String username) {
         return Jwts.builder()
                 .setSubject(username)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    // Generate JWT Token with username and role
+    public String generateToken(String username, RoleType role) {
+        return Jwts.builder()
+                .setSubject(username)
+                .claim(ROLE_CLAIM_KEY, role)  // Add role claim
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(key, SignatureAlgorithm.HS256)
