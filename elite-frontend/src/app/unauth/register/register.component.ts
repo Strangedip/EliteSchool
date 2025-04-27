@@ -2,8 +2,8 @@ import { Component, OnInit, ChangeDetectorRef, inject, NO_ERRORS_SCHEMA } from '
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/service/auth.service';
 import { UserService } from 'src/app/service/user.service';
-import { UserData } from 'src/app/model/user-data.model';
-import { Gender, Role } from 'src/app/model/common.model';
+import { UserData } from 'src/app/models/user-data.model';
+import { Gender, Role } from 'src/app/models/common.model';
 import { SelectItem, MessageService } from 'primeng/api';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -16,7 +16,7 @@ import { RippleModule } from 'primeng/ripple';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { ToastModule } from 'primeng/toast';
 import { finalize } from 'rxjs';
-import { CommonResponseDto } from 'src/app/model/common-response.model';
+import { CommonResponseDto } from 'src/app/models/common-response.model';
 
 @Component({
   selector: 'app-register',

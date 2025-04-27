@@ -1,55 +1,62 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { MenuItem } from 'primeng/api';
+import { Router, RouterModule, RouterOutlet } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { MenuModule } from 'primeng/menu';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { AuthService } from '../service/auth.service';
+import { UserService } from '../service/user.service';
+import { UserInfoComponent } from '../components/user-info/user-info.component';
 import { Subscription } from 'rxjs';
+import { User } from '../models/user.model';
 
 @Component({
     selector: 'app-auth-layout',
-    standalone: true,
-    imports: [RouterOutlet, CommonModule, ButtonModule, MenuModule, OverlayPanelModule],
     templateUrl: './auth-layout.component.html',
-    styleUrls: ['./auth-layout.component.scss']
+    styleUrls: ['./auth-layout.component.scss'],
+    standalone: true,
+    imports: [RouterOutlet, CommonModule, ButtonModule, MenuModule, OverlayPanelModule, UserInfoComponent, RouterModule]
 })
 export class AuthLayoutComponent implements OnInit, OnDestroy {
-    activeIndex: number = 0;
-    items: MenuItem[] = [];
-    userMenuItems: MenuItem[] = [];
-    pageTitle: string = 'Dashboard';
-    userName: string = 'Student';
-    isMobileMenuOpen: boolean = false;
-    private authSubscription: Subscription | undefined;
+    isMobileMenuOpen = false;
+    pageTitle = 'Dashboard';
+    activeIndex = 0;
+    userSubscription: Subscription | undefined;
+    authSubscription: Subscription | undefined;
+    currentUser: User | null = null;
 
-    constructor(private router: Router, private authService: AuthService) {}
+    items = [
+        { label: 'Dashboard', icon: 'pi pi-home', route: '/auth/dashboard' },
+        { label: 'Store', icon: 'pi pi-shopping-cart', route: '/auth/store' },
+        { label: 'Tasks', icon: 'pi pi-check-square', route: '/auth/taskboard' },
+        { label: 'Profile', icon: 'pi pi-user', route: '/auth/profile' },
+        { label: 'Settings', icon: 'pi pi-cog', route: '/auth/settings' },
+    ];
+
+    constructor(
+        private router: Router, 
+        private authService: AuthService,
+        private userService: UserService
+    ) {}
 
     ngOnInit() {
-        this.items = [
-            { label: 'Dashboard', icon: 'pi pi-home', routerLink: '/auth/dashboard' },
-            { label: 'Tasks', icon: 'pi pi-check-square', routerLink: '/auth/taskboard' },
-            { label: 'Settings', icon: 'pi pi-cog', routerLink: '/auth/settings' },
-        ];
-        
-        this.userMenuItems = [
-            { label: 'Profile', icon: 'pi pi-user', command: () => this.router.navigate(['/auth/profile']) },
-            { label: 'Logout', icon: 'pi pi-sign-out', command: () => this.logout() }
-        ];
-        
-        // Set the active tab based on current route
-        const currentPath = this.router.url.split('/').pop();
-        const index = this.items.findIndex(item => 
-            item.routerLink?.toString().includes(currentPath || '')
-        );
-        this.activeIndex = index !== -1 ? index : 0;
-        this.updatePageTitle();
+        // Set active tab based on current route
+        const currentRoute = this.router.url;
+        const foundIndex = this.items.findIndex(item => currentRoute.includes(item.route));
+        if (foundIndex !== -1) {
+            this.activeIndex = foundIndex;
+            this.pageTitle = this.items[foundIndex].label;
+        }
 
-        // Check authentication status
+        // Subscribe to user data changes
+        this.userSubscription = this.userService.currentUser$.subscribe(user => {
+            this.currentUser = user;
+        });
+
+        // Subscribe to authentication state
         this.authSubscription = this.authService.isAuthenticated$.subscribe(isAuthenticated => {
             if (!isAuthenticated) {
-                this.authService.navigateToLogin();
+                this.router.navigate(['/unauth/login']);
             }
         });
     }
@@ -58,36 +65,23 @@ export class AuthLayoutComponent implements OnInit, OnDestroy {
         if (this.authSubscription) {
             this.authSubscription.unsubscribe();
         }
+        if (this.userSubscription) {
+            this.userSubscription.unsubscribe();
+        }
     }
 
     handleTabChange(index: number) {
         this.activeIndex = index;
-        const route = this.items[this.activeIndex].routerLink;
-        if (route) {
-            this.router.navigate([route]);
-            this.updatePageTitle();
-            // Close mobile menu when a tab is selected
+        this.pageTitle = this.items[index].label;
+        this.router.navigate([this.items[index].route]);
+        
+        // Close mobile menu on selection
+        if (this.isMobileMenuOpen) {
             this.isMobileMenuOpen = false;
         }
     }
 
-    updatePageTitle() {
-        if (this.items[this.activeIndex]) {
-            this.pageTitle = this.items[this.activeIndex].label || 'Dashboard';
-        }
-    }
-
-    toggleMobileMenu(): void {
+    toggleMobileMenu() {
         this.isMobileMenuOpen = !this.isMobileMenuOpen;
-    }
-
-    logout(): void {
-        this.authService.logout().subscribe({
-            next: (response) => {
-                if (response.success) {
-                    this.authService.navigateToLogin();
-                }
-            }
-        });
     }
 }

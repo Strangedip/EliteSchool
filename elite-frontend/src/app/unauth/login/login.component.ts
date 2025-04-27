@@ -1,6 +1,6 @@
 import { Component, NO_ERRORS_SCHEMA } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { CommonResponseDto } from 'src/app/model/common-response.model';
+import { CommonResponseDto } from 'src/app/models/common-response.model';
 import { AuthService } from 'src/app/service/auth.service';
 import { ToastService } from 'src/app/service/toast.service';
 import { CommonModule } from '@angular/common';

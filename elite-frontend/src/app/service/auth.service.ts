@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, BehaviorSubject, of, throwError, shareReplay } from 'rxjs';
-import { tap, catchError, debounceTime } from 'rxjs/operators';
+import { tap, catchError, map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { Router } from '@angular/router';
+import { UserService } from './user.service';
+import { CommonResponseDto } from '../models/common-response.model';
+import { LoginResponseDto, User } from '../models/user.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -15,7 +18,11 @@ export class AuthService {
   private lastValidationTime = 0;
   private validationThrottleTime = 15000; // 15 seconds
   
-  constructor(private http: HttpClient, private router: Router) {
+  constructor(
+    private http: HttpClient, 
+    private router: Router,
+    private userService: UserService
+  ) {
     // Check authentication state on service initialization
     this.checkAuthState();
   }
@@ -30,6 +37,7 @@ export class AuthService {
         },
         error: () => {
           this.clearToken();
+          this.userService.clearCurrentUser();
           this.isAuthenticatedSubject.next(false);
         }
       });
@@ -61,33 +69,49 @@ export class AuthService {
     this.isAuthenticatedSubject.next(false);
   }
 
-  login(username: string, password: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/login`, { username: username, password: password })
-      .pipe(
-        tap((response: any) => {
-          if (response.success && response.data && response.data.token) {
-            this.saveToken(response.data.token);
+  login(username: string, password: string): Observable<CommonResponseDto<LoginResponseDto>> {
+    return this.http.post<CommonResponseDto<LoginResponseDto>>(
+      `${this.apiUrl}/login`, 
+      { username, password }
+    ).pipe(
+      tap((response: CommonResponseDto<LoginResponseDto>) => {
+        if (response.success && response.data) {
+          // Save token
+          this.saveToken(response.data.token);
+          
+          // Save user data to user service
+          if (response.data.user) {
+            this.userService.setCurrentUser(response.data.user);
           }
-        })
-      );
+        }
+      })
+    );
   }
   
-  signup(userData: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/signup`, userData)
-      .pipe(
-        tap((response: any) => {
-          if (response.success && response.data && response.data.token) {
-            this.saveToken(response.data.token);
+  signup(userData: any): Observable<CommonResponseDto<LoginResponseDto>> {
+    return this.http.post<CommonResponseDto<LoginResponseDto>>(
+      `${this.apiUrl}/signup`, 
+      userData
+    ).pipe(
+      tap((response: CommonResponseDto<LoginResponseDto>) => {
+        if (response.success && response.data) {
+          // Save token
+          this.saveToken(response.data.token);
+          
+          // Save user data to user service
+          if (response.data.user) {
+            this.userService.setCurrentUser(response.data.user);
           }
-        })
-      );
+        }
+      })
+    );
   }
 
-  validateToken(): Observable<any> {
+  validateToken(): Observable<CommonResponseDto<User>> {
     // Use the token from localStorage in the Authorization header
     const headers = this.getAuthHeaders();
     if (!headers.has('Authorization')) {
-      return of({ success: false });
+      return of({ success: false, message: 'No token available' });
     }
     
     // Check if we need to throttle validation requests
@@ -98,30 +122,40 @@ export class AuthService {
     
     if (now - this.lastValidationTime < this.validationThrottleTime) {
       // Return the current auth state if we've validated recently
-      return of({ success: this.isAuthenticatedSubject.value });
+      return of({ 
+        success: this.isAuthenticatedSubject.value, 
+        message: 'Using cached authentication state' 
+      });
     }
     
     // Create new validation request and share it
     this.lastValidationTime = now;
-    this.tokenValidationInProgress = this.http.get(`${this.apiUrl}/validate-token`, { headers })
-      .pipe(
-        tap((response: any) => {
-          if (!response.success) {
-            this.clearToken();
-          }
-        }),
-        catchError((error) => {
+    this.tokenValidationInProgress = this.http.get<CommonResponseDto<User>>(
+      `${this.apiUrl}/validate-token`, 
+      { headers }
+    ).pipe(
+      tap((response: CommonResponseDto<User>) => {
+        if (!response.success) {
           this.clearToken();
-          return throwError(() => error);
-        }),
-        shareReplay(1),
-        tap(() => {
-          // Clear the in-progress observable after completion
-          setTimeout(() => {
-            this.tokenValidationInProgress = null;
-          }, 0);
-        })
-      );
+          this.userService.clearCurrentUser();
+        } else if (response.data) {
+          // Update user data if validation returns user info
+          this.userService.setCurrentUser(response.data);
+        }
+      }),
+      catchError((error) => {
+        this.clearToken();
+        this.userService.clearCurrentUser();
+        return throwError(() => error);
+      }),
+      shareReplay(1),
+      tap(() => {
+        // Clear the in-progress observable after completion
+        setTimeout(() => {
+          this.tokenValidationInProgress = null;
+        }, 0);
+      })
+    );
     
     return this.tokenValidationInProgress;
   }
@@ -132,9 +166,11 @@ export class AuthService {
       .pipe(
         tap((response: any) => {
           this.clearToken();
+          this.userService.clearCurrentUser();
         }),
         catchError((error) => {
           this.clearToken();
+          this.userService.clearCurrentUser();
           return throwError(() => error);
         })
       );

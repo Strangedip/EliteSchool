@@ -10,7 +10,7 @@ import {
 } from '@angular/common/http';
 import { Observable, catchError, throwError } from 'rxjs';
 import { ToastService } from './toast.service';
-import { CommonResponseDto } from '../model/common-response.model';
+import { CommonResponseDto } from '../models/common-response.model';
 
 // Modern Angular interceptor function
 export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {

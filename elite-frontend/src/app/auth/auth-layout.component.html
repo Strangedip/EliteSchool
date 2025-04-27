@@ -22,13 +22,7 @@
         </nav>
         
         <div class="nav-footer">
-            <button pButton 
-                type="button" 
-                icon="pi pi-sign-out" 
-                class="logout-btn" 
-                (click)="logout()">
-                <span>Logout</span>
-            </button>
+            <app-user-info [showAvatar]="false" [showDetails]="false" [showLogout]="true"></app-user-info>
         </div>
     </aside>
 
@@ -44,11 +38,7 @@
                 <h2 class="page-title">{{pageTitle}}</h2>
             </div>
             <div class="user-info">
-                <span class="welcome-text">Welcome, {{userName}}</span>
-                <span class="user-badge" (click)="userMenu.toggle($event)">
-                    <i class="pi pi-user"></i>
-                </span>
-                <p-menu #userMenu [popup]="true" [model]="userMenuItems"></p-menu>
+                <app-user-info [showLogout]="false"></app-user-info>
             </div>
         </header>
         
