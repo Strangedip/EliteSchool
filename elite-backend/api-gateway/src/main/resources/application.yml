@@ -20,10 +20,24 @@ spring:
           filters:
             - PreserveHostHeader
 
-        - id: task-service
+        - id: auth-service-user
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/user/**
+          filters:
+            - PreserveHostHeader
+
+        - id: task-service-tasks
           uri: lb://task-service
           predicates:
             - Path=/api/tasks/**
+          filters:
+            - PreserveHostHeader
+
+        - id: task-service-submissions
+          uri: lb://task-service
+          predicates:
+            - Path=/api/task-submissions/**
           filters:
             - PreserveHostHeader
 

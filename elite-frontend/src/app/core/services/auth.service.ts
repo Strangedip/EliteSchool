@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, BehaviorSubject, of, throwError, shareReplay } from 'rxjs';
+import { Observable, BehaviorSubject, of, throwError, shareReplay, map } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { Router } from '@angular/router';
@@ -74,20 +74,34 @@ export class AuthService {
   }
 
   login(username: string, password: string): Observable<CommonResponseDto<LoginResponseDto>> {
-    return this.http.post<CommonResponseDto<LoginResponseDto>>(
+    return this.http.post<CommonResponseDto<any>>(
       `${this.apiUrl}/login`, 
       { username, password }
     ).pipe(
-      tap((response: CommonResponseDto<LoginResponseDto>) => {
+      map(response => {
         if (response.success && response.data) {
-          // Save token
-          this.saveToken(response.data.token);
+          // Extract token and user from response
+          const { token, user } = response.data;
           
-          // Save user data to user service
-          if (response.data.user) {
-            this.userService.setCurrentUser(response.data.user);
+          // Save token
+          this.saveToken(token);
+          
+          // Save user data to user service if available
+          if (user) {
+            this.userService.setCurrentUser(user);
           }
+          
+          // Format as LoginResponseDto
+          return {
+            success: response.success,
+            message: response.message,
+            data: {
+              token: token,
+              user: user
+            }
+          };
         }
+        return response;
       })
     );
   }

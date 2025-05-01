@@ -1,14 +1,17 @@
 <div class="store-container">
     <div class="store-header">
-        <h2>Elite School Store</h2>
+        <h2><i class="pi pi-shopping-bag mr-2"></i> Elite School Store</h2>
         <div class="header-actions">
             <div class="search-box">
-                <input type="text" placeholder="Search items..." (input)="onSearch($event)" />
+                <input pInputText type="text" placeholder="Search items..." (input)="onSearch($event)" />
                 <i class="pi pi-search"></i>
             </div>
             <div class="reward-info" *ngIf="currentUserRole === 'STUDENT'">
-                <i class="pi pi-star"></i>
+                <i class="pi pi-star-fill"></i>
                 <span>{{ rewardPoints }} Points</span>
+                <a routerLink="/auth/rewards" class="view-rewards-link">
+                    <i class="pi pi-chart-bar"></i> View Rewards
+                </a>
             </div>
             <button pButton 
                 type="button" 
@@ -18,21 +21,55 @@
                 (click)="addItem()"
                 *ngIf="isAdmin()">
             </button>
+            <button pButton
+                type="button"
+                icon="pi pi-history"
+                label="Purchase History"
+                class="p-button-secondary"
+                (click)="showPurchaseHistory()"
+                *ngIf="currentUserRole === 'STUDENT'">
+            </button>
         </div>
     </div>
 
-    <div class="store-items">
-        <div class="item-card" *ngFor="let item of filteredItems">
-            <div class="item-image">
-                <img [src]="item.imageUrl || 'assets/images/default-item.png'" [alt]="item.name">
+    <p-panel *ngIf="currentUserRole === 'STUDENT'" styleClass="mb-3">
+        <ng-template pTemplate="header">
+            <div class="flex align-items-center">
+                <i class="pi pi-info-circle mr-2"></i>
+                <span>Store Information</span>
             </div>
-            <div class="item-content">
-                <h3 class="item-name">{{ item.name }}</h3>
-                <p class="item-description">{{ item.description }}</p>
-                <div class="item-meta">
-                    <span class="item-price"><i class="pi pi-star"></i> {{ item.price }} Points</span>
-                    <span class="item-stock">{{ item.stock }} in stock</span>
+        </ng-template>
+        <p>Use your reward points to redeem items from our store. Items will be available for collection from the school office.</p>
+    </p-panel>
+
+    <!-- Empty state message -->
+    <p-card *ngIf="filteredItems.length === 0" styleClass="text-center p-4">
+        <ng-template pTemplate="content">
+            <i class="pi pi-shopping-cart text-6xl text-primary mb-3" style="display: block;"></i>
+            <h3>No items available</h3>
+            <p class="text-secondary">There are currently no items in the store or no items match your search.</p>
+            <button *ngIf="isAdmin()" pButton type="button" label="Add First Item" icon="pi pi-plus" (click)="addItem()" class="p-button-primary"></button>
+        </ng-template>
+    </p-card>
+
+    <!-- Items grid -->
+    <div class="store-items" *ngIf="filteredItems.length > 0">
+        <p-card *ngFor="let item of filteredItems" [header]="item.name" styleClass="item-card">
+            <ng-template pTemplate="header">
+                <div class="item-image">
+                    <img [src]="item.imageUrl || 'assets/images/store/default-item.svg'" [alt]="item.name">
                 </div>
+            </ng-template>
+            
+            <ng-template pTemplate="content">
+                <p class="item-description">{{ item.description || 'No description available' }}</p>
+                <div class="item-meta">
+                    <span class="item-price"><i class="pi pi-star-fill"></i> {{ item.price }} Points</span>
+                    <p-tag [severity]="item.stock > 0 ? 'success' : 'danger'" [value]="item.stock > 0 ? item.stock + ' in stock' : 'Out of stock'"></p-tag>
+                </div>
+            </ng-template>
+            
+            <ng-template pTemplate="footer">
                 <div class="item-actions">
                     <button pButton 
                         type="button" 
@@ -43,63 +80,113 @@
                         (click)="redeemItem(item)"
                         *ngIf="currentUserRole === 'STUDENT'">
                     </button>
-                    <button pButton 
-                        type="button" 
-                        icon="pi pi-pencil" 
-                        label="Edit" 
-                        class="p-button-primary"
-                        (click)="editItem(item)"
-                        *ngIf="isAdmin()">
-                    </button>
-                    <button pButton 
-                        type="button" 
-                        icon="pi pi-trash" 
-                        label="Delete" 
-                        class="p-button-danger"
-                        (click)="deleteItem(item)"
-                        *ngIf="isAdmin()">
-                    </button>
+                    
+                    <ng-container *ngIf="isAdmin()">
+                        <button pButton 
+                            type="button" 
+                            icon="pi pi-pencil" 
+                            label="Edit" 
+                            class="p-button-primary p-button-outlined"
+                            (click)="editItem(item)">
+                        </button>
+                        <button pButton 
+                            type="button" 
+                            icon="pi pi-trash" 
+                            label="Delete" 
+                            class="p-button-danger p-button-outlined"
+                            (click)="deleteItem(item)">
+                        </button>
+                    </ng-container>
                 </div>
-            </div>
-        </div>
-        
-        <div class="empty-message" *ngIf="filteredItems.length === 0">
-            No items available in the store
-        </div>
+            </ng-template>
+        </p-card>
     </div>
 </div>
 
 <!-- Item Form Dialog -->
-<p-dialog [header]="editMode ? 'Edit Item' : 'Add Item'" [(visible)]="itemDialogVisible" [modal]="true" [style]="{width: '500px'}">
+<p-dialog [header]="editMode ? 'Edit Item' : 'Add Item'" [(visible)]="itemDialogVisible" [modal]="true" [style]="{width: '500px'}" [draggable]="false" [resizable]="false">
     <form *ngIf="selectedItem" #itemForm="ngForm" (ngSubmit)="saveItem()">
         <div class="field">
-            <label for="name">Item Name</label>
+            <label for="name">Item Name <span class="text-danger">*</span></label>
             <input id="name" type="text" pInputText [(ngModel)]="selectedItem.name" name="name" required>
         </div>
         <div class="field">
             <label for="description">Description</label>
-            <textarea id="description" pInputTextarea [(ngModel)]="selectedItem.description" name="description" rows="5"></textarea>
+            <textarea pInputTextarea [(ngModel)]="selectedItem.description" name="description" rows="5"></textarea>
         </div>
         <div class="field">
-            <label for="price">Price (Points)</label>
-            <input id="price" type="number" pInputText [(ngModel)]="selectedItem.price" name="price" required min="1">
+            <label for="price">Price (Points) <span class="text-danger">*</span></label>
+            <p-inputNumber id="price" [(ngModel)]="selectedItem.price" name="price" [min]="1" [showButtons]="true" required></p-inputNumber>
         </div>
         <div class="field">
-            <label for="stock">Stock Available</label>
-            <input id="stock" type="number" pInputText [(ngModel)]="selectedItem.stock" name="stock" required min="0">
+            <label for="stock">Stock Available <span class="text-danger">*</span></label>
+            <p-inputNumber id="stock" [(ngModel)]="selectedItem.stock" name="stock" [min]="0" [showButtons]="true" required></p-inputNumber>
         </div>
         <div class="field">
-            <label for="imageUrl">Image URL (Optional)</label>
-            <input id="imageUrl" type="text" pInputText [(ngModel)]="selectedItem.imageUrl" name="imageUrl">
+            <label for="imageUrl">Image URL</label>
+            <div class="p-inputgroup">
+                <input id="imageUrl" type="text" pInputText [(ngModel)]="selectedItem.imageUrl" name="imageUrl" placeholder="https://example.com/image.jpg">
+                <button pButton type="button" icon="pi pi-eye" class="p-button-outlined" *ngIf="selectedItem.imageUrl" (click)="previewImage(selectedItem.imageUrl)"></button>
+            </div>
+            <small class="text-secondary">Leave empty to use default image</small>
         </div>
         <div class="dialog-footer">
             <button pButton type="button" label="Cancel" icon="pi pi-times" 
                     class="p-button-text" (click)="itemDialogVisible = false"></button>
             <button pButton type="submit" label="Save" icon="pi pi-check" 
-                    [disabled]="!itemForm.valid"></button>
+                    class="p-button-primary" [disabled]="!itemForm.valid"></button>
         </div>
     </form>
 </p-dialog>
 
+<!-- Image Preview Dialog -->
+<p-dialog header="Image Preview" [(visible)]="imagePreviewVisible" [modal]="true" [style]="{width: '400px'}" [draggable]="false" [resizable]="false">
+    <div class="text-center">
+        <img [src]="previewImageUrl" style="max-width: 100%; max-height: 300px;" alt="Image Preview">
+    </div>
+</p-dialog>
+
+<!-- Purchase History Dialog -->
+<p-dialog header="Purchase History" [(visible)]="historyDialogVisible" [modal]="true" [style]="{width: '700px'}" [draggable]="false" [resizable]="false">
+    <p-table [value]="transactionHistory" [loading]="loadingHistory" styleClass="p-datatable-sm" [paginator]="true" [rows]="5" [showCurrentPageReport]="true" 
+             currentPageReportTemplate="Showing {first} to {last} of {totalRecords} transactions">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Points</th>
+                <th>Description</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-transaction>
+            <tr>
+                <td>{{ transaction.createdAt | date:'medium' }}</td>
+                <td>
+                    <p-tag 
+                        [severity]="transaction.transactionType === 'SPENT' ? 'danger' : 'success'" 
+                        [value]="transaction.transactionType === 'SPENT' ? 'Spent' : 'Earned'">
+                    </p-tag>
+                </td>
+                <td>{{ transaction.points }}</td>
+                <td>{{ transaction.description }}</td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="4" class="text-center">
+                    <p>No transaction history found.</p>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+    <div class="dialog-footer">
+        <button pButton type="button" label="Close" icon="pi pi-times" 
+                class="p-button-text" (click)="historyDialogVisible = false"></button>
+    </div>
+</p-dialog>
+
 <!-- Confirmation Dialog -->
 <p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+
+<!-- Toast Messages -->
+<p-toast position="top-right"></p-toast>

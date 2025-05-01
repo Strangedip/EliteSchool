@@ -273,3 +273,102 @@
     }
   }
 }
+
+// Rewards icon color
+.card-icon.rewards {
+  background: linear-gradient(135deg, #ffb56b, #ff8e3c);
+}
+
+// Rewards card styles
+.rewards-card {
+  .rewards-summary {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 0;
+    margin-bottom: 15px;
+    
+    .reward-stat {
+      flex: 1;
+      text-align: center;
+      border-right: 1px solid #eee;
+      padding: 0 10px;
+      
+      &:last-child {
+        border-right: none;
+      }
+      
+      .stat-label {
+        display: block;
+        font-size: 0.85rem;
+        color: #777;
+        margin-bottom: 5px;
+      }
+      
+      .stat-value {
+        display: block;
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #333;
+        
+        &.earned {
+          color: #2ecc71;
+        }
+        
+        &.spent {
+          color: #e74c3c;
+        }
+      }
+    }
+  }
+  
+  .rewards-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 0;
+    
+    i {
+      font-size: 1.5rem;
+      margin-right: 10px;
+      color: #777;
+    }
+    
+    span {
+      color: #777;
+    }
+  }
+  
+  .card-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+    
+    a {
+      flex: 1;
+      text-align: center;
+      padding: 10px;
+      border-radius: 5px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.2s;
+      
+      &.btn-primary {
+        background-color: var(--primary-color);
+        color: white;
+        
+        &:hover {
+          background-color: var(--primary-color-darker, #3f51b5);
+        }
+      }
+      
+      &.btn-secondary {
+        background-color: #f5f5f5;
+        color: #333;
+        
+        &:hover {
+          background-color: #e0e0e0;
+        }
+      }
+    }
+  }
+}

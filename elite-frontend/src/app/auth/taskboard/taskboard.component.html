@@ -7,15 +7,18 @@
                 <i class="pi pi-search"></i>
             </div>
             <div class="reward-info" *ngIf="currentUserRole === 'STUDENT'">
-                <i class="pi pi-star"></i>
+                <i class="pi pi-star-fill"></i>
                 <span>{{ rewardPoints }} Points</span>
+                <a routerLink="/auth/rewards" class="view-rewards-link">
+                    <i class="pi pi-chart-bar"></i> View Rewards
+                </a>
             </div>
             <button pButton 
                 type="button" 
                 icon="pi pi-plus" 
                 label="Add Task" 
                 class="p-button-primary"
-                (click)="addTask()"
+                routerLink="/auth/taskboard/create"
                 *ngIf="canCreateTasks()">
             </button>
         </div>
@@ -76,13 +79,13 @@
                             <button pButton type="button" icon="pi pi-check" label="Approve" 
                                     class="p-button-success p-button-sm" 
                                     [disabled]="isVerifying"
-                                    (click)="verifyTask(task, true)">
+                                    (click)="verifyTask(task.id, task.submissionId, true)">
                                 <i class="pi pi-spin pi-spinner" *ngIf="isVerifying"></i>
                             </button>
                             <button pButton type="button" icon="pi pi-times" label="Reject" 
                                     class="p-button-danger p-button-sm" 
                                     [disabled]="isVerifying"
-                                    (click)="verifyTask(task, false)">
+                                    (click)="verifyTask(task.id, task.submissionId, false)">
                                 <i class="pi pi-spin pi-spinner" *ngIf="isVerifying"></i>
                             </button>
                         </div>

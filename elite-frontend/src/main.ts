@@ -14,6 +14,9 @@ import { httpErrorInterceptor } from './app/core/interceptors/http-error.interce
 import { authInterceptor } from './app/core/interceptors/auth.interceptor';
 import { CoreModule } from './app/core/core.module';
 
+// Import compiler for JIT compilation support during transition to standalone components
+import '@angular/compiler';
+
 bootstrapApplication(AppComponent, {
   providers: [
     // Core functionality

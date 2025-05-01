@@ -8,12 +8,18 @@ import { InputTextarea } from 'primeng/inputtextarea';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { CardModule } from 'primeng/card';
+import { TagModule } from 'primeng/tag';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { PanelModule } from 'primeng/panel';
+import { TableModule } from 'primeng/table';
 
 import { StoreItem } from '../../core/models/store-item.model';
 import { StoreService } from '../../core/services/store.service';
 import { AuthService } from '../../core/services/auth.service';
 import { UserService } from '../../core/services/user.service';
 import { RewardService } from '../../core/services/reward.service';
+import { RewardTransaction } from '../../core/models/reward.model';
 
 @Component({
   selector: 'app-store',
@@ -28,7 +34,12 @@ import { RewardService } from '../../core/services/reward.service';
     InputTextModule,
     InputTextarea,
     ConfirmDialogModule,
-    ToastModule
+    ToastModule,
+    CardModule,
+    TagModule,
+    InputNumberModule,
+    PanelModule,
+    TableModule
   ],
   providers: [ConfirmationService, MessageService],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
@@ -44,6 +55,15 @@ export class StoreComponent implements OnInit {
   itemDialogVisible: boolean = false;
   editMode: boolean = false;
   selectedItem: StoreItem | null = null;
+  
+  // Image preview properties
+  imagePreviewVisible: boolean = false;
+  previewImageUrl: string = '';
+  
+  // Transaction history properties
+  historyDialogVisible: boolean = false;
+  transactionHistory: RewardTransaction[] = [];
+  loadingHistory: boolean = false;
 
   constructor(
     private storeService: StoreService,
@@ -62,26 +82,116 @@ export class StoreComponent implements OnInit {
   loadUserInfo(): void {
     const user = this.userService.getCurrentUser();
     if (user) {
-      this.currentUserRole = user.role;
-      if (user.role === 'STUDENT') {
+      // Normalize role to uppercase for consistent comparison
+      this.currentUserRole = user.role?.toUpperCase() || '';
+      console.log('Current user role:', this.currentUserRole);
+      
+      if (this.currentUserRole === 'STUDENT') {
         const userId = user.id || user.eliteId;
         if (userId) {
           this.loadRewardPoints(userId);
         }
       }
+    } else {
+      // If no user found, try to fetch from API
+      this.userService.getUserProfile().subscribe({
+        next: (response) => {
+          if (response.success && response.data) {
+            this.currentUserRole = response.data.role?.toUpperCase() || '';
+            console.log('User profile loaded, role:', this.currentUserRole);
+            
+            if (this.currentUserRole === 'STUDENT') {
+              const userId = response.data.id || response.data.eliteId;
+              if (userId) {
+                this.loadRewardPoints(userId);
+              }
+            }
+          }
+        },
+        error: (error) => {
+          console.error('Failed to load user profile:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to load user profile. Some features may be unavailable.'
+          });
+        }
+      });
     }
   }
 
   loadRewardPoints(userId: string): void {
-    this.rewardService.getWalletBalance(userId).subscribe(points => {
-      this.rewardPoints = points;
+    this.rewardService.getWalletBalance(userId).subscribe({
+      next: (points) => {
+        this.rewardPoints = points;
+      },
+      error: (error) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: `Failed to load reward points: ${error.message}`
+        });
+      }
+    });
+  }
+
+  showPurchaseHistory(): void {
+    this.historyDialogVisible = true;
+    this.loadTransactionHistory();
+  }
+  
+  loadTransactionHistory(): void {
+    const user = this.userService.getCurrentUser();
+    if (!user) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'User information not found'
+      });
+      return;
+    }
+    
+    const userId = user.id || user.eliteId;
+    if (!userId) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'User ID not found'
+      });
+      return;
+    }
+    
+    this.loadingHistory = true;
+    this.rewardService.getTransactionHistory(userId).subscribe({
+      next: (transactions) => {
+        this.transactionHistory = transactions;
+        this.loadingHistory = false;
+      },
+      error: (error) => {
+        console.error('Error loading transaction history:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to load transaction history'
+        });
+        this.loadingHistory = false;
+      }
     });
   }
 
   loadItems(): void {
-    this.storeService.getAllItems().subscribe(items => {
-      this.items = items;
-      this.filterItems();
+    this.storeService.getAllItems().subscribe({
+      next: (items) => {
+        this.items = items;
+        this.filterItems();
+      },
+      error: (error) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: `Failed to load store items: ${error.message}`
+        });
+      }
     });
   }
 
@@ -89,7 +199,7 @@ export class StoreComponent implements OnInit {
     this.filteredItems = this.searchQuery 
       ? this.items.filter(item => 
           item.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-          item.description?.toLowerCase().includes(this.searchQuery.toLowerCase())
+          (item.description && item.description.toLowerCase().includes(this.searchQuery.toLowerCase()))
         )
       : this.items;
   }
@@ -100,7 +210,12 @@ export class StoreComponent implements OnInit {
   }
 
   isAdmin(): boolean {
-    return ['ADMIN', 'MANAGEMENT'].includes(this.currentUserRole);
+    // Debug log to check role
+    console.log('Checking admin privileges, current role:', this.currentUserRole);
+    
+    // Normalize the comparison to handle case inconsistencies
+    const role = this.currentUserRole?.toUpperCase() || '';
+    return ['ADMIN', 'MANAGEMENT'].includes(role);
   }
 
   canRedeem(item: StoreItem): boolean {
@@ -123,6 +238,11 @@ export class StoreComponent implements OnInit {
     this.selectedItem = { ...item };
     this.editMode = true;
     this.itemDialogVisible = true;
+  }
+  
+  previewImage(imageUrl: string): void {
+    this.previewImageUrl = imageUrl;
+    this.imagePreviewVisible = true;
   }
 
   saveItem(): void {
@@ -202,22 +322,26 @@ export class StoreComponent implements OnInit {
           return;
         }
         
-        this.rewardService.spendPoints(userId, item.id).subscribe({
-          next: () => {
+        this.storeService.purchaseItem(userId, item.id).subscribe({
+          next: (response) => {
+            // Update the local reward points
+            this.loadRewardPoints(userId);
+            
             this.messageService.add({
               severity: 'success',
               summary: 'Success',
-              detail: 'Item redeemed successfully!'
+              detail: 'Item redeemed successfully'
             });
-            // Reload points and items
-            this.loadRewardPoints(userId);
+            
+            // Reload items to reflect the updated stock
             this.loadItems();
           },
           error: (error) => {
+            console.error('Error redeeming item:', error);
             this.messageService.add({
               severity: 'error',
               summary: 'Error',
-              detail: `Failed to redeem item: ${error.message}`
+              detail: error.error?.message || 'Failed to redeem item. Please try again later.'
             });
           }
         });

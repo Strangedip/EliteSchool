@@ -1,7 +1,7 @@
 import { Component, OnInit, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Task } from '../../core/models/task.model';
+import { Task, TaskSubmission } from '../../core/models/task.model';
 import { TaskService } from '../../core/services/task.service';
 import { AuthService } from '../../core/services/auth.service';
 import { UserService } from '../../core/services/user.service';
@@ -11,6 +11,7 @@ import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextarea } from 'primeng/inputtextarea';
 import { InputTextModule } from 'primeng/inputtext';
+import { ToastService } from '../../core/services/toast.service';
 
 @Component({
   selector: 'app-taskboard',
@@ -27,6 +28,7 @@ export class TaskboardComponent implements OnInit {
   allTasks: Task[] = [];
   searchQuery: string = '';
   currentUserRole: string = '';
+  currentUserId: string = '';
   rewardPoints: number = 0;
   
   // Loading states
@@ -37,16 +39,19 @@ export class TaskboardComponent implements OnInit {
   // Task submission properties
   submissionDialogVisible: boolean = false;
   selectedTask: Task | null = null;
-  taskSubmission: any = {
+  taskSubmission: TaskSubmission = {
     submissionDetails: '',
-    evidence: ''
+    evidence: '',
+    taskId: '',
+    studentId: ''
   };
 
   constructor(
     private taskService: TaskService, 
     private authService: AuthService,
     private userService: UserService,
-    private rewardService: RewardService
+    private rewardService: RewardService,
+    private toastService: ToastService
   ) { }
 
   ngOnInit(): void {
@@ -58,32 +63,102 @@ export class TaskboardComponent implements OnInit {
     const user = this.userService.getCurrentUser();
     if (user) {
       this.currentUserRole = user.role;
-      if (user.role === 'STUDENT') {
-        const userId = user.id || user.eliteId;
-        if (userId) {
-          this.loadRewardPoints(userId);
-        }
+      this.currentUserId = user.id || user.eliteId || '';
+      
+      if (user.role === 'STUDENT' && this.currentUserId) {
+        this.loadRewardPoints(this.currentUserId);
       }
+    } else {
+      // If user info not available in memory, try to fetch it
+      this.userService.getUserProfile().subscribe({
+        next: (response) => {
+          if (response.success && response.data) {
+            this.currentUserRole = response.data.role;
+            this.currentUserId = response.data.id || response.data.eliteId || '';
+            
+            if (response.data.role === 'STUDENT' && this.currentUserId) {
+              this.loadRewardPoints(this.currentUserId);
+            }
+          }
+        },
+        error: (error) => {
+          console.error('Error loading user profile:', error);
+          this.toastService.showError('Error loading user profile');
+        }
+      });
     }
   }
 
   loadRewardPoints(userId: string): void {
-    this.rewardService.getWalletBalance(userId).subscribe((points: number) => {
-      this.rewardPoints = points;
+    this.rewardService.getWalletBalance(userId).subscribe({
+      next: (points: number) => {
+        this.rewardPoints = points;
+      },
+      error: (error) => {
+        console.error('Error loading reward points:', error);
+      }
     });
   }
 
   loadTasks(): void {
     this.isLoading = true;
-    this.taskService.getTasks().subscribe({
-      next: (tasks) => {
-        this.allTasks = tasks;
-        this.filterTasks();
-        this.isLoading = false;
+    
+    // For student users, we need to get submitted/completed tasks separately
+    if (this.currentUserRole === 'STUDENT' && this.currentUserId) {
+      // First get open tasks
+      this.taskService.getOpenTasks().subscribe({
+        next: (tasks) => {
+          this.openTasks = tasks;
+          this.isLoading = false;
+          
+          // Then get student's submissions
+          this.loadStudentSubmissions();
+        },
+        error: (error) => {
+          console.error('Error loading open tasks:', error);
+          this.isLoading = false;
+          this.toastService.showError('Error loading tasks');
+        }
+      });
+    } else {
+      // For faculty/admin, get all tasks
+      this.taskService.getTasks().subscribe({
+        next: (tasks) => {
+          this.allTasks = tasks;
+          this.filterTasks();
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error loading tasks:', error);
+          this.isLoading = false;
+          this.toastService.showError('Error loading tasks');
+        }
+      });
+    }
+  }
+  
+  loadStudentSubmissions(): void {
+    if (!this.currentUserId) return;
+    
+    this.taskService.getSubmissionsByStudent(this.currentUserId).subscribe({
+      next: (submissions) => {
+        // Process submissions to update task lists
+        submissions.forEach(submission => {
+          if (submission.task) {
+            // Add submission info to the task
+            submission.task.submissionId = submission.id;
+            submission.task.submissionStatus = submission.status;
+            
+            if (submission.status === 'APPROVED') {
+              this.completedTasks.push(submission.task);
+            } else if (submission.status === 'PENDING') {
+              this.submittedTasks.push(submission.task);
+            }
+          }
+        });
       },
       error: (error) => {
-        console.error('Error loading tasks:', error);
-        this.isLoading = false;
+        console.error('Error loading student submissions:', error);
       }
     });
   }
@@ -114,18 +189,11 @@ export class TaskboardComponent implements OnInit {
     return ['FACULTY', 'MANAGEMENT', 'ADMIN'].includes(this.currentUserRole);
   }
 
-  addTask(): void {
-    // Navigate to task creation component
-    console.log('Adding new task...');
-  }
-
   startTask(task: Task): void {
     this.selectedTask = task;
-    const user = this.userService.getCurrentUser();
-    const userId = user ? (user.id || user.eliteId) : '';
     
-    if (!userId) {
-      console.error('User ID not found');
+    if (!this.currentUserId) {
+      this.toastService.showError('User information not available');
       return;
     }
     
@@ -133,7 +201,7 @@ export class TaskboardComponent implements OnInit {
       submissionDetails: '',
       evidence: '',
       taskId: task.id,
-      studentId: userId
+      studentId: this.currentUserId
     };
     this.submissionDialogVisible = true;
   }
@@ -143,48 +211,53 @@ export class TaskboardComponent implements OnInit {
       this.isSubmitting = true;
       this.taskService.submitTask(this.taskSubmission).subscribe({
         next: (response) => {
-          console.log('Task submitted successfully', response);
+          this.toastService.showSuccess('Task submitted successfully');
           this.submissionDialogVisible = false;
           this.loadTasks(); // Reload tasks to update the board
           this.isSubmitting = false;
         },
         error: (error) => {
           console.error('Error submitting task', error);
+          this.toastService.showError('Error submitting task');
           this.isSubmitting = false;
         }
       });
     }
   }
 
-  verifyTask(task: Task, approved: boolean): void {
-    this.isVerifying = true;
-    const user = this.userService.getCurrentUser();
-    const userId = user ? (user.id || user.eliteId) : '';
+  verifyTask(taskId: string, submissionId: string | undefined, approved: boolean): void {
+    if (!submissionId) {
+      this.toastService.showError('Submission ID not found');
+      return;
+    }
     
-    if (!userId) {
-      console.error('User ID not found');
+    this.isVerifying = true;
+    
+    if (!this.currentUserId) {
+      this.toastService.showError('User information not available');
       this.isVerifying = false;
       return;
     }
     
     const feedback = approved ? 'Approved' : 'Rejected';
     
-    this.taskService.verifyTask(task.id, userId, approved, feedback)
+    this.taskService.verifyTask(submissionId, this.currentUserId, approved, feedback)
       .subscribe({
         next: () => {
-          console.log('Task verification complete');
+          this.toastService.showSuccess('Task verification complete');
           this.loadTasks(); // Reload tasks to update the board
           this.isVerifying = false;
         },
         error: (error) => {
           console.error('Error verifying task', error);
+          this.toastService.showError('Error verifying task');
           this.isVerifying = false;
         }
       });
   }
 
   getPriorityClass(priority: string): string {
-    switch (priority.toLowerCase()) {
+    switch (priority?.toLowerCase()) {
       case 'high':
         return 'priority-high';
       case 'medium':

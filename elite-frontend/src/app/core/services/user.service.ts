@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { tap, map, catchError } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { User } from '../models/user.model';
 import { CommonResponseDto } from '../models/common-response.model';
@@ -19,6 +19,7 @@ export enum Role {
 @Injectable({ providedIn: 'root' })
 export class UserService {
   private apiUrl = `${environment.apiUrl}/user`;
+  private authUrl = `${environment.apiUrl}/auth`;
   
   // User state management
   private currentUserSubject = new BehaviorSubject<User | null>(null);
@@ -40,6 +41,15 @@ export class UserService {
         localStorage.removeItem(this.USER_DATA_KEY);
       }
     }
+  }
+
+  private getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('Authorization') || localStorage.getItem('token');
+    let headers = new HttpHeaders();
+    if (token) {
+      headers = headers.set('Authorization', `Bearer ${token}`);
+    }
+    return headers;
   }
 
   setCurrentUser(user: User): void {
@@ -70,17 +80,50 @@ export class UserService {
   }
 
   getUserProfile(): Observable<CommonResponseDto<User>> {
-    return this.http.get<CommonResponseDto<User>>(`${this.apiUrl}/profile`).pipe(
+    // Use current user from storage if available
+    const currentUser = this.getCurrentUser();
+    if (currentUser) {
+      return of({ success: true, message: 'User loaded from storage', data: currentUser });
+    }
+    
+    // Otherwise, get from the profile endpoint
+    const headers = this.getAuthHeaders();
+    if (!headers.has('Authorization')) {
+      return of({ success: false, message: 'No authentication token available' });
+    }
+    
+    return this.http.get<CommonResponseDto<User>>(
+      `${this.authUrl}/profile`, 
+      { headers }
+    ).pipe(
       tap(response => {
         if (response.success && response.data) {
           this.setCurrentUser(response.data);
         }
+      }),
+      catchError(error => {
+        console.error('Error getting user profile:', error);
+        
+        // Fallback to token validation if profile endpoint fails
+        return this.http.get<CommonResponseDto<User>>(
+          `${this.authUrl}/validate-token`, 
+          { headers }
+        ).pipe(
+          tap(response => {
+            if (response.success && response.data) {
+              this.setCurrentUser(response.data);
+            }
+          }),
+          catchError(_ => {
+            return of({ success: false, message: 'Failed to get user profile' });
+          })
+        );
       })
     );
   }
 
   updateUserProfile(userData: Partial<User>): Observable<CommonResponseDto<User>> {
-    return this.http.put<CommonResponseDto<User>>(`${this.apiUrl}/profile/update`, userData).pipe(
+    return this.http.put<CommonResponseDto<User>>(`${this.apiUrl}/${userData.id || userData.eliteId}`, userData).pipe(
       tap(response => {
         if (response.success && response.data) {
           this.setCurrentUser(response.data);
@@ -94,6 +137,10 @@ export class UserService {
   }
 
   updateUser(userId: string, userData: Partial<User>): Observable<CommonResponseDto<User>> {
-    return this.http.put<CommonResponseDto<User>>(`${this.apiUrl}/update/${userId}`, userData);
+    return this.http.put<CommonResponseDto<User>>(`${this.apiUrl}/${userId}`, userData);
+  }
+  
+  getUserById(userId: string): Observable<CommonResponseDto<User>> {
+    return this.http.get<CommonResponseDto<User>>(`${this.apiUrl}/${userId}`);
   }
 } 

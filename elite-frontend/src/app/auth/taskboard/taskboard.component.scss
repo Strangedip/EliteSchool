@@ -234,3 +234,25 @@
     align-items: stretch;
   }
 }
+
+.reward-info {
+  .view-rewards-link {
+    margin-left: 10px;
+    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    color: var(--primary-color);
+    text-decoration: none;
+    border-left: 1px solid #e0e0e0;
+    padding-left: 10px;
+    
+    i {
+      margin-right: 5px;
+      font-size: 0.9rem;
+    }
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

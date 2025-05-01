@@ -11,6 +11,8 @@ export interface Task {
   completedAt?: string;
   createdAt: string;
   priority?: 'high' | 'medium' | 'low';
+  submissionId?: string;
+  submissionStatus?: string;
 }
 
 export interface TaskSubmission {
@@ -19,7 +21,7 @@ export interface TaskSubmission {
   studentId: string;
   submissionDetails: string;
   evidence: string;
-  status?: 'SUBMITTED' | 'COMPLETED' | 'REJECTED';
+  status?: 'PENDING' | 'APPROVED' | 'REJECTED';
   feedbackNotes?: string;
   verifiedBy?: string;
   submittedAt?: string;
@@ -28,4 +30,5 @@ export interface TaskSubmission {
   
   taskTitle?: string;
   rewardPoints?: number;
+  task?: Task;
 } 

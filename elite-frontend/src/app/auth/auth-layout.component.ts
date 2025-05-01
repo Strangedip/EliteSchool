@@ -1,12 +1,12 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule, RouterOutlet } from '@angular/router';
+import { Router, RouterModule, RouterOutlet, NavigationEnd, Event } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { MenuModule } from 'primeng/menu';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { AuthService } from '../core/services/auth.service';
 import { UserService } from '../core/services/user.service';
-import { Subscription } from 'rxjs';
+import { Subscription, filter } from 'rxjs';
 import { User } from '../core/models/user.model';
 
 @Component({
@@ -22,12 +22,14 @@ export class AuthLayoutComponent implements OnInit, OnDestroy {
     activeIndex = 0;
     userSubscription: Subscription | undefined;
     authSubscription: Subscription | undefined;
+    routerSubscription: Subscription | undefined;
     currentUser: User | null = null;
 
     items = [
         { label: 'Dashboard', icon: 'pi pi-home', route: '/auth/dashboard' },
-        { label: 'Store', icon: 'pi pi-shopping-cart', route: '/auth/store' },
         { label: 'Tasks', icon: 'pi pi-check-square', route: '/auth/taskboard' },
+        { label: 'Rewards', icon: 'pi pi-star', route: '/auth/rewards' },
+        { label: 'Store', icon: 'pi pi-shopping-cart', route: '/auth/store' },
         { label: 'Profile', icon: 'pi pi-user', route: '/auth/profile' },
         { label: 'Settings', icon: 'pi pi-cog', route: '/auth/settings' },
     ];
@@ -46,6 +48,24 @@ export class AuthLayoutComponent implements OnInit, OnDestroy {
                 this.router.navigate(['/unauth/login']);
             }
         });
+
+        // Set active tab based on current URL
+        this.setActiveTabFromUrl(this.router.url);
+
+        // Subscribe to router events to update active tab when navigating
+        this.routerSubscription = this.router.events
+            .pipe(filter((event: Event): event is NavigationEnd => event instanceof NavigationEnd))
+            .subscribe((event: NavigationEnd) => {
+                this.setActiveTabFromUrl(event.urlAfterRedirects);
+            });
+    }
+
+    setActiveTabFromUrl(url: string): void {
+        const foundIndex = this.items.findIndex(item => url.includes(item.route));
+        if (foundIndex !== -1) {
+            this.activeIndex = foundIndex;
+            this.pageTitle = this.items[foundIndex].label;
+        }
     }
 
     ngOnDestroy() {
@@ -54,6 +74,9 @@ export class AuthLayoutComponent implements OnInit, OnDestroy {
         }
         if (this.userSubscription) {
             this.userSubscription.unsubscribe();
+        }
+        if (this.routerSubscription) {
+            this.routerSubscription.unsubscribe();
         }
     }
 
