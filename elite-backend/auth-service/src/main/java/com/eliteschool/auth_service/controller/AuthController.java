@@ -1,5 +1,6 @@
 package com.eliteschool.auth_service.controller;
 
+import com.eliteschool.auth_service.mapper.UserMapper;
 import com.eliteschool.auth_service.model.User;
 import com.eliteschool.auth_service.security.JwtUtil;
 import com.eliteschool.auth_service.service.UserService;
@@ -27,15 +28,15 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@RequestBody User user) {
-        if (userService.emailExists(user.getEmail()) || userService.usernameExists(user.getUsername())) {
+        if (userService.existsByEmail(user.getEmail()) || userService.existsByUsername(user.getUsername())) {
             return ResponseUtil.error(HttpStatus.BAD_REQUEST, "USER_EXISTS",
                     "Email or Username already exists", "Registration failed");
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        User savedUser = userService.saveUser(user);
+        User savedUser = userService.createUser(user);
 
-        return ResponseUtil.success("User registered successfully", null);
+        return ResponseUtil.success("User registered successfully", UserMapper.toResponseDTO(savedUser));
     }
 
     @PostMapping("/login")
