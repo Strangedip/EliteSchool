@@ -63,52 +63,10 @@ public class UserController {
         return ResponseUtil.success("User created successfully", UserMapper.toResponseDTO(createdUser));
     }
 
-    @GetMapping("/students/admission/{admissionNumber}")
-    public ResponseEntity<?> getStudentByAdmissionNumber(@PathVariable String admissionNumber) {
-        try {
-            UserDTO student = userService.getStudentByAdmissionNumber(admissionNumber);
-            return ResponseUtil.success("Student found", student);
-        } catch (RuntimeException e) {
-            return ResponseUtil.error(HttpStatus.NOT_FOUND, "STUDENT_NOT_FOUND",
-                    e.getMessage(), null);
-        }
-    }
-
-    @GetMapping("/students/grade/{grade}/section/{section}")
-    public ResponseEntity<?> getStudentsByGradeAndSection(
-            @PathVariable String grade,
-            @PathVariable String section) {
-        List<UserDTO> students = userService.getStudentsByGradeAndSection(grade, section);
-        return ResponseUtil.success("Students found", students);
-    }
-
     @GetMapping("/students")
     public ResponseEntity<?> getAllStudents() {
         List<UserDTO> students = userService.getAllStudents();
         return ResponseUtil.success("All students retrieved", students);
-    }
-
-    @GetMapping("/faculty/employee/{employeeId}")
-    public ResponseEntity<?> getFacultyByEmployeeId(@PathVariable String employeeId) {
-        try {
-            UserDTO faculty = userService.getFacultyByEmployeeId(employeeId);
-            return ResponseUtil.success("Faculty found", faculty);
-        } catch (RuntimeException e) {
-            return ResponseUtil.error(HttpStatus.NOT_FOUND, "FACULTY_NOT_FOUND",
-                    e.getMessage(), null);
-        }
-    }
-
-    @GetMapping("/faculty/subject/{subject}")
-    public ResponseEntity<?> getFacultyBySubject(@PathVariable String subject) {
-        List<UserDTO> faculty = userService.getFacultyBySubject(subject);
-        return ResponseUtil.success("Faculty found by subject", faculty);
-    }
-
-    @GetMapping("/faculty/grade/{grade}")
-    public ResponseEntity<?> getFacultyByGrade(@PathVariable String grade) {
-        List<UserDTO> faculty = userService.getFacultyByGrade(grade);
-        return ResponseUtil.success("Faculty found by grade", faculty);
     }
 
     @GetMapping("/faculty")

@@ -42,6 +42,15 @@ public class RewardController {
     }
 
     /**
+     * Award points for task completion (internal service endpoint)
+     */
+    @PostMapping("/award")
+    public ResponseEntity<Void> awardTaskPoints(@RequestBody AwardPointsRequest request) {
+        rewardService.earnPoints(request.studentId(), request.points(), request.description());
+        return ResponseEntity.ok().build();
+    }
+
+    /**
      * Spend reward points to redeem an item.
      * @param studentId The student's ID.
      * @param itemId The item ID to redeem.
@@ -63,4 +72,7 @@ public class RewardController {
     public ResponseEntity<List<RewardTransaction>> getTransactionHistory(@PathVariable UUID studentId) {
         return ResponseEntity.ok(rewardService.getTransactionHistory(studentId));
     }
+    
+    // Request record for task completion points
+    private record AwardPointsRequest(UUID studentId, int points, String description) {}
 }

@@ -16,9 +16,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     private final UserDetailsService userDetailsService;
@@ -53,6 +55,12 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // 🔹 Disable CSRF
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+//                        .requestMatchers("/api/auth/signup", "/api/auth/login", "/api/auth/validate-token").permitAll()
+//                        .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
+//                        .requestMatchers("/api/management/**").hasAnyAuthority("ADMIN", "MANAGEMENT")
+//                        .requestMatchers("/api/faculty/**").hasAnyAuthority("ADMIN", "MANAGEMENT", "FACULTY")
+//                        .requestMatchers("/api/student/**").hasAnyAuthority("ADMIN", "MANAGEMENT", "FACULTY", "STUDENT")
+//                        .requestMatchers("/api/public/**").permitAll()
                         .anyRequest().permitAll()
                 );
 

@@ -30,15 +30,5 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     // Check if mobile number already exists
     boolean existsByMobileNumber(String mobileNumber);
 
-    // Student-specific queries
-    Optional<User> findByAdmissionNumberAndRole(String admissionNumber, RoleType role);
-    List<User> findByGradeAndSectionAndRole(String grade, String section, RoleType role);
     List<User> findByRole(RoleType role);
-    boolean existsByAdmissionNumberAndRole(String admissionNumber, RoleType role);
-
-    // Teacher-specific queries
-    Optional<User> findByEmployeeIdAndRole(String employeeId, RoleType role);
-    List<User> findBySubjectsContainingAndRole(String subject, RoleType role);
-    List<User> findByGradesContainingAndRole(String grade, RoleType role);
-    boolean existsByEmployeeIdAndRole(String employeeId, RoleType role);
 }

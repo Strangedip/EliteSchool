@@ -9,21 +9,31 @@
         </div>
         
         <nav class="nav-menu">
-            <ul>
-                <li *ngFor="let item of items; let i = index" 
-                    [class.active]="activeIndex === i"
-                    (click)="handleTabChange(i)">
-                    <a>
-                        <i [class]="item.icon"></i>
-                        <span>{{item.label}}</span>
-                    </a>
-                </li>
-            </ul>
+            <div class="menu-items">
+                <ul>
+                    <li *ngFor="let item of items; let i = index" 
+                        [class.active]="activeIndex === i"
+                        (click)="handleTabChange(i)">
+                        <a>
+                            <i [class]="item.icon"></i>
+                            <span>{{item.label}}</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Logout option at bottom of sidebar -->
+            <div class="bottom-menu">
+                <ul>
+                    <li class="logout-item" (click)="logout()">
+                        <a>
+                            <span>Logout</span>
+                            <i class="pi pi-sign-out"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </nav>
-        
-        <div class="nav-footer">
-            <app-user-info [showAvatar]="false" [showDetails]="false" [showLogout]="true"></app-user-info>
-        </div>
     </aside>
 
     <!-- Main content area -->
@@ -37,8 +47,13 @@
                 </button>
                 <h2 class="page-title">{{pageTitle}}</h2>
             </div>
-            <div class="user-info">
-                <app-user-info [showLogout]="false"></app-user-info>
+            
+            <!-- Add logout button to header for easy access -->
+            <div class="header-right">
+                <button class="logout-btn" (click)="logout()">
+                    <i class="pi pi-sign-out"></i>
+                    <span>Logout</span>
+                </button>
             </div>
         </header>
         

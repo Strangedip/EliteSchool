@@ -6,59 +6,90 @@
                 <input type="text" placeholder="Search tasks..." (input)="onSearch($event)" />
                 <i class="pi pi-search"></i>
             </div>
+            <div class="reward-info" *ngIf="currentUserRole === 'STUDENT'">
+                <i class="pi pi-star"></i>
+                <span>{{ rewardPoints }} Points</span>
+            </div>
             <button pButton 
                 type="button" 
                 icon="pi pi-plus" 
                 label="Add Task" 
                 class="p-button-primary"
-                (click)="addTask()">
+                (click)="addTask()"
+                *ngIf="canCreateTasks()">
             </button>
+        </div>
+    </div>
+
+    <!-- Loading overlay -->
+    <div class="loading-overlay" *ngIf="isLoading">
+        <div class="loading-spinner">
+            <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+            <span>Loading tasks...</span>
         </div>
     </div>
 
     <div class="task-columns">
         <div class="task-column">
             <div class="column-header">
-                <h3>To Do</h3>
-                <span class="task-count">{{ todoTasks.length }}</span>
+                <h3>Open Tasks</h3>
+                <span class="task-count">{{ openTasks.length }}</span>
             </div>
             <div class="column-content">
-                <div class="task-card" *ngFor="let task of todoTasks">
-                    <div class="task-priority" [ngClass]="'priority-' + task.priority"></div>
+                <div class="task-card" *ngFor="let task of openTasks">
+                    <div class="task-status status-open"></div>
                     <div class="task-content">
                         <h4 class="task-title">{{ task.title }}</h4>
                         <p class="task-description">{{ task.description }}</p>
                         <div class="task-meta">
-                            <span class="task-course">{{ task.course }}</span>
-                            <span class="task-due-date">Due: {{ formatDate(task.dueDate) }}</span>
+                            <span class="task-points"><i class="pi pi-star"></i> {{ task.rewardPoints }} Points</span>
+                            <span class="task-type">{{ task.taskType }}</span>
+                        </div>
+                        <div class="task-actions" *ngIf="currentUserRole === 'STUDENT'">
+                            <button pButton type="button" icon="pi pi-check" label="Start Task" 
+                                    class="p-button-sm" (click)="startTask(task)"></button>
                         </div>
                     </div>
                 </div>
-                <div class="empty-message" *ngIf="todoTasks.length === 0">
-                    No tasks to do
+                <div class="empty-message" *ngIf="openTasks.length === 0 && !isLoading">
+                    No open tasks available
                 </div>
             </div>
         </div>
 
         <div class="task-column">
             <div class="column-header">
-                <h3>In Progress</h3>
-                <span class="task-count">{{ inProgressTasks.length }}</span>
+                <h3>Submitted</h3>
+                <span class="task-count">{{ submittedTasks.length }}</span>
             </div>
             <div class="column-content">
-                <div class="task-card" *ngFor="let task of inProgressTasks">
-                    <div class="task-priority" [ngClass]="'priority-' + task.priority"></div>
+                <div class="task-card" *ngFor="let task of submittedTasks">
+                    <div class="task-status status-submitted"></div>
                     <div class="task-content">
                         <h4 class="task-title">{{ task.title }}</h4>
                         <p class="task-description">{{ task.description }}</p>
                         <div class="task-meta">
-                            <span class="task-course">{{ task.course }}</span>
-                            <span class="task-due-date">Due: {{ formatDate(task.dueDate) }}</span>
+                            <span class="task-points"><i class="pi pi-star"></i> {{ task.rewardPoints }} Points</span>
+                            <span class="task-status-text">Pending Verification</span>
+                        </div>
+                        <div class="task-actions" *ngIf="canVerifyTasks()">
+                            <button pButton type="button" icon="pi pi-check" label="Approve" 
+                                    class="p-button-success p-button-sm" 
+                                    [disabled]="isVerifying"
+                                    (click)="verifyTask(task, true)">
+                                <i class="pi pi-spin pi-spinner" *ngIf="isVerifying"></i>
+                            </button>
+                            <button pButton type="button" icon="pi pi-times" label="Reject" 
+                                    class="p-button-danger p-button-sm" 
+                                    [disabled]="isVerifying"
+                                    (click)="verifyTask(task, false)">
+                                <i class="pi pi-spin pi-spinner" *ngIf="isVerifying"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
-                <div class="empty-message" *ngIf="inProgressTasks.length === 0">
-                    No tasks in progress
+                <div class="empty-message" *ngIf="submittedTasks.length === 0 && !isLoading">
+                    No submitted tasks
                 </div>
             </div>
         </div>
@@ -70,20 +101,46 @@
             </div>
             <div class="column-content">
                 <div class="task-card task-completed" *ngFor="let task of completedTasks">
-                    <div class="task-priority" [ngClass]="'priority-' + task.priority"></div>
+                    <div class="task-status status-completed"></div>
                     <div class="task-content">
                         <h4 class="task-title">{{ task.title }}</h4>
                         <p class="task-description">{{ task.description }}</p>
                         <div class="task-meta">
-                            <span class="task-course">{{ task.course }}</span>
-                            <span class="task-due-date">Completed</span>
+                            <span class="task-points"><i class="pi pi-star"></i> {{ task.rewardPoints }} Points</span>
+                            <span class="task-completed-date" *ngIf="task.completedAt">{{ formatDate(task.completedAt) }}</span>
                         </div>
                     </div>
                 </div>
-                <div class="empty-message" *ngIf="completedTasks.length === 0">
+                <div class="empty-message" *ngIf="completedTasks.length === 0 && !isLoading">
                     No completed tasks
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Task Submission Dialog -->
+<p-dialog header="Submit Task" [(visible)]="submissionDialogVisible" [modal]="true" [style]="{width: '500px'}">
+    <form *ngIf="selectedTask" #submissionForm="ngForm" (ngSubmit)="submitTask()">
+        <div class="field">
+            <label for="submissionDetails">Submission Details</label>
+            <textarea id="submissionDetails" pInputTextarea [(ngModel)]="taskSubmission.submissionDetails" 
+                      name="submissionDetails" required rows="5"></textarea>
+        </div>
+        <div class="field">
+            <label for="evidence">Evidence (Link or description)</label>
+            <input id="evidence" type="text" pInputText [(ngModel)]="taskSubmission.evidence" name="evidence" required>
+        </div>
+        <div class="dialog-footer">
+            <button pButton type="button" label="Cancel" icon="pi pi-times" 
+                    class="p-button-text" 
+                    [disabled]="isSubmitting"
+                    (click)="submissionDialogVisible = false"></button>
+            <button pButton type="submit" label="Submit" icon="pi pi-check" 
+                    [disabled]="!submissionForm.valid || isSubmitting">
+                <i class="pi pi-spin pi-spinner" *ngIf="isSubmitting"></i>
+                Submit
+            </button>
+        </div>
+    </form>
+</p-dialog>

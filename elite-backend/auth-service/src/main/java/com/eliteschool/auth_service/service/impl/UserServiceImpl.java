@@ -83,51 +83,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO getStudentByAdmissionNumber(String admissionNumber) {
-        return userRepository.findByAdmissionNumberAndRole(admissionNumber, RoleType.STUDENT)
-                .map(UserMapper::toDTO)
-                .orElseThrow(() -> new RuntimeException("Student not found with admission number: " + admissionNumber));
-    }
-
-    @Override
-    public List<UserDTO> getStudentsByGradeAndSection(String grade, String section) {
-        return userRepository.findByGradeAndSectionAndRole(grade, section, RoleType.STUDENT)
-                .stream()
-                .map(UserMapper::toDTO)
-                .collect(Collectors.toList());
-    }
-
-    @Override
     public List<UserDTO> getAllStudents() {
         return userRepository.findByRole(RoleType.STUDENT)
-                .stream()
-                .map(UserMapper::toDTO)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public boolean existsByAdmissionNumber(String admissionNumber) {
-        return userRepository.existsByAdmissionNumberAndRole(admissionNumber, RoleType.STUDENT);
-    }
-
-    @Override
-    public UserDTO getFacultyByEmployeeId(String employeeId) {
-        return userRepository.findByEmployeeIdAndRole(employeeId, RoleType.FACULTY)
-                .map(UserMapper::toDTO)
-                .orElseThrow(() -> new RuntimeException("Faculty not found with employee id: " + employeeId));
-    }
-
-    @Override
-    public List<UserDTO> getFacultyBySubject(String subject) {
-        return userRepository.findBySubjectsContainingAndRole(subject, RoleType.FACULTY)
-                .stream()
-                .map(UserMapper::toDTO)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<UserDTO> getFacultyByGrade(String grade) {
-        return userRepository.findByGradesContainingAndRole(grade, RoleType.FACULTY)
                 .stream()
                 .map(UserMapper::toDTO)
                 .collect(Collectors.toList());
@@ -139,10 +96,5 @@ public class UserServiceImpl implements UserService {
                 .stream()
                 .map(UserMapper::toDTO)
                 .collect(Collectors.toList());
-    }
-
-    @Override
-    public boolean existsByEmployeeId(String employeeId) {
-        return userRepository.existsByEmployeeIdAndRole(employeeId, RoleType.FACULTY);
     }
 } 

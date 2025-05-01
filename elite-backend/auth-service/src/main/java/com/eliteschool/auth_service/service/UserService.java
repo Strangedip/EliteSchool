@@ -23,15 +23,8 @@ public interface UserService {
     User getUserEntityByUsername(String username);
 
     // Student-specific operations
-    UserDTO getStudentByAdmissionNumber(String admissionNumber);
-    List<UserDTO> getStudentsByGradeAndSection(String grade, String section);
-    List<UserDTO> getAllStudents();
-    boolean existsByAdmissionNumber(String admissionNumber);
 
-    // Faculty-specific operations
-    UserDTO getFacultyByEmployeeId(String employeeId);
-    List<UserDTO> getFacultyBySubject(String subject);
-    List<UserDTO> getFacultyByGrade(String grade);
+    List<UserDTO> getAllStudents();
+
     List<UserDTO> getAllFaculty();
-    boolean existsByEmployeeId(String employeeId);
 }

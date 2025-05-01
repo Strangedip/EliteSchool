@@ -4,18 +4,17 @@ import { Router, RouterModule, RouterOutlet } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { MenuModule } from 'primeng/menu';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
-import { AuthService } from '../service/auth.service';
-import { UserService } from '../service/user.service';
-import { UserInfoComponent } from '../components/user-info/user-info.component';
+import { AuthService } from '../core/services/auth.service';
+import { UserService } from '../core/services/user.service';
 import { Subscription } from 'rxjs';
-import { User } from '../models/user.model';
+import { User } from '../core/models/user.model';
 
 @Component({
     selector: 'app-auth-layout',
     templateUrl: './auth-layout.component.html',
     styleUrls: ['./auth-layout.component.scss'],
     standalone: true,
-    imports: [RouterOutlet, CommonModule, ButtonModule, MenuModule, OverlayPanelModule, UserInfoComponent, RouterModule]
+    imports: [RouterOutlet, CommonModule, ButtonModule, MenuModule, OverlayPanelModule, RouterModule]
 })
 export class AuthLayoutComponent implements OnInit, OnDestroy {
     isMobileMenuOpen = false;
@@ -40,21 +39,9 @@ export class AuthLayoutComponent implements OnInit, OnDestroy {
     ) {}
 
     ngOnInit() {
-        // Set active tab based on current route
-        const currentRoute = this.router.url;
-        const foundIndex = this.items.findIndex(item => currentRoute.includes(item.route));
-        if (foundIndex !== -1) {
-            this.activeIndex = foundIndex;
-            this.pageTitle = this.items[foundIndex].label;
-        }
-
-        // Subscribe to user data changes
-        this.userSubscription = this.userService.currentUser$.subscribe(user => {
-            this.currentUser = user;
-        });
-
         // Subscribe to authentication state
         this.authSubscription = this.authService.isAuthenticated$.subscribe(isAuthenticated => {
+            console.log('Auth state changed:', isAuthenticated);
             if (!isAuthenticated) {
                 this.router.navigate(['/unauth/login']);
             }
@@ -83,5 +70,20 @@ export class AuthLayoutComponent implements OnInit, OnDestroy {
 
     toggleMobileMenu() {
         this.isMobileMenuOpen = !this.isMobileMenuOpen;
+    }
+    
+    logout() {
+        console.log('Logging out...');
+        this.authService.logout().subscribe({
+            next: () => {
+                this.router.navigate(['/unauth/login']);
+            },
+            error: (err) => {
+                console.error('Logout error:', err);
+                // Even if there's an error, try to clear local auth state and redirect
+                this.authService.clearToken();
+                this.router.navigate(['/unauth/login']);
+            }
+        });
     }
 }

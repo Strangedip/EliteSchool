@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
-import { MessageService } from 'primeng/api';  // Import MessageService from PrimeNG
+import { MessageService } from 'primeng/api';
 
+/**
+ * Service for displaying toast notifications throughout the application
+ */
 @Injectable({
     providedIn: 'root',
 })
@@ -8,7 +11,9 @@ export class ToastService {
 
     constructor(private messageService: MessageService) { }
 
-    // Show success message
+    /**
+     * Show success toast message
+     */
     showSuccess(message: string, title: string = 'Success', options: any = {}) {
         this.messageService.add({ 
             severity: 'success', 
@@ -19,7 +24,9 @@ export class ToastService {
         });
     }
 
-    // Show error message
+    /**
+     * Show error toast message
+     */
     showError(message: string, title: string = 'Error', options: any = {}) {
         this.messageService.add({ 
             severity: 'error', 
@@ -30,7 +37,9 @@ export class ToastService {
         });
     }
 
-    // Show info message
+    /**
+     * Show info toast message
+     */
     showInfo(message: string, title: string = 'Info', options: any = {}) {
         this.messageService.add({ 
             severity: 'info', 
@@ -41,7 +50,9 @@ export class ToastService {
         });
     }
 
-    // Show warning message
+    /**
+     * Show warning toast message
+     */
     showWarning(message: string, title: string = 'Warning', options: any = {}) {
         this.messageService.add({ 
             severity: 'warn', 
@@ -52,8 +63,10 @@ export class ToastService {
         });
     }
 
-    // Clear all toasts
+    /**
+     * Clear all toast messages
+     */
     clearToasts(key?: string) {
         this.messageService.clear(key);
     }
-}
+} 

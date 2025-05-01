@@ -24,8 +24,6 @@ import { AuthGuard } from './auth.guard';
   declarations: [
     TaskCreateComponent,
     DashboardComponent,
-    UserProfileComponent,
-    StoreComponent
   ],
   imports: [
     CommonModule,
