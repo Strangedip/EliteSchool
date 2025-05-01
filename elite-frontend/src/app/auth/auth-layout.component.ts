@@ -43,7 +43,6 @@ export class AuthLayoutComponent implements OnInit, OnDestroy {
     ngOnInit() {
         // Subscribe to authentication state
         this.authSubscription = this.authService.isAuthenticated$.subscribe(isAuthenticated => {
-            console.log('Auth state changed:', isAuthenticated);
             if (!isAuthenticated) {
                 this.router.navigate(['/unauth/login']);
             }
@@ -96,7 +95,6 @@ export class AuthLayoutComponent implements OnInit, OnDestroy {
     }
     
     logout() {
-        console.log('Logging out...');
         this.authService.logout().subscribe({
             next: () => {
                 this.router.navigate(['/unauth/login']);

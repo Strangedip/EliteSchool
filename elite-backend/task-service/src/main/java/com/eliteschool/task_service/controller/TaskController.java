@@ -27,6 +27,18 @@ public class TaskController {
         this.taskService = taskService;
     }
 
+
+    /**
+     * Get all tasks by status.
+     * @param status The task status (OPEN, COMPLETED, CLOSED).
+     * @return List of tasks.
+     */
+    @GetMapping("/all")
+    public ResponseEntity<CommonResponseDto<List<TaskDto>>> getAllTasks(@PathVariable TaskStatus status) {
+        List<TaskDto> tasks = taskService.getAllTask();
+        return ResponseUtil.success("Tasks retrieved successfully", tasks);
+    }
+
     /**
      * Create a new task.
      * @param taskDto The task details.

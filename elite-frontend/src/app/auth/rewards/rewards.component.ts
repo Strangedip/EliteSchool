@@ -26,7 +26,7 @@ export class RewardsComponent implements OnInit {
   currentUserId: string = '';
   
   // For UI display options
-  showBalance: boolean = true;
+  showBalance: boolean = false;
   viewMode: 'all' | 'earned' | 'spent' = 'all';
   
   constructor(

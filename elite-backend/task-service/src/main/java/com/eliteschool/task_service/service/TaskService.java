@@ -43,6 +43,15 @@ public class TaskService {
     }
 
     /**
+     * Get all tasks.
+     * @return List of tasks.
+     */
+    public List<TaskDto> getAllTask() {
+        List<Task> tasks = taskRepository.findAll();
+        return TaskMapper.toDtoList(tasks);
+    }
+
+    /**
      * Get all tasks by status.
      * @param status The task status (OPEN, COMPLETED, CLOSED).
      * @return List of tasks.

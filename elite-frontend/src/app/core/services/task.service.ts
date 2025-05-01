@@ -18,7 +18,7 @@ export class TaskService {
 
   // Task endpoints
   getTasks(): Observable<Task[]> {
-    return this.http.get<CommonResponseDto<Task[]>>(`${this.tasksUrl}`)
+    return this.http.get<CommonResponseDto<Task[]>>(`${this.tasksUrl}/all`)
       .pipe(map(response => response.data ?? []));
   }
 
@@ -45,6 +45,11 @@ export class TaskService {
   closeTask(taskId: string): Observable<Task> {
     return this.http.put<CommonResponseDto<Task>>(`${this.tasksUrl}/${taskId}/close`, {})
       .pipe(map(response => response.data as Task));
+  }
+
+  deleteTask(taskId: string): Observable<any> {
+    return this.http.delete<CommonResponseDto<void>>(`${this.tasksUrl}/${taskId}`)
+      .pipe(map(response => response.data));
   }
 
   // Task submission endpoints

@@ -84,7 +84,6 @@ export class StoreComponent implements OnInit {
     if (user) {
       // Normalize role to uppercase for consistent comparison
       this.currentUserRole = user.role?.toUpperCase() || '';
-      console.log('Current user role:', this.currentUserRole);
       
       if (this.currentUserRole === 'STUDENT') {
         const userId = user.id || user.eliteId;
@@ -98,7 +97,6 @@ export class StoreComponent implements OnInit {
         next: (response) => {
           if (response.success && response.data) {
             this.currentUserRole = response.data.role?.toUpperCase() || '';
-            console.log('User profile loaded, role:', this.currentUserRole);
             
             if (this.currentUserRole === 'STUDENT') {
               const userId = response.data.id || response.data.eliteId;
@@ -210,9 +208,6 @@ export class StoreComponent implements OnInit {
   }
 
   isAdmin(): boolean {
-    // Debug log to check role
-    console.log('Checking admin privileges, current role:', this.currentUserRole);
-    
     // Normalize the comparison to handle case inconsistencies
     const role = this.currentUserRole?.toUpperCase() || '';
     return ['ADMIN', 'MANAGEMENT'].includes(role);

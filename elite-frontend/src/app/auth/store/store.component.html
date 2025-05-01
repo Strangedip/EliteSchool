@@ -8,16 +8,16 @@
             </div>
             <div class="reward-info" *ngIf="currentUserRole === 'STUDENT'">
                 <i class="pi pi-star-fill"></i>
-                <span>{{ rewardPoints }} Points</span>
-                <a routerLink="/auth/rewards" class="view-rewards-link">
-                    <i class="pi pi-chart-bar"></i> View Rewards
+                <span>{{ rewardPoints }}</span>
+                <a href="/auth/rewards" class="view-rewards-link">
+                    <i class="pi pi-chart-bar"></i> Rewards
                 </a>
             </div>
             <button pButton 
                 type="button" 
                 icon="pi pi-plus" 
                 label="Add Item" 
-                class="p-button-primary"
+                class="p-button-primary action-button"
                 (click)="addItem()"
                 *ngIf="isAdmin()">
             </button>
@@ -25,21 +25,25 @@
                 type="button"
                 icon="pi pi-history"
                 label="Purchase History"
-                class="p-button-secondary"
+                class="p-button-secondary action-button"
                 (click)="showPurchaseHistory()"
                 *ngIf="currentUserRole === 'STUDENT'">
             </button>
         </div>
     </div>
 
-    <p-panel *ngIf="currentUserRole === 'STUDENT'" styleClass="mb-3">
+    <p-panel *ngIf="currentUserRole === 'STUDENT'" styleClass="info-panel mb-3">
         <ng-template pTemplate="header">
-            <div class="flex align-items-center">
-                <i class="pi pi-info-circle mr-2"></i>
+            <div class="flex align-items-center panel-header">
+                <i class="pi pi-info-circle" style="margin-right:0.3rem ;"></i>
                 <span>Store Information</span>
             </div>
         </ng-template>
-        <p>Use your reward points to redeem items from our store. Items will be available for collection from the school office.</p>
+        <div class="panel-content">
+            <p><i class="pi pi-star"></i> Use your reward points to redeem items from our store.</p>
+            <p><i class="pi pi-map-marker"></i> Items will be available for collection from the school office.</p>
+            <p><i class="pi pi-clock"></i> Please allow 1-2 business days for processing.</p>
+        </div>
     </p-panel>
 
     <!-- Empty state message -->
@@ -93,7 +97,7 @@
                             type="button" 
                             icon="pi pi-trash" 
                             label="Delete" 
-                            class="p-button-danger p-button-outlined"
+                            class="p-button-outlined p-button-danger"
                             (click)="deleteItem(item)">
                         </button>
                     </ng-container>
@@ -104,28 +108,28 @@
 </div>
 
 <!-- Item Form Dialog -->
-<p-dialog [header]="editMode ? 'Edit Item' : 'Add Item'" [(visible)]="itemDialogVisible" [modal]="true" [style]="{width: '500px'}" [draggable]="false" [resizable]="false">
+<p-dialog [header]="editMode ? 'Edit Item' : 'Add Item'" [(visible)]="itemDialogVisible" [modal]="true" [style]="{width: '500px'}" [draggable]="false" [resizable]="false" styleClass="custom-dialog">
     <form *ngIf="selectedItem" #itemForm="ngForm" (ngSubmit)="saveItem()">
         <div class="field">
             <label for="name">Item Name <span class="text-danger">*</span></label>
-            <input id="name" type="text" pInputText [(ngModel)]="selectedItem.name" name="name" required>
+            <input id="name" type="text" pInputText [(ngModel)]="selectedItem.name" name="name" required class="theme-input">
         </div>
         <div class="field">
             <label for="description">Description</label>
-            <textarea pInputTextarea [(ngModel)]="selectedItem.description" name="description" rows="5"></textarea>
+            <textarea pInputTextarea [(ngModel)]="selectedItem.description" name="description" rows="5" class="theme-textarea"></textarea>
         </div>
         <div class="field">
             <label for="price">Price (Points) <span class="text-danger">*</span></label>
-            <p-inputNumber id="price" [(ngModel)]="selectedItem.price" name="price" [min]="1" [showButtons]="true" required></p-inputNumber>
+            <p-inputNumber id="price" [(ngModel)]="selectedItem.price" name="price" [min]="1" [showButtons]="true" required styleClass="theme-input-number"></p-inputNumber>
         </div>
         <div class="field">
             <label for="stock">Stock Available <span class="text-danger">*</span></label>
-            <p-inputNumber id="stock" [(ngModel)]="selectedItem.stock" name="stock" [min]="0" [showButtons]="true" required></p-inputNumber>
+            <p-inputNumber id="stock" [(ngModel)]="selectedItem.stock" name="stock" [min]="0" [showButtons]="true" required styleClass="theme-input-number"></p-inputNumber>
         </div>
         <div class="field">
             <label for="imageUrl">Image URL</label>
             <div class="p-inputgroup">
-                <input id="imageUrl" type="text" pInputText [(ngModel)]="selectedItem.imageUrl" name="imageUrl" placeholder="https://example.com/image.jpg">
+                <input id="imageUrl" type="text" pInputText [(ngModel)]="selectedItem.imageUrl" name="imageUrl" placeholder="https://example.com/image.jpg" class="theme-input">
                 <button pButton type="button" icon="pi pi-eye" class="p-button-outlined" *ngIf="selectedItem.imageUrl" (click)="previewImage(selectedItem.imageUrl)"></button>
             </div>
             <small class="text-secondary">Leave empty to use default image</small>
@@ -140,14 +144,14 @@
 </p-dialog>
 
 <!-- Image Preview Dialog -->
-<p-dialog header="Image Preview" [(visible)]="imagePreviewVisible" [modal]="true" [style]="{width: '400px'}" [draggable]="false" [resizable]="false">
+<p-dialog header="Image Preview" [(visible)]="imagePreviewVisible" [modal]="true" [style]="{width: '400px'}" [draggable]="false" [resizable]="false" styleClass="custom-dialog">
     <div class="text-center">
         <img [src]="previewImageUrl" style="max-width: 100%; max-height: 300px;" alt="Image Preview">
     </div>
 </p-dialog>
 
 <!-- Purchase History Dialog -->
-<p-dialog header="Purchase History" [(visible)]="historyDialogVisible" [modal]="true" [style]="{width: '700px'}" [draggable]="false" [resizable]="false">
+<p-dialog header="Purchase History" [(visible)]="historyDialogVisible" [modal]="true" [style]="{width: '700px'}" [draggable]="false" [resizable]="false" styleClass="custom-dialog">
     <p-table [value]="transactionHistory" [loading]="loadingHistory" styleClass="p-datatable-sm" [paginator]="true" [rows]="5" [showCurrentPageReport]="true" 
              currentPageReportTemplate="Showing {first} to {last} of {totalRecords} transactions">
         <ng-template pTemplate="header">
@@ -186,7 +190,12 @@
 </p-dialog>
 
 <!-- Confirmation Dialog -->
-<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle" styleClass="custom-dialog">
+    <ng-template pTemplate="footer">
+        <button type="button" pButton icon="pi pi-times" label="No" class="p-button-text"></button>
+        <button type="button" pButton icon="pi pi-check" label="Yes" class="p-button-primary"></button>
+    </ng-template>
+</p-confirmDialog>
 
 <!-- Toast Messages -->
 <p-toast position="top-right"></p-toast>

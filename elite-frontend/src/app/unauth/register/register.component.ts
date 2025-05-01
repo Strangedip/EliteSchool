@@ -201,10 +201,6 @@ export class RegisterComponent implements OnInit {
     this.router.navigate(['/auth/dashboard']);
   }
 
-  info(): void {
-    console.log(this.userData);  // Display user data for debugging
-  }
-
   testToast() {
     this.messageService.add({
       severity: 'success',

@@ -65,7 +65,7 @@ export class LoginComponent {
           }
         },
         error: (error) => {
-          console.log('Token validation failed:', error);
+          console.error('Token validation failed:', error);
           // We don't show error toast for token validation failures
         }
       });

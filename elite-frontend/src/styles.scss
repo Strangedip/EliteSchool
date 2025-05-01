@@ -4,6 +4,32 @@
 /* Import Typography Utilities */
 @import 'assets/typography.scss';
 
+/* Overrides for PrimeNG default colors */
+:root {
+  /* Override PrimeNG's default color scheme */
+  --primary-color: #00b4d8 !important;
+  --primary-color-text: #ffffff !important;
+  --primary-dark-color: #0077b6 !important;
+  --primary-light-color: #00d4ff !important;
+  --highlight-bg: rgba(0, 180, 216, 0.16) !important;
+  --highlight-text-color: #00b4d8 !important;
+  
+  /* Tag component colors */
+  --success-color: #0aefff !important; 
+  --info-color: #00b4d8 !important;
+  --warning-color: #fb923c !important;
+  --danger-color: #f87171 !important;
+  
+  /* Button colors */
+  --green-500: #0aefff !important;
+  --blue-500: #00b4d8 !important;
+  --yellow-500: #fb923c !important;
+  --red-500: #f87171 !important;
+  
+  /* Focus state */
+  --focus-ring: 0 0 0 2px rgba(0, 180, 216, 0.25) !important;
+}
+
 /* Global Styles */
 body {
     background-color: var(--surface-ground);
@@ -15,6 +41,134 @@ body {
     padding: 0;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+
+    /* TabView Root Overrides */
+    .p-tabview,
+    .p-tabview .p-tabview-nav,
+    .p-tabview .p-tabview-nav-container,
+    .p-tabview .p-tabview-nav-content,
+    .p-tabview .p-tabview-panels {
+        background-color: transparent !important;
+        border: none !important;
+        color: var(--profile-text-light) !important;
+    }
+    
+    /* TabView Nav Items */
+    .p-tabview .p-tabview-nav li {
+        background-color: transparent !important;
+        margin: 0 0.5rem !important;
+        
+        .p-tabview-nav-link {
+            background-color: transparent !important;
+            color: #a3c1d9 !important;
+            border: none !important;
+            padding: 0.75rem 1.25rem !important;
+            border-radius: 0.5rem 0.5rem 0 0 !important;
+            
+            &:hover {
+                background-color: rgba(0, 180, 216, 0.05) !important;
+                color: #00d4ff !important;
+            }
+            
+            .p-tabview-title {
+                color: #a3c1d9 !important;
+            }
+            
+            .p-tabview-left-icon {
+                color: #00b4d8 !important;
+                margin-right: 0.5rem !important;
+            }
+        }
+        
+        &.p-highlight {
+            .p-tabview-nav-link {
+                background-color: rgba(0, 180, 216, 0.1) !important;
+                position: relative !important;
+                
+                &::after {
+                    content: "" !important;
+                    position: absolute !important;
+                    bottom: 0 !important;
+                    left: 0 !important;
+                    right: 0 !important;
+                    height: 3px !important;
+                    background: linear-gradient(90deg, #0077b6, #00d4ff) !important;
+                }
+                
+                .p-tabview-title {
+                    color: #00d4ff !important;
+                }
+                
+                .p-tabview-left-icon {
+                    color: #00d4ff !important;
+                }
+            }
+        }
+    }
+    
+    /* Override any p-tablist and p-tabpanels elements if they exist */
+    p-tablist, .p-tablist,
+    p-tabpanels, .p-tabpanels {
+        background-color: transparent !important;
+        color: inherit !important;
+        border: none !important;
+        
+        * {
+            background-color: transparent !important;
+            color: inherit !important;
+        }
+    }
+    
+    /* Ensure modern-tabs class has the highest specificity */
+    .modern-tabs.p-tabview,
+    .modern-tabs .p-tabview,
+    .modern-tabs.p-element .p-tabview,
+    div.modern-tabs .p-tabview {
+        .p-tabview-nav {
+            border-bottom: 1px solid rgba(0, 180, 216, 0.15) !important;
+            background-color: transparent !important;
+            
+            li {
+                .p-tabview-nav-link {
+                    background-color: transparent !important;
+                    color: #a3c1d9 !important;
+                    border: none !important;
+                    
+                    .p-tabview-title {
+                        color: #a3c1d9 !important;
+                    }
+                }
+                
+                &.p-highlight .p-tabview-nav-link {
+                    background-color: rgba(0, 180, 216, 0.1) !important;
+                    
+                    .p-tabview-title {
+                        color: #00d4ff !important;
+                    }
+                }
+            }
+        }
+        
+        .p-tabview-panels {
+            border: none !important;
+            padding: 1.5rem 0 !important;
+            background-color: transparent !important;
+        }
+    }
+    
+    /* PrimeNG specific internal component overrides */
+    div[class*="p-tabview"] { 
+        background-color: transparent !important;
+        
+        [class*="p-tabview-nav"],
+        [class*="p-tabview-selected"],
+        [class*="p-tabview-panels"],
+        [class*="p-tabview-panel"] {
+            background-color: transparent !important;
+            color: inherit !important;
+            border-color: rgba(0, 180, 216, 0.15) !important;
+        }
+    }
 }
 
 /* PrimeNG 18 Component Styles */
@@ -117,6 +271,175 @@ h6 {
 /* Button styling consistency */
 .p-button {
     justify-content: center;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+/* Modern Button Styles */
+.p-button.p-button-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #0077b6, #00b4d8) !important;
+  color: white !important;
+  font-weight: 500 !important;
+  padding: 0.75rem 1.5rem !important;
+  border-radius: 2rem !important;
+  text-decoration: none !important;
+  border: none !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+  
+  &:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15) !important;
+    background: linear-gradient(135deg, #0077b6, #00d4ff) !important;
+  }
+  
+  &:focus {
+    box-shadow: 0 0 0 2px rgba(0, 180, 216, 0.25) !important;
+  }
+  
+  .p-button-icon {
+    margin-right: 0.5rem !important;
+  }
+}
+
+.p-button.p-button-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(15, 25, 40, 0.5) !important;
+  color: #f1f5f9 !important;
+  font-weight: 500 !important;
+  padding: 0.75rem 1.5rem !important;
+  border-radius: 2rem !important;
+  border: 1px solid rgba(0, 180, 216, 0.25) !important;
+  text-decoration: none !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05) !important;
+  
+  &:hover {
+    transform: translateY(-2px) !important;
+    background: rgba(15, 25, 40, 0.7) !important;
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.1) !important;
+    border-color: rgba(0, 180, 216, 0.4) !important;
+  }
+  
+  &:focus {
+    box-shadow: 0 0 0 2px rgba(0, 180, 216, 0.15) !important;
+  }
+  
+  .p-button-icon {
+    margin-right: 0.5rem !important;
+  }
+}
+
+.p-button.p-button-success {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #0aefff, #00b4d8) !important;
+  color: white !important;
+  font-weight: 500 !important;
+  padding: 0.75rem 1.5rem !important;
+  border-radius: 2rem !important;
+  border: none !important;
+  text-decoration: none !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+  
+  &:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15) !important;
+    background: linear-gradient(135deg, #00d4e0, #00a0c0) !important;
+  }
+  
+  &:focus {
+    box-shadow: 0 0 0 2px rgba(10, 239, 255, 0.25) !important;
+  }
+  
+  .p-button-icon {
+    margin-right: 0.5rem !important;
+  }
+}
+
+.p-button.p-button-danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f87171, #ef4444) !important;
+  color: white !important;
+  font-weight: 500 !important;
+  padding: 0.75rem 1.5rem !important;
+  border-radius: 2rem !important;
+  border: none !important;
+  text-decoration: none !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+  
+  &:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15) !important;
+    background: linear-gradient(135deg, #dc5555, #dd3333) !important;
+  }
+  
+  &:focus {
+    box-shadow: 0 0 0 2px rgba(248, 113, 113, 0.25) !important;
+  }
+  
+  .p-button-icon {
+    margin-right: 0.5rem !important;
+  }
+}
+
+/* Text button styling */
+.p-button.p-button-text {
+  background: transparent !important;
+  color: #00b4d8 !important;
+  border: none !important;
+  padding: 0.5rem 1rem !important;
+  font-weight: 500 !important;
+  transition: all 0.3s ease !important;
+  border-radius: 2rem !important;
+  
+  &:hover {
+    background: rgba(0, 180, 216, 0.1) !important;
+    transform: translateY(-1px) !important;
+  }
+  
+  &:focus {
+    box-shadow: 0 0 0 2px rgba(0, 180, 216, 0.15) !important;
+  }
+  
+  .p-button-icon {
+    margin-right: 0.5rem !important;
+  }
+}
+
+/* Outlined button styling */
+.p-button.p-button-outlined {
+  background: transparent !important;
+  color: #00b4d8 !important;
+  border: 1px solid #00b4d8 !important;
+  padding: 0.75rem 1.5rem !important;
+  font-weight: 500 !important;
+  border-radius: 2rem !important;
+  transition: all 0.3s ease !important;
+  
+  &:hover {
+    background: rgba(0, 180, 216, 0.1) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05) !important;
+  }
+  
+  &:focus {
+    box-shadow: 0 0 0 2px rgba(0, 180, 216, 0.15) !important;
+  }
+  
+  .p-button-icon {
+    margin-right: 0.5rem !important;
+  }
 }
 
 /* Auth Layout Styles */
@@ -999,4 +1322,205 @@ p-floatLabel[variant='on'] input.p-filled ~ label {
 
 .status-completed {
     color: #0077b6;
+}
+
+/* Panel styling */
+.p-panel {
+  background: rgba(9, 25, 43, 0.8) !important;
+  border: 1px solid rgba(0, 180, 216, 0.25) !important;
+  border-radius: 1rem !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+  transition: all 0.3s ease !important;
+  
+  &:hover {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+    border-color: rgba(0, 180, 216, 0.4) !important;
+  }
+  
+  .p-panel-header {
+    background: rgba(15, 25, 40, 0.6) !important;
+    border-bottom: 1px solid rgba(0, 180, 216, 0.25) !important;
+    padding: 1rem 1.5rem !important;
+    border-radius: 1rem 1rem 0 0 !important;
+    
+    .p-panel-title {
+      color: #f1f5f9 !important;
+      font-weight: 600 !important;
+      font-size: 1.1rem !important;
+    }
+    
+    .p-panel-header-icon {
+      color: #a3c1d9 !important;
+      
+      &:hover {
+        background: rgba(0, 180, 216, 0.1) !important;
+        color: #00b4d8 !important;
+      }
+    }
+  }
+  
+  .p-panel-content {
+    background: transparent !important;
+    color: #f1f5f9 !important;
+    padding: 1.25rem 1.5rem !important;
+    border: none !important;
+    border-radius: 0 0 1rem 1rem !important;
+  }
+  
+  .p-panel-footer {
+    background: rgba(15, 25, 40, 0.6) !important;
+    border-top: 1px solid rgba(0, 180, 216, 0.25) !important;
+    padding: 1rem 1.5rem !important;
+    border-radius: 0 0 1rem 1rem !important;
+  }
+}
+
+/* Card styling */
+.p-card {
+    background: rgba(15, 25, 40, 0.8) !important;
+    border-radius: 8px !important;
+    border: 1px solid rgba(0, 180, 216, 0.25) !important;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1) !important;
+    overflow: hidden !important;
+    
+    .p-card-title {
+        color: #f1f5f9 !important;
+    }
+    
+    .p-card-subtitle {
+        color: #a3c1d9 !important;
+    }
+    
+    .p-card-content {
+        color: #f1f5f9 !important;
+    }
+}
+
+/* Tag component styling */
+.p-tag {
+  border-radius: 4px !important;
+  padding: 0.25rem 0.5rem !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  
+  &.p-tag-success {
+    background-color: rgba(10, 239, 255, 0.1) !important;
+    color: #0aefff !important;
+    border: 1px solid rgba(10, 239, 255, 0.2) !important;
+  }
+  
+  &.p-tag-info {
+    background-color: rgba(0, 180, 216, 0.1) !important;
+    color: #00b4d8 !important;
+    border: 1px solid rgba(0, 180, 216, 0.2) !important;
+  }
+  
+  &.p-tag-warning {
+    background-color: rgba(251, 146, 60, 0.1) !important;
+    color: #fb923c !important;
+    border: 1px solid rgba(251, 146, 60, 0.2) !important;
+  }
+  
+  &.p-tag-danger {
+    background-color: rgba(248, 113, 113, 0.1) !important;
+    color: #f87171 !important;
+    border: 1px solid rgba(248, 113, 113, 0.2) !important;
+  }
+}
+
+/* Ultimate TabView Overrides - Direct Element Targeting */
+.p-tabview,
+.p-tabview-nav,
+.p-tabview-nav-container,
+.p-tabview-panels,
+.p-tabview-panel,
+.p-tablist,
+.p-tabpanels {
+  background-color: transparent !important;
+  color: #f1f5f9 !important;
+  border: none !important;
+}
+
+.p-tabview-nav li,
+.p-tablist-item {
+  background-color: transparent !important;
+  
+  .p-tabview-nav-link,
+  &.p-element {
+    background-color: transparent !important;
+    color: #a3c1d9 !important;
+    border: none !important;
+    
+    .p-tabview-title,
+    .p-tablist-item-title {
+      color: #a3c1d9 !important;
+    }
+  }
+  
+  &.p-highlight {
+    .p-tabview-nav-link,
+    &.p-element {
+      background-color: rgba(0, 180, 216, 0.1) !important;
+      position: relative !important;
+      
+      &::after {
+        content: '' !important;
+        position: absolute !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        height: 3px !important;
+        background: linear-gradient(90deg, #0077b6, #00d4ff) !important;
+      }
+      
+      .p-tabview-title,
+      .p-tablist-item-title {
+        color: #00d4ff !important;
+      }
+    }
+  }
+}
+
+/* Emergency fix for any black backgrounds */
+[class*="tabview"], 
+[class*="tablist"], 
+[class*="tabpanel"],
+p-tabview,
+p-tabpanel,
+p-tablist {
+  background-color: transparent !important;
+}
+
+/* Force text colors */
+[class*="tabview"] [class*="title"], 
+[class*="tablist"] [class*="title"],
+[class*="tabview"] span, 
+[class*="tablist"] span {
+  color: #a3c1d9 !important;
+}
+
+/* Force highlight colors */
+[class*="highlight"] [class*="title"], 
+[class*="highlight"] span {
+  color: #00d4ff !important;
+}
+
+/* Add !important to every CSS property related to tabView */
+.p-tabview, p-tabview, *[class*="tabview"] {
+  * {
+    background-color: transparent !important;
+  }
+}
+
+/* Target the tab active indicator bar */
+.p-tablist-active-bar,
+.p-tabview-ink-bar,
+[class*="tablist-active-bar"],
+[class*="tabview-ink-bar"] {
+  background: linear-gradient(90deg, #0077b6, #00d4ff) !important;
+  height: 3px !important;
+  border-radius: 3px !important;
+  box-shadow: 0 1px 3px rgba(0, 180, 216, 0.3) !important;
+  z-index: 2 !important;
+  bottom: 0 !important;
 }

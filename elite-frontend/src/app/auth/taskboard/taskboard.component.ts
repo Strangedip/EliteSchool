@@ -5,20 +5,34 @@ import { Task, TaskSubmission } from '../../core/models/task.model';
 import { TaskService } from '../../core/services/task.service';
 import { AuthService } from '../../core/services/auth.service';
 import { UserService } from '../../core/services/user.service';
-import { User } from '../../core/models/user.model';
 import { RewardService } from '../../core/services/reward.service';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextarea } from 'primeng/inputtextarea';
 import { InputTextModule } from 'primeng/inputtext';
+import { DropdownModule } from 'primeng/dropdown';
+import { InputNumberModule } from 'primeng/inputnumber';
 import { ToastService } from '../../core/services/toast.service';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ConfirmationService } from 'primeng/api';
 
 @Component({
   selector: 'app-taskboard',
   templateUrl: './taskboard.component.html',
   styleUrls: ['./taskboard.component.scss'],
   standalone: true,
-  imports: [CommonModule, ButtonModule, FormsModule, DialogModule, InputTextarea, InputTextModule],
+  imports: [
+    CommonModule, 
+    ButtonModule, 
+    FormsModule, 
+    DialogModule, 
+    InputTextarea, 
+    InputTextModule,
+    DropdownModule,
+    InputNumberModule,
+    ConfirmDialogModule
+  ],
+  providers: [ConfirmationService],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class TaskboardComponent implements OnInit {
@@ -46,12 +60,31 @@ export class TaskboardComponent implements OnInit {
     studentId: ''
   };
 
+  // Task edit properties
+  taskDialogVisible: boolean = false;
+  editMode: boolean = false;
+  taskToEdit: Task | null = null;
+  
+  // Priority options
+  priorityOptions = [
+    { label: 'High', value: 'high' },
+    { label: 'Medium', value: 'medium' },
+    { label: 'Low', value: 'low' }
+  ];
+  
+  // Task type options
+  taskTypeOptions = [
+    { label: 'Single', value: 'SINGLE' },
+    { label: 'Multiple', value: 'MULTIPLE' }
+  ];
+
   constructor(
     private taskService: TaskService, 
     private authService: AuthService,
     private userService: UserService,
     private rewardService: RewardService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private confirmationService: ConfirmationService
   ) { }
 
   ngOnInit(): void {
@@ -273,5 +306,85 @@ export class TaskboardComponent implements OnInit {
     if (!dateString) return '';
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  }
+  
+  isAdmin(): boolean {
+    return this.currentUserRole === 'ADMIN' || this.currentUserRole === 'MANAGEMENT';
+  }
+  
+  editTask(task: Task): void {
+    this.editMode = true;
+    this.taskToEdit = {...task}; // Clone to avoid modifying the original task
+    this.taskDialogVisible = true;
+  }
+  
+  addNewTask(): void {
+    this.editMode = false;
+    const defaultTask: Task = {
+      id: '',
+      title: '',
+      description: '',
+      taskType: 'SINGLE',
+      minLevel: 1,
+      rewardPoints: 10,
+      createdBy: this.currentUserId,
+      status: 'OPEN',
+      createdAt: new Date().toISOString(),
+      priority: 'medium'
+    };
+    this.taskToEdit = defaultTask;
+    this.taskDialogVisible = true;
+  }
+  
+  saveTask(): void {
+    if (!this.taskToEdit) return;
+    
+    if (this.editMode) {
+      // Update existing task
+      this.taskService.updateTask(this.taskToEdit.id, this.taskToEdit).subscribe({
+        next: (updatedTask) => {
+          this.toastService.showSuccess('Task updated successfully');
+          this.taskDialogVisible = false;
+          this.loadTasks(); // Reload tasks to update the board
+        },
+        error: (error) => {
+          console.error('Error updating task', error);
+          this.toastService.showError('Error updating task');
+        }
+      });
+    } else {
+      // Create new task
+      this.taskService.createTask(this.taskToEdit).subscribe({
+        next: (newTask) => {
+          this.toastService.showSuccess('Task created successfully');
+          this.taskDialogVisible = false;
+          this.loadTasks(); // Reload tasks to update the board
+        },
+        error: (error) => {
+          console.error('Error creating task', error);
+          this.toastService.showError('Error creating task');
+        }
+      });
+    }
+  }
+  
+  deleteTask(task: Task): void {
+    this.confirmationService.confirm({
+      message: `Are you sure you want to delete the task "${task.title}"?`,
+      header: 'Confirm Delete',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.taskService.deleteTask(task.id).subscribe({
+          next: () => {
+            this.toastService.showSuccess('Task deleted successfully');
+            this.loadTasks(); // Reload tasks to update the board
+          },
+          error: (error) => {
+            console.error('Error deleting task', error);
+            this.toastService.showError('Error deleting task');
+          }
+        });
+      }
+    });
   }
 }
