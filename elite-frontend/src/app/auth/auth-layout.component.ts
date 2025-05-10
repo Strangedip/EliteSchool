@@ -28,10 +28,11 @@ export class AuthLayoutComponent implements OnInit, OnDestroy {
     items = [
         { label: 'Dashboard', icon: 'pi pi-home', route: '/auth/dashboard' },
         { label: 'Tasks', icon: 'pi pi-check-square', route: '/auth/taskboard' },
-        { label: 'Wallet', icon: 'pi pi-wallet', route: '/auth/wallet' },
-        { label: 'Games', icon: 'pi pi-gamepad', route: '/auth/games' },
         { label: 'Store', icon: 'pi pi-shopping-cart', route: '/auth/store' },
+        { label: 'Wallet', icon: 'pi pi-wallet', route: '/auth/wallet' },
         { label: 'Profile', icon: 'pi pi-user', route: '/auth/profile' },
+        { label: 'Games', icon: 'pi pi-bullseye', route: '/auth/games' },
+        { label: 'AI', icon: 'pi pi-microchip-ai', route: '/auth/ai' },
         { label: 'Settings', icon: 'pi pi-cog', route: '/auth/settings' },
     ];
 
