@@ -6,11 +6,11 @@
                 <input pInputText type="text" placeholder="Search items..." (input)="onSearch($event)" />
                 <i class="pi pi-search"></i>
             </div>
-            <div class="reward-info" *ngIf="currentUserRole === 'STUDENT'">
-                <i class="pi pi-star-fill"></i>
+            <div class="wallet-info" *ngIf="currentUserRole === 'STUDENT'">
+                <i class="pi pi-wallet"></i>
                 <span>{{ rewardPoints }}</span>
-                <a href="/auth/rewards" class="view-rewards-link">
-                    <i class="pi pi-chart-bar"></i> Rewards
+                <a href="/auth/wallet" class="view-wallet-link">
+                    <i class="pi pi-chart-bar"></i> Wallet
                 </a>
             </div>
             <button pButton 
@@ -40,7 +40,7 @@
             </div>
         </ng-template>
         <div class="panel-content">
-            <p><i class="pi pi-star"></i> Use your reward points to redeem items from our store.</p>
+            <p><i class="pi pi-wallet"></i> Use your points to redeem items from our store.</p>
             <p><i class="pi pi-map-marker"></i> Items will be available for collection from the school office.</p>
             <p><i class="pi pi-clock"></i> Please allow 1-2 business days for processing.</p>
         </div>
@@ -68,7 +68,7 @@
             <ng-template pTemplate="content">
                 <p class="item-description">{{ item.description || 'No description available' }}</p>
                 <div class="item-meta">
-                    <span class="item-price"><i class="pi pi-star-fill"></i> {{ item.price }} Points</span>
+                    <span class="item-price"><i class="pi pi-wallet"></i> {{ item.price }} Points</span>
                     <p-tag [severity]="item.stock > 0 ? 'success' : 'danger'" [value]="item.stock > 0 ? item.stock + ' in stock' : 'Out of stock'"></p-tag>
                 </div>
             </ng-template>
@@ -167,8 +167,8 @@
                 <td>{{ transaction.createdAt | date:'medium' }}</td>
                 <td>
                     <p-tag 
-                        [severity]="transaction.transactionType === 'SPENT' ? 'danger' : 'success'" 
-                        [value]="transaction.transactionType === 'SPENT' ? 'Spent' : 'Earned'">
+                        [severity]="transaction.transactionType === 'DEBIT' ? 'danger' : 'success'" 
+                        [value]="transaction.transactionType === 'DEBIT' ? 'Debit' : 'Credit'">
                     </p-tag>
                 </td>
                 <td>{{ transaction.points }}</td>

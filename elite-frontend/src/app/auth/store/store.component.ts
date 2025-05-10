@@ -18,8 +18,8 @@ import { StoreItem } from '../../core/models/store-item.model';
 import { StoreService } from '../../core/services/store.service';
 import { AuthService } from '../../core/services/auth.service';
 import { UserService } from '../../core/services/user.service';
-import { RewardService } from '../../core/services/reward.service';
-import { RewardTransaction } from '../../core/models/reward.model';
+import { WalletService } from '../../core/services/wallet.service';
+import { Transaction } from '../../core/models/wallet.model';
 
 @Component({
   selector: 'app-store',
@@ -41,7 +41,7 @@ import { RewardTransaction } from '../../core/models/reward.model';
     PanelModule,
     TableModule
   ],
-  providers: [ConfirmationService, MessageService],
+  providers: [ConfirmationService, MessageService, WalletService],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class StoreComponent implements OnInit {
@@ -62,14 +62,14 @@ export class StoreComponent implements OnInit {
   
   // Transaction history properties
   historyDialogVisible: boolean = false;
-  transactionHistory: RewardTransaction[] = [];
+  transactionHistory: Transaction[] = [];
   loadingHistory: boolean = false;
 
   constructor(
     private storeService: StoreService,
     private authService: AuthService,
     private userService: UserService,
-    private rewardService: RewardService,
+    private walletService: WalletService,
     private confirmationService: ConfirmationService,
     private messageService: MessageService
   ) { }
@@ -81,100 +81,53 @@ export class StoreComponent implements OnInit {
 
   loadUserInfo(): void {
     const user = this.userService.getCurrentUser();
-    if (user) {
-      // Normalize role to uppercase for consistent comparison
-      this.currentUserRole = user.role?.toUpperCase() || '';
-      
-      if (this.currentUserRole === 'STUDENT') {
-        const userId = user.id || user.eliteId;
-        if (userId) {
-          this.loadRewardPoints(userId);
-        }
+    this.currentUserRole = user?.role || '';
+    
+    if (user && (user.role === 'STUDENT')) {
+      const userId = user.id || user.eliteId;
+      if (userId) {
+        this.loadWalletBalance(userId);
       }
-    } else {
-      // If no user found, try to fetch from API
-      this.userService.getUserProfile().subscribe({
-        next: (response) => {
-          if (response.success && response.data) {
-            this.currentUserRole = response.data.role?.toUpperCase() || '';
-            
-            if (this.currentUserRole === 'STUDENT') {
-              const userId = response.data.id || response.data.eliteId;
-              if (userId) {
-                this.loadRewardPoints(userId);
-              }
-            }
-          }
-        },
-        error: (error) => {
-          console.error('Failed to load user profile:', error);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Failed to load user profile. Some features may be unavailable.'
-          });
-        }
-      });
     }
   }
 
-  loadRewardPoints(userId: string): void {
-    this.rewardService.getWalletBalance(userId).subscribe({
-      next: (points) => {
-        this.rewardPoints = points;
+  loadWalletBalance(userId: string): void {
+    this.walletService.getWalletBalance(userId).subscribe({
+      next: (balance) => {
+        this.rewardPoints = balance;
       },
       error: (error) => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: `Failed to load reward points: ${error.message}`
-        });
+        console.error('Error loading wallet balance:', error);
       }
     });
   }
 
   showPurchaseHistory(): void {
-    this.historyDialogVisible = true;
-    this.loadTransactionHistory();
-  }
-  
-  loadTransactionHistory(): void {
-    const user = this.userService.getCurrentUser();
-    if (!user) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'User information not found'
-      });
-      return;
-    }
-    
-    const userId = user.id || user.eliteId;
-    if (!userId) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'User ID not found'
-      });
-      return;
-    }
-    
     this.loadingHistory = true;
-    this.rewardService.getTransactionHistory(userId).subscribe({
-      next: (transactions) => {
-        this.transactionHistory = transactions;
-        this.loadingHistory = false;
-      },
-      error: (error) => {
-        console.error('Error loading transaction history:', error);
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to load transaction history'
-        });
-        this.loadingHistory = false;
-      }
-    });
+    this.historyDialogVisible = true;
+    
+    const user = this.userService.getCurrentUser();
+    const userId = user ? (user.id || user.eliteId) : '';
+    
+    if (userId) {
+      this.walletService.getTransactionHistory(userId).subscribe({
+        next: (transactions) => {
+          this.transactionHistory = transactions;
+          this.loadingHistory = false;
+        },
+        error: (error) => {
+          console.error('Error loading transaction history:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to load transaction history'
+          });
+          this.loadingHistory = false;
+        }
+      });
+    } else {
+      this.loadingHistory = false;
+    }
   }
 
   loadItems(): void {
@@ -320,7 +273,7 @@ export class StoreComponent implements OnInit {
         this.storeService.purchaseItem(userId, item.id).subscribe({
           next: (response) => {
             // Update the local reward points
-            this.loadRewardPoints(userId);
+            this.loadWalletBalance(userId);
             
             this.messageService.add({
               severity: 'success',

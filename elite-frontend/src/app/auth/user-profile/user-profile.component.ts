@@ -7,8 +7,8 @@ import { TableModule } from 'primeng/table';
 import { AuthService } from '../../core/services/auth.service';
 import { UserService } from '../../core/services/user.service';
 import { User } from '../../core/models/user.model';
-import { RewardService } from '../../core/services/reward.service';
-import { RewardTransaction } from '../../core/models/reward.model';
+import { WalletService } from '../../core/services/wallet.service';
+import { Transaction } from '../../core/models/wallet.model';
 import { TaskService } from '../../core/services/task.service';
 import { TaskSubmission } from '../../core/models/task.model';
 
@@ -32,13 +32,13 @@ interface UserTaskDisplay {
 export class UserProfileComponent implements OnInit, AfterViewInit {
   user: User | null = null;
   rewardPoints: number = 0;
-  transactions: RewardTransaction[] = [];
+  transactions: Transaction[] = [];
   userTasks: UserTaskDisplay[] = [];
 
   constructor(
     private authService: AuthService,
     private userService: UserService,
-    private rewardService: RewardService,
+    private walletService: WalletService,
     private taskService: TaskService,
     private el: ElementRef
   ) { }
@@ -69,24 +69,24 @@ export class UserProfileComponent implements OnInit, AfterViewInit {
   }
 
   loadRewardPoints(userId: string): void {
-    this.rewardService.getWalletBalance(userId).subscribe(points => {
+    this.walletService.getWalletBalance(userId).subscribe((points: number) => {
       this.rewardPoints = points;
     });
   }
 
   loadTransactions(userId: string): void {
-    this.rewardService.getTransactionHistory(userId).subscribe(transactions => {
+    this.walletService.getTransactionHistory(userId).subscribe((transactions: Transaction[]) => {
       this.transactions = transactions;
     });
   }
 
   loadUserTasks(userId: string): void {
     // Get all task submissions for the student
-    this.taskService.getSubmissionsByStudent(userId).subscribe(submissions => {
+    this.taskService.getSubmissionsByStudent(userId).subscribe((submissions: any[]) => {
       const taskPromises: Promise<UserTaskDisplay>[] = submissions.map(submission => {
         // For each submission, get the related task to get its title and points
         return new Promise<UserTaskDisplay>((resolve) => {
-          this.taskService.getTaskById(submission.taskId).subscribe(task => {
+          this.taskService.getTaskById(submission.taskId).subscribe((task: any) => {
             resolve({
               id: submission.id || '',
               title: task.title,
@@ -116,14 +116,9 @@ export class UserProfileComponent implements OnInit, AfterViewInit {
     });
   }
 
-  formatDate(dateString: string): string {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
+  formatDate(date: string): string {
+    if (!date) return 'N/A';
+    return new Date(date).toLocaleDateString();
   }
 
   /**

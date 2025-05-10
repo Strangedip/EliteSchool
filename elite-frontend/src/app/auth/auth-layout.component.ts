@@ -28,7 +28,8 @@ export class AuthLayoutComponent implements OnInit, OnDestroy {
     items = [
         { label: 'Dashboard', icon: 'pi pi-home', route: '/auth/dashboard' },
         { label: 'Tasks', icon: 'pi pi-check-square', route: '/auth/taskboard' },
-        { label: 'Rewards', icon: 'pi pi-star', route: '/auth/rewards' },
+        { label: 'Wallet', icon: 'pi pi-wallet', route: '/auth/wallet' },
+        { label: 'Games', icon: 'pi pi-gamepad', route: '/auth/games' },
         { label: 'Store', icon: 'pi pi-shopping-cart', route: '/auth/store' },
         { label: 'Profile', icon: 'pi pi-user', route: '/auth/profile' },
         { label: 'Settings', icon: 'pi pi-cog', route: '/auth/settings' },

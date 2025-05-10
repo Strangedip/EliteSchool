@@ -1,0 +1,125 @@
+<div class="game-container">
+  <div class="game-header">
+    <div class="back-button">
+      <p-button icon="pi pi-arrow-left" (onClick)="backToGames()" styleClass="p-button-rounded p-button-text"></p-button>
+    </div>
+    <h1>Rock Paper Scissors</h1>
+  </div>
+
+  <div class="game-content">
+    <!-- Game Area - Now on top -->
+    <div class="game-area">
+      <!-- Choice Selection -->
+      <div class="choice-selection" *ngIf="!showResult">
+        <h3 class="selection-title">Make your choice</h3>
+        
+        <div class="choices-grid">
+          <div class="choice-card" (click)="makeChoice('rock')">
+            <div class="choice-image-container">
+              <img [src]="choiceImages.rock" alt="Rock" class="choice-image" 
+                   onerror="this.src='assets/images/games/game-placeholder.svg'">
+            </div>
+            <span class="choice-name">Rock</span>
+          </div>
+          
+          <div class="choice-card" (click)="makeChoice('paper')">
+            <div class="choice-image-container">
+              <img [src]="choiceImages.paper" alt="Paper" class="choice-image"
+                   onerror="this.src='assets/images/games/game-placeholder.svg'">
+            </div>
+            <span class="choice-name">Paper</span>
+          </div>
+          
+          <div class="choice-card" (click)="makeChoice('scissors')">
+            <div class="choice-image-container">
+              <img [src]="choiceImages.scissors" alt="Scissors" class="choice-image"
+                   onerror="this.src='assets/images/games/game-placeholder.svg'">
+            </div>
+            <span class="choice-name">Scissors</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Game Result -->
+      <div class="game-result" *ngIf="showResult">
+        <h3 class="result-title" [ngClass]="{
+          'win-text': result === 'win',
+          'lose-text': result === 'lose',
+          'draw-text': result === 'draw'
+        }">
+          {{ result === 'win' ? 'You Win!' : result === 'lose' ? 'You Lose!' : 'It\'s a Draw!' }}
+        </h3>
+        
+        <div class="result-display">
+          <div class="player-choice">
+            <h4>Your Choice</h4>
+            <div class="result-image-container">
+              <img [src]="playerChoice ? choiceImages[playerChoice] : ''" [alt]="playerChoice || ''" class="result-image"
+                   onerror="this.src='assets/images/games/game-placeholder.svg'">
+            </div>
+            <span class="result-choice-name">{{playerChoice ? choiceNames[playerChoice] : ''}}</span>
+          </div>
+          
+          <div class="versus">VS</div>
+          
+          <div class="computer-choice">
+            <h4>Computer's Choice</h4>
+            <div class="result-image-container">
+              <img [src]="computerChoice ? choiceImages[computerChoice] : ''" [alt]="computerChoice || ''" class="result-image"
+                   onerror="this.src='assets/images/games/game-placeholder.svg'">
+            </div>
+            <span class="result-choice-name">{{computerChoice ? choiceNames[computerChoice] : ''}}</span>
+          </div>
+        </div>
+        
+        <div class="result-actions">
+          <p-button 
+            label="Play Again" 
+            icon="pi pi-replay" 
+            styleClass="p-button-primary" 
+            (onClick)="playAgain()">
+          </p-button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Game Stats - Now below -->
+    <div class="game-stats">
+      <div class="stats-card">
+        <div class="stats-header">
+          <h3>Game Statistics</h3>
+          <p-button 
+            icon="pi pi-refresh" 
+            styleClass="p-button-rounded p-button-text p-button-sm" 
+            (onClick)="resetStats()"
+            pTooltip="Reset Stats">
+          </p-button>
+        </div>
+        
+        <div class="stats-grid">
+          <div class="stat-item wins">
+            <span class="stat-value">{{wins}}</span>
+            <span class="stat-label">Wins</span>
+          </div>
+          
+          <div class="stat-item losses">
+            <span class="stat-value">{{losses}}</span>
+            <span class="stat-label">Losses</span>
+          </div>
+          
+          <div class="stat-item draws">
+            <span class="stat-value">{{draws}}</span>
+            <span class="stat-label">Draws</span>
+          </div>
+        </div>
+        
+        <div class="streak-info" *ngIf="streak > 0">
+          <span class="streak-value">{{streak}}</span>
+          <span class="streak-label">Game Winning Streak!</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-toast></p-toast> 

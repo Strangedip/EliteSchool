@@ -29,11 +29,11 @@
         </div>
 
         <div class="card summary-card">
-            <div class="card-icon rewards">
-                <i class="pi pi-star-fill"></i>
+            <div class="card-icon wallet">
+                <i class="pi pi-wallet"></i>
             </div>
             <div class="card-content">
-                <h3>Rewards</h3>
+                <h3>Wallet</h3>
                 <div class="card-stat">{{ rewardPoints || 0 }}</div>
                 <p>Available points</p>
             </div>
@@ -84,32 +84,32 @@
             </div>
         </div>
 
-        <!-- Rewards Activity -->
-        <div class="card rewards-card">
+        <!-- Wallet Activity -->
+        <div class="card wallet-card">
             <div class="card-header">
-                <h2>Rewards Activity</h2>
-                <a routerLink="/auth/rewards" class="view-all">View All</a>
+                <h2>Wallet Activity</h2>
+                <a routerLink="/auth/wallet" class="view-all">View All</a>
             </div>
-            <div class="rewards-summary" *ngIf="!loadingRewards">
-                <div class="reward-stat">
-                    <span class="stat-label">Total Earned</span>
+            <div class="wallet-summary" *ngIf="!loadingRewards">
+                <div class="wallet-stat">
+                    <span class="stat-label">Total Credits</span>
                     <span class="stat-value earned">+{{ totalEarned }}</span>
                 </div>
-                <div class="reward-stat">
-                    <span class="stat-label">Total Spent</span>
+                <div class="wallet-stat">
+                    <span class="stat-label">Total Debits</span>
                     <span class="stat-value spent">-{{ totalSpent }}</span>
                 </div>
-                <div class="reward-stat">
+                <div class="wallet-stat">
                     <span class="stat-label">Available</span>
                     <span class="stat-value">{{ rewardPoints }}</span>
                 </div>
             </div>
-            <div class="rewards-loading" *ngIf="loadingRewards">
+            <div class="wallet-loading" *ngIf="loadingRewards">
                 <i class="pi pi-spin pi-spinner"></i>
-                <span>Loading rewards data...</span>
+                <span>Loading wallet data...</span>
             </div>
             <div class="card-actions">
-                <a routerLink="/auth/rewards" class="btn-primary">View Rewards</a>
+                <a routerLink="/auth/wallet" class="btn-primary">View Wallet</a>
                 <a routerLink="/auth/store" class="btn-secondary">Browse Store</a>
             </div>
         </div>

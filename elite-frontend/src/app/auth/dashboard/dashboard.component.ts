@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { RewardService } from '../../core/services/reward.service';
+import { WalletService } from '../../core/services/wallet.service';
 import { AuthService } from '../../core/services/auth.service';
 import { UserService } from '../../core/services/user.service';
 import { ToastService } from '../../core/services/toast.service';
 import { finalize } from 'rxjs';
-import { RewardTransaction } from '../../core/models/reward.model';
+import { Transaction } from '../../core/models/wallet.model';
 
 @Component({
   selector: 'app-dashboard',
@@ -19,7 +19,7 @@ export class DashboardComponent implements OnInit {
   currentUserId: string = '';
   
   constructor(
-    private rewardService: RewardService,
+    private walletService: WalletService,
     private authService: AuthService,
     private userService: UserService,
     private toastService: ToastService
@@ -30,13 +30,13 @@ export class DashboardComponent implements OnInit {
   }
   
   loadUserInfo(): void {
-    // Try to get current user from auth service
+    // Try to get current user from user service
     const user = this.userService.getCurrentUser();
     if (user) {
       // If user found, get ID
       this.currentUserId = user.id || user.eliteId || '';
       if (this.currentUserId) {
-        this.loadRewardData();
+        this.loadWalletData();
       }
     } else {
       // If no user found, try to fetch from API
@@ -45,7 +45,7 @@ export class DashboardComponent implements OnInit {
           if (response.success && response.data) {
             this.currentUserId = response.data.id || response.data.eliteId || '';
             if (this.currentUserId) {
-              this.loadRewardData();
+              this.loadWalletData();
             }
           }
         },
@@ -57,42 +57,42 @@ export class DashboardComponent implements OnInit {
     }
   }
   
-  loadRewardData(): void {
+  loadWalletData(): void {
     if (!this.currentUserId) return;
     
     this.loadingRewards = true;
     
-    // Load reward points
-    this.rewardService.getWalletBalance(this.currentUserId)
+    // Load wallet balance
+    this.walletService.getWalletBalance(this.currentUserId)
       .subscribe({
-        next: (balance) => {
+        next: (balance: number) => {
           this.rewardPoints = balance;
         },
-        error: (error) => {
+        error: (error: any) => {
           console.error('Error loading wallet balance', error);
         }
       });
       
     // Load transaction history to calculate totals
-    this.rewardService.getTransactionHistory(this.currentUserId)
+    this.walletService.getTransactionHistory(this.currentUserId)
       .pipe(finalize(() => this.loadingRewards = false))
       .subscribe({
-        next: (transactions) => {
-          this.calculateRewardTotals(transactions);
+        next: (transactions: Transaction[]) => {
+          this.calculateWalletTotals(transactions);
         },
-        error: (error) => {
+        error: (error: any) => {
           console.error('Error loading transaction history', error);
         }
       });
   }
   
-  calculateRewardTotals(transactions: RewardTransaction[]): void {
+  calculateWalletTotals(transactions: Transaction[]): void {
     this.totalEarned = transactions
-      .filter(t => t.transactionType === 'EARNED')
+      .filter(t => t.transactionType === 'CREDIT')
       .reduce((sum, t) => sum + t.points, 0);
       
     this.totalSpent = transactions
-      .filter(t => t.transactionType === 'SPENT')
+      .filter(t => t.transactionType === 'DEBIT')
       .reduce((sum, t) => sum + t.points, 0);
   }
 }

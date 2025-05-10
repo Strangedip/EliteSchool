@@ -25,10 +25,10 @@
             <div class="elite-points-card" *ngIf="user.role === 'STUDENT'">
                 <div class="points-header">Elite Points</div>
                 <div class="points-value">
-                    <i class="pi pi-star-fill"></i>
+                    <i class="pi pi-wallet"></i>
                     <span>{{ rewardPoints }}</span>
                 </div>
-                <a routerLink="/auth/rewards" class="points-action">
+                <a routerLink="/auth/wallet" class="points-action">
                     <i class="pi pi-shopping-bag"></i>
                     Go to Store
                 </a>
@@ -115,8 +115,8 @@
                 </div>
             </p-tabPanel>
 
-            <p-tabPanel header="Rewards History" leftIcon="pi pi-wallet" *ngIf="user.role === 'STUDENT'">
-                <div class="profile-card rewards-history-card">
+            <p-tabPanel header="Wallet History" leftIcon="pi pi-wallet" *ngIf="user.role === 'STUDENT'">
+                <div class="profile-card wallet-history-card">
                     <div class="card-header">
                         <i class="pi pi-history"></i>
                         <span>Transaction History</span>
@@ -136,13 +136,13 @@
                                     <td>{{ formatDate(transaction.createdAt) }}</td>
                                     <td>{{ transaction.description }}</td>
                                     <td>
-                                        <span class="transaction-badge" [ngClass]="transaction.transactionType === 'EARNED' ? 'earned' : 'spent'">
+                                        <span class="transaction-badge" [ngClass]="transaction.transactionType === 'CREDIT' ? 'credit' : 'debit'">
                                             {{ transaction.transactionType }}
                                         </span>
                                     </td>
                                     <td>
-                                        <span [ngClass]="{'positive': transaction.transactionType === 'EARNED', 'negative': transaction.transactionType === 'SPENT'}">
-                                            {{ transaction.transactionType === 'EARNED' ? '+' : '-' }} {{ transaction.points }}
+                                        <span [ngClass]="{'positive': transaction.transactionType === 'CREDIT', 'negative': transaction.transactionType === 'DEBIT'}">
+                                            {{ transaction.transactionType === 'CREDIT' ? '+' : '-' }} {{ transaction.points }}
                                         </span>
                                     </td>
                                 </tr>
@@ -175,7 +175,7 @@
                                     <th>Title</th>
                                     <th>Status</th>
                                     <th>Submitted On</th>
-                                    <th>Reward Points</th>
+                                    <th>Points</th>
                                 </tr>
                             </ng-template>
                             <ng-template pTemplate="body" let-task>
@@ -189,7 +189,7 @@
                                     <td>{{ formatDate(task.submittedAt || '') }}</td>
                                     <td>
                                         <span class="task-points">
-                                            <i class="pi pi-star-fill"></i>
+                                            <i class="pi pi-wallet"></i>
                                             {{ task.rewardPoints }}
                                         </span>
                                     </td>

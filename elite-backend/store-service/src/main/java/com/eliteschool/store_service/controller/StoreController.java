@@ -106,4 +106,18 @@ public class StoreController {
                 .orElseGet(() -> ResponseUtil.error(HttpStatus.BAD_REQUEST, "PURCHASE_FAILED", 
                           "Item out of stock or not found", "Purchase failed"));
     }
+
+    /**
+     * Get item price by ID.
+     * @param itemId The item's ID.
+     * @return ResponseEntity with the item price.
+     */
+    @GetMapping("/items/{itemId}/price")
+    public ResponseEntity<CommonResponseDto<Integer>> getItemPrice(@PathVariable UUID itemId) {
+        log.info("Request received to get price for item with ID: {}", itemId);
+        return storeService.getItemById(itemId)
+                .map(item -> ResponseUtil.success("Item price retrieved successfully", item.getPrice()))
+                .orElseGet(() -> ResponseUtil.error(HttpStatus.NOT_FOUND, "ITEM_NOT_FOUND", 
+                          "Item with ID " + itemId + " not found", "Item not found"));
+    }
 }

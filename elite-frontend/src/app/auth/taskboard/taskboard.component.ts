@@ -5,7 +5,7 @@ import { Task, TaskSubmission } from '../../core/models/task.model';
 import { TaskService } from '../../core/services/task.service';
 import { AuthService } from '../../core/services/auth.service';
 import { UserService } from '../../core/services/user.service';
-import { RewardService } from '../../core/services/reward.service';
+import { WalletService } from '../../core/services/wallet.service';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextarea } from 'primeng/inputtextarea';
@@ -82,7 +82,7 @@ export class TaskboardComponent implements OnInit {
     private taskService: TaskService, 
     private authService: AuthService,
     private userService: UserService,
-    private rewardService: RewardService,
+    private walletService: WalletService,
     private toastService: ToastService,
     private confirmationService: ConfirmationService
   ) { }
@@ -123,11 +123,11 @@ export class TaskboardComponent implements OnInit {
   }
 
   loadRewardPoints(userId: string): void {
-    this.rewardService.getWalletBalance(userId).subscribe({
+    this.walletService.getWalletBalance(userId).subscribe({
       next: (points: number) => {
         this.rewardPoints = points;
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Error loading reward points:', error);
       }
     });

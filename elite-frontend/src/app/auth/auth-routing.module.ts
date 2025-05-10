@@ -9,7 +9,7 @@ import { SettingsComponent } from './settings/settings.component';
 // Import the module instead of the component directly
 // import { RewardsComponent } from './rewards/rewards.component';
 
-// Note: Several components here are standalone components (RewardsComponent, TaskboardComponent, AuthLayoutComponent, StoreComponent)
+// Note: Several components here are standalone components (TaskboardComponent, AuthLayoutComponent, StoreComponent, WalletComponent)
 const routes: Routes = [
   {
     path: '',
@@ -18,11 +18,15 @@ const routes: Routes = [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'store', component: StoreComponent },
       { path: 'taskboard', component: TaskboardComponent },
-      // Use lazy loading for rewards component
+      // Wallet route
       { 
-        path: 'rewards', 
-        loadChildren: () => import('./rewards/rewards.module').then(m => m.RewardsModule),
-        // The RewardsModule will handle loading the RewardsComponent
+        path: 'wallet', 
+        loadChildren: () => import('./wallet/wallet.module').then(m => m.WalletModule),
+      },
+      // Use lazy loading for games module
+      {
+        path: 'games',
+        loadChildren: () => import('./games/games.module').then(m => m.GamesModule),
       },
       { path: 'profile', component: UserProfileComponent },
       { path: 'settings', component: SettingsComponent },

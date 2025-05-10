@@ -1,17 +1,25 @@
 package com.eliteschool.reward_service.dto;
 
-import com.eliteschool.reward_service.model.RewardTransaction;
+import com.eliteschool.reward_service.model.Transaction;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class RewardTransactionMapper {
+/**
+ * Mapper class for converting between Transaction and TransactionDto
+ */
+public class TransactionMapper {
 
-    public static RewardTransactionDto toDto(RewardTransaction transaction) {
+    /**
+     * Convert a Transaction entity to a TransactionDto
+     * @param transaction The transaction entity
+     * @return The transaction DTO
+     */
+    public static TransactionDto toDto(Transaction transaction) {
         if (transaction == null) {
             return null;
         }
         
-        return RewardTransactionDto.builder()
+        return TransactionDto.builder()
                 .id(transaction.getId())
                 .studentId(transaction.getStudentId())
                 .transactionType(transaction.getTransactionType())
@@ -21,28 +29,37 @@ public class RewardTransactionMapper {
                 .build();
     }
     
-    public static RewardTransaction toEntity(RewardTransactionDto dto) {
+    /**
+     * Convert a TransactionDto to a Transaction entity
+     * @param dto The transaction DTO
+     * @return The transaction entity
+     */
+    public static Transaction toEntity(TransactionDto dto) {
         if (dto == null) {
             return null;
         }
         
-        return RewardTransaction.builder()
+        return Transaction.builder()
                 .id(dto.getId())
                 .studentId(dto.getStudentId())
                 .transactionType(dto.getTransactionType())
                 .points(dto.getPoints())
                 .description(dto.getDescription())
-                .createdAt(dto.getCreatedAt())
                 .build();
     }
     
-    public static List<RewardTransactionDto> toDtoList(List<RewardTransaction> transactions) {
+    /**
+     * Convert a list of Transaction entities to a list of TransactionDtos
+     * @param transactions The list of transaction entities
+     * @return The list of transaction DTOs
+     */
+    public static List<TransactionDto> toDtoList(List<Transaction> transactions) {
         if (transactions == null) {
             return List.of();
         }
         
         return transactions.stream()
-                .map(RewardTransactionMapper::toDto)
+                .map(TransactionMapper::toDto)
                 .collect(Collectors.toList());
     }
 } 

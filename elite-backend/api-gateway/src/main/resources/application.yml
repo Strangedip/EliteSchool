@@ -41,10 +41,10 @@ spring:
           filters:
             - PreserveHostHeader
 
-        - id: reward-service
-          uri: lb://reward-service
+        - id: wallet-service
+          uri: lb://wallet-service
           predicates:
-            - Path=/api/rewards/**
+            - Path=/api/wallet/**
           filters:
             - PreserveHostHeader
 

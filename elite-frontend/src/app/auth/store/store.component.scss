@@ -94,7 +94,7 @@
   }
 }
 
-.reward-info {
+.wallet-info {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -105,11 +105,11 @@
   color: #f1f5f9;
   
   i {
-    color: #fbbf24;
+    color: #00b4d8;
     font-size: 1rem;
   }
   
-  .view-rewards-link {
+  .view-wallet-link {
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -410,7 +410,7 @@
         }
       }
       
-      .reward-info {
+      .wallet-info {
         width: 100%;
       }
       

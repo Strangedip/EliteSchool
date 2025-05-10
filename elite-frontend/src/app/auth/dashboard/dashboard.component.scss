@@ -101,8 +101,9 @@
       background: linear-gradient(135deg, #4361ee, #4895ef);
     }
     
-    &.grades {
-      background: linear-gradient(135deg, #560bad, #7209b7);
+    // Wallet icon color
+    &.wallet {
+      background: linear-gradient(135deg, #0077b6, #00b4d8);
     }
     
     &.events {
@@ -274,99 +275,87 @@
   }
 }
 
-// Rewards icon color
-.card-icon.rewards {
-  background: linear-gradient(135deg, #ffb56b, #ff8e3c);
-}
-
-// Rewards card styles
-.rewards-card {
-  .rewards-summary {
+// Wallet card styles
+.wallet-card {
+  .wallet-summary {
     display: flex;
     justify-content: space-between;
-    padding: 15px 0;
-    margin-bottom: 15px;
+    margin-bottom: 1.5rem;
     
-    .reward-stat {
-      flex: 1;
+    .wallet-stat {
       text-align: center;
-      border-right: 1px solid #eee;
-      padding: 0 10px;
-      
-      &:last-child {
-        border-right: none;
-      }
+      flex: 1;
       
       .stat-label {
         display: block;
-        font-size: 0.85rem;
-        color: #777;
-        margin-bottom: 5px;
+        font-size: 0.75rem;
+        color: #64748b;
+        margin-bottom: 0.5rem;
       }
       
       .stat-value {
-        display: block;
-        font-size: 1.5rem;
-        font-weight: 600;
-        color: #333;
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #f1f5f9;
         
         &.earned {
-          color: #2ecc71;
+          color: #10b981;
         }
         
         &.spent {
-          color: #e74c3c;
+          color: #ef4444;
         }
       }
     }
   }
   
-  .rewards-loading {
+  .wallet-loading {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    padding: 30px 0;
+    padding: 2rem 0;
+    color: #64748b;
     
     i {
-      font-size: 1.5rem;
-      margin-right: 10px;
-      color: #777;
-    }
-    
-    span {
-      color: #777;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      color: #00b4d8;
     }
   }
   
   .card-actions {
     display: flex;
-    gap: 15px;
-    margin-top: 20px;
+    justify-content: space-between;
+    margin-top: 1rem;
     
     a {
       flex: 1;
+      padding: 0.75rem;
+      border-radius: 0.25rem;
       text-align: center;
-      padding: 10px;
-      border-radius: 5px;
+      font-size: 0.875rem;
       font-weight: 500;
+      transition: all 0.2s ease;
       text-decoration: none;
-      transition: all 0.2s;
       
       &.btn-primary {
-        background-color: var(--primary-color);
-        color: white;
+        background: linear-gradient(135deg, #0077b6, #00b4d8);
+        color: #ffffff;
+        margin-right: 0.5rem;
         
         &:hover {
-          background-color: var(--primary-color-darker, #3f51b5);
+          box-shadow: 0 0 15px rgba(0, 180, 216, 0.5);
         }
       }
       
       &.btn-secondary {
-        background-color: #f5f5f5;
-        color: #333;
+        background: rgba(0, 180, 216, 0.1);
+        border: 1px solid rgba(0, 180, 216, 0.3);
+        color: #00b4d8;
+        margin-left: 0.5rem;
         
         &:hover {
-          background-color: #e0e0e0;
+          background: rgba(0, 180, 216, 0.2);
         }
       }
     }

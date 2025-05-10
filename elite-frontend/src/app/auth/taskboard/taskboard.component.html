@@ -6,11 +6,11 @@
                 <input type="text" placeholder="Search tasks..." (input)="onSearch($event)" />
                 <i class="pi pi-search"></i>
             </div>
-            <div class="reward-info" *ngIf="currentUserRole === 'STUDENT'">
-                <i class="pi pi-star-fill"></i>
+            <div class="wallet-info" *ngIf="currentUserRole === 'STUDENT'">
+                <i class="pi pi-wallet"></i>
                 <span>{{ rewardPoints }}</span>
-                <a href="/auth/rewards" class="view-rewards-link">
-                    <i class="pi pi-chart-bar"></i> View Rewards
+                <a href="/auth/wallet" class="view-wallet-link">
+                    <i class="pi pi-chart-bar"></i> View Wallet
                 </a>
             </div>
             <button pButton 
@@ -45,7 +45,7 @@
                         <h4 class="task-title">{{ task.title }}</h4>
                         <p class="task-description">{{ task.description }}</p>
                         <div class="task-meta">
-                            <span class="task-points"><i class="pi pi-star"></i> {{ task.rewardPoints }} Points</span>
+                            <span class="task-points"><i class="pi pi-wallet"></i> {{ task.rewardPoints }} Points</span>
                             <span class="task-type">{{ task.taskType }}</span>
                         </div>
                         <div class="task-actions" *ngIf="currentUserRole === 'STUDENT'">
@@ -84,7 +84,7 @@
                         <h4 class="task-title">{{ task.title }}</h4>
                         <p class="task-description">{{ task.description }}</p>
                         <div class="task-meta">
-                            <span class="task-points"><i class="pi pi-star"></i> {{ task.rewardPoints }} Points</span>
+                            <span class="task-points"><i class="pi pi-wallet"></i> {{ task.rewardPoints }} Points</span>
                             <span class="task-status-text">Pending Verification</span>
                         </div>
                         <div class="task-actions" *ngIf="canVerifyTasks()">
@@ -121,7 +121,7 @@
                         <h4 class="task-title">{{ task.title }}</h4>
                         <p class="task-description">{{ task.description }}</p>
                         <div class="task-meta">
-                            <span class="task-points"><i class="pi pi-star"></i> {{ task.rewardPoints }} Points</span>
+                            <span class="task-points"><i class="pi pi-wallet"></i> {{ task.rewardPoints }} Points</span>
                             <span class="task-completed-date" *ngIf="task.completedAt">{{ formatDate(task.completedAt) }}</span>
                         </div>
                     </div>
@@ -184,7 +184,7 @@
         </div>
         <div class="form-row" style="display: flex; gap: 20px;">
             <div class="field" style="flex: 1;">
-                <label for="rewardPoints">Reward Points <span class="text-danger">*</span></label>
+                <label for="rewardPoints">Points <span class="text-danger">*</span></label>
                 <p-inputNumber id="rewardPoints" [(ngModel)]="taskToEdit.rewardPoints" name="rewardPoints" [min]="1" [showButtons]="true" required></p-inputNumber>
             </div>
             <div class="field" style="flex: 1;">

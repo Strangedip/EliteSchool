@@ -64,6 +64,41 @@
   }
 }
 
+.wallet-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: rgba(0, 180, 216, 0.1);
+  border: 1px solid rgba(0, 180, 216, 0.2);
+  padding: 0.5rem 0.75rem;
+  border-radius: 2rem;
+  
+  i {
+    color: #00b4d8;
+  }
+  
+  span {
+    font-weight: 600;
+    color: #f1f5f9;
+  }
+  
+  .view-wallet-link {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: #00b4d8;
+    text-decoration: none;
+    margin-left: 0.5rem;
+    font-size: 0.875rem;
+    transition: color 0.2s;
+    
+    &:hover {
+      color: #0077b6;
+      text-decoration: underline;
+    }
+  }
+}
+
 .action-button {
   min-width: 120px;
   display: flex;
@@ -524,7 +559,7 @@
     }
   }
   
-  .reward-info {
+  .wallet-info {
     width: 100%;
     justify-content: space-between;
   }
@@ -544,39 +579,5 @@
   .task-column {
     height: auto;
     min-height: 300px;
-  }
-}
-
-.reward-info {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  background: rgba(15, 25, 40, 0.6);
-  border: 1px solid rgba(0, 180, 216, 0.25);
-  border-radius: 2rem;
-  color: #f1f5f9;
-  
-  i {
-    color: #fbbf24;
-  }
-  
-  .view-rewards-link {
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    color: #00b4d8;
-    font-size: 0.85rem;
-    margin-left: 0.75rem;
-    padding-left: 0.75rem;
-    border-left: 1px solid rgba(0, 180, 216, 0.25);
-    text-decoration: none;
-    transition: color 0.2s;
-    
-    &:hover {
-      color: #00d4ff;
-      text-decoration: underline;
-    }
   }
 }
