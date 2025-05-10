@@ -1,0 +1,67 @@
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: auth-service-auth
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/auth/**
+          filters:
+            - PreserveHostHeader
+
+        - id: auth-service-users
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/users/**
+          filters:
+            - PreserveHostHeader
+
+        - id: auth-service-user
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/user/**
+          filters:
+            - PreserveHostHeader
+
+        - id: task-service-tasks
+          uri: lb://task-service
+          predicates:
+            - Path=/api/tasks/**
+          filters:
+            - PreserveHostHeader
+
+        - id: task-service-submissions
+          uri: lb://task-service
+          predicates:
+            - Path=/api/task-submissions/**
+          filters:
+            - PreserveHostHeader
+
+        - id: wallet-service
+          uri: lb://wallet-service
+          predicates:
+            - Path=/api/wallet/**
+          filters:
+            - PreserveHostHeader
+
+        - id: store-service
+          uri: lb://store-service
+          predicates:
+            - Path=/api/store/**
+          filters:
+            - PreserveHostHeader
+
+      default-filters:
+        - PreserveHostHeader
+        - RemoveRequestHeader=Cookie
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true

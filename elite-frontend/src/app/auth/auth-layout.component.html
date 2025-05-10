@@ -1,0 +1,64 @@
+<div class="app-layout">
+    <!-- Sidebar navigation -->
+    <aside class="side-nav" [ngClass]="{'mobile-open': isMobileMenuOpen}">
+        <div class="brand">
+            <div class="logo">
+                <span>E</span>
+            </div>
+            <h1 class="brand-name">Elite School</h1>
+        </div>
+        
+        <nav class="nav-menu">
+            <div class="menu-items">
+                <ul>
+                    <li *ngFor="let item of items; let i = index" 
+                        [class.active]="activeIndex === i"
+                        (click)="handleTabChange(i)">
+                        <a>
+                            <i [class]="item.icon"></i>
+                            <span>{{item.label}}</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Logout option at bottom of sidebar -->
+            <div class="bottom-menu">
+                <ul>
+                    <li class="logout-item" (click)="logout()">
+                        <a>
+                            <span>Logout</span>
+                            <i class="pi pi-sign-out"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main content area -->
+    <main class="main-content">
+        <!-- Mobile menu toggle button moved inside header -->
+        <header class="header">
+            <div class="header-left">
+                <!-- Mobile menu toggle button -->
+                <button class="mobile-menu-toggle" (click)="toggleMobileMenu()">
+                    <i class="pi" [ngClass]="isMobileMenuOpen ? 'pi-times' : 'pi-bars'"></i>
+                </button>
+                <h2 class="page-title">{{pageTitle}}</h2>
+            </div>
+            
+            <!-- Add logout button to header for easy access -->
+            <div class="header-right">
+                <button class="logout-btn" (click)="logout()">
+                    <i class="pi pi-sign-out"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </header>
+        
+        <div class="content-container">
+            <router-outlet></router-outlet>
+        </div>
+    </main>
+</div>

@@ -1,0 +1,32 @@
+<div class="games-container">
+  <div class="games-header">
+    <h1>Games</h1>
+    <p class="games-subtitle">Take a break and enjoy these games!</p>
+  </div>
+  
+  <div class="games-grid">
+    <div *ngFor="let game of games" class="game-card">
+      <p-card [styleClass]="'game-card-content'">
+        <ng-template pTemplate="header">
+          <div class="game-image-container">
+            <img [src]="game.imageUrl" [alt]="game.name" class="game-image" 
+                 onerror="this.src='assets/images/games/game-placeholder.svg'">
+          </div>
+        </ng-template>
+        
+        <h3 class="game-title">{{game.name}}</h3>
+        <p class="game-description">{{game.description}}</p>
+        
+        <ng-template pTemplate="footer">
+          <div class="game-footer">
+            <p-button 
+              label="Play Now" 
+              styleClass="p-button-primary" 
+              (onClick)="navigateToGame(game.route)">
+            </p-button>
+          </div>
+        </ng-template>
+      </p-card>
+    </div>
+  </div>
+</div> 

@@ -1,1 +1,1526 @@
-/* You can add global styles to this file, and also import other style files */
+/* Import Fonts */
+@import 'assets/fonts.scss';
+
+/* Import Typography Utilities */
+@import 'assets/typography.scss';
+
+/* Overrides for PrimeNG default colors */
+:root {
+  /* Override PrimeNG's default color scheme */
+  --primary-color: #00b4d8 !important;
+  --primary-color-text: #ffffff !important;
+  --primary-dark-color: #0077b6 !important;
+  --primary-light-color: #00d4ff !important;
+  --highlight-bg: rgba(0, 180, 216, 0.16) !important;
+  --highlight-text-color: #00b4d8 !important;
+  
+  /* Tag component colors */
+  --success-color: #0aefff !important; 
+  --info-color: #00b4d8 !important;
+  --warning-color: #fb923c !important;
+  --danger-color: #f87171 !important;
+  
+  /* Button colors */
+  --green-500: #0aefff !important;
+  --blue-500: #00b4d8 !important;
+  --yellow-500: #fb923c !important;
+  --red-500: #f87171 !important;
+  
+  /* Focus state */
+  --focus-ring: 0 0 0 2px rgba(0, 180, 216, 0.25) !important;
+}
+
+/* Global Styles */
+body {
+    background-color: var(--surface-ground);
+    color: var(--text-color);
+    font-family: var(--font-secondary);
+    font-size: var(--text-base);
+    line-height: var(--leading-normal);
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    /* TabView Root Overrides */
+    .p-tabview,
+    .p-tabview .p-tabview-nav,
+    .p-tabview .p-tabview-nav-container,
+    .p-tabview .p-tabview-nav-content,
+    .p-tabview .p-tabview-panels {
+        background-color: transparent !important;
+        border: none !important;
+        color: var(--profile-text-light) !important;
+    }
+    
+    /* TabView Nav Items */
+    .p-tabview .p-tabview-nav li {
+        background-color: transparent !important;
+        margin: 0 0.5rem !important;
+        
+        .p-tabview-nav-link {
+            background-color: transparent !important;
+            color: #a3c1d9 !important;
+            border: none !important;
+            padding: 0.75rem 1.25rem !important;
+            border-radius: 0.5rem 0.5rem 0 0 !important;
+            
+            &:hover {
+                background-color: rgba(0, 180, 216, 0.05) !important;
+                color: #00d4ff !important;
+            }
+            
+            .p-tabview-title {
+                color: #a3c1d9 !important;
+            }
+            
+            .p-tabview-left-icon {
+                color: #00b4d8 !important;
+                margin-right: 0.5rem !important;
+            }
+        }
+        
+        &.p-highlight {
+            .p-tabview-nav-link {
+                background-color: rgba(0, 180, 216, 0.1) !important;
+                position: relative !important;
+                
+                &::after {
+                    content: "" !important;
+                    position: absolute !important;
+                    bottom: 0 !important;
+                    left: 0 !important;
+                    right: 0 !important;
+                    height: 3px !important;
+                    background: linear-gradient(90deg, #0077b6, #00d4ff) !important;
+                }
+                
+                .p-tabview-title {
+                    color: #00d4ff !important;
+                }
+                
+                .p-tabview-left-icon {
+                    color: #00d4ff !important;
+                }
+            }
+        }
+    }
+    
+    /* Override any p-tablist and p-tabpanels elements if they exist */
+    p-tablist, .p-tablist,
+    p-tabpanels, .p-tabpanels {
+        background-color: transparent !important;
+        color: inherit !important;
+        border: none !important;
+        
+        * {
+            background-color: transparent !important;
+            color: inherit !important;
+        }
+    }
+    
+    /* Ensure modern-tabs class has the highest specificity */
+    .modern-tabs.p-tabview,
+    .modern-tabs .p-tabview,
+    .modern-tabs.p-element .p-tabview,
+    div.modern-tabs .p-tabview {
+        .p-tabview-nav {
+            border-bottom: 1px solid rgba(0, 180, 216, 0.15) !important;
+            background-color: transparent !important;
+            
+            li {
+                .p-tabview-nav-link {
+                    background-color: transparent !important;
+                    color: #a3c1d9 !important;
+                    border: none !important;
+                    
+                    .p-tabview-title {
+                        color: #a3c1d9 !important;
+                    }
+                }
+                
+                &.p-highlight .p-tabview-nav-link {
+                    background-color: rgba(0, 180, 216, 0.1) !important;
+                    
+                    .p-tabview-title {
+                        color: #00d4ff !important;
+                    }
+                }
+            }
+        }
+        
+        .p-tabview-panels {
+            border: none !important;
+            padding: 1.5rem 0 !important;
+            background-color: transparent !important;
+        }
+    }
+    
+    /* PrimeNG specific internal component overrides */
+    div[class*="p-tabview"] { 
+        background-color: transparent !important;
+        
+        [class*="p-tabview-nav"],
+        [class*="p-tabview-selected"],
+        [class*="p-tabview-panels"],
+        [class*="p-tabview-panel"] {
+            background-color: transparent !important;
+            color: inherit !important;
+            border-color: rgba(0, 180, 216, 0.15) !important;
+        }
+    }
+}
+
+/* PrimeNG 18 Component Styles */
+.p-component {
+    font-family: var(--font-secondary);
+    font-size: var(--text-base);
+}
+
+/* Typography System */
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-primary);
+    letter-spacing: var(--tracking-tight);
+    line-height: var(--leading-tight);
+    font-weight: var(--font-bold);
+    margin-top: 0;
+}
+
+h1 {
+    font-size: var(--text-4xl);
+    margin-bottom: 1.5rem;
+}
+
+h2 {
+    font-size: var(--text-3xl);
+    margin-bottom: 1.25rem;
+}
+
+h3 {
+    font-size: var(--text-2xl);
+    margin-bottom: 1rem;
+}
+
+h4 {
+    font-size: var(--text-xl);
+    margin-bottom: 0.75rem;
+}
+
+h5 {
+    font-size: var(--text-lg);
+    margin-bottom: 0.5rem;
+}
+
+h6 {
+    font-size: var(--text-md);
+    margin-bottom: 0.5rem;
+}
+
+.subtitle {
+    font-family: var(--font-secondary);
+    font-weight: var(--font-regular);
+    color: #94a3b8;
+    font-size: var(--text-base);
+}
+
+.text-accent {
+    font-family: var(--font-accent);
+}
+
+.text-xs { font-size: var(--text-xs); }
+.text-sm { font-size: var(--text-sm); }
+.text-base { font-size: var(--text-base); }
+.text-md { font-size: var(--text-md); }
+.text-lg { font-size: var(--text-lg); }
+.text-xl { font-size: var(--text-xl); }
+.text-2xl { font-size: var(--text-2xl); }
+.text-3xl { font-size: var(--text-3xl); }
+.text-4xl { font-size: var(--text-4xl); }
+
+.font-light { font-weight: var(--font-light); }
+.font-regular { font-weight: var(--font-regular); }
+.font-medium { font-weight: var(--font-medium); }
+.font-semibold { font-weight: var(--font-semibold); }
+.font-bold { font-weight: var(--font-bold); }
+.font-extrabold { font-weight: var(--font-extrabold); }
+
+.tracking-tight { letter-spacing: var(--tracking-tight); }
+.tracking-normal { letter-spacing: var(--tracking-normal); }
+.tracking-wide { letter-spacing: var(--tracking-wide); }
+
+.leading-tight { line-height: var(--leading-tight); }
+.leading-normal { line-height: var(--leading-normal); }
+.leading-loose { line-height: var(--leading-loose); }
+
+/* Field Spacing */
+.field {
+    margin-bottom: 1.5rem;
+    width: 100%;
+    position: relative;
+    min-height: 4.5rem; /* Fixed height to accommodate input and error message */
+}
+
+/* Input fields and buttons alignment */
+.p-inputtext, 
+.p-password, 
+.p-button {
+    width: 100%;
+    border-radius: 6px;
+}
+
+/* Button styling consistency */
+.p-button {
+    justify-content: center;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+/* Modern Button Styles */
+.p-button.p-button-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #0077b6, #00b4d8) !important;
+  color: white !important;
+  font-weight: 500 !important;
+  padding: 0.75rem 1.5rem !important;
+  border-radius: 2rem !important;
+  text-decoration: none !important;
+  border: none !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+  
+  &:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15) !important;
+    background: linear-gradient(135deg, #0077b6, #00d4ff) !important;
+  }
+  
+  &:focus {
+    box-shadow: 0 0 0 2px rgba(0, 180, 216, 0.25) !important;
+  }
+  
+  .p-button-icon {
+    margin-right: 0.5rem !important;
+  }
+}
+
+.p-button.p-button-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(15, 25, 40, 0.5) !important;
+  color: #f1f5f9 !important;
+  font-weight: 500 !important;
+  padding: 0.75rem 1.5rem !important;
+  border-radius: 2rem !important;
+  border: 1px solid rgba(0, 180, 216, 0.25) !important;
+  text-decoration: none !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05) !important;
+  
+  &:hover {
+    transform: translateY(-2px) !important;
+    background: rgba(15, 25, 40, 0.7) !important;
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.1) !important;
+    border-color: rgba(0, 180, 216, 0.4) !important;
+  }
+  
+  &:focus {
+    box-shadow: 0 0 0 2px rgba(0, 180, 216, 0.15) !important;
+  }
+  
+  .p-button-icon {
+    margin-right: 0.5rem !important;
+  }
+}
+
+.p-button.p-button-success {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #0aefff, #00b4d8) !important;
+  color: white !important;
+  font-weight: 500 !important;
+  padding: 0.75rem 1.5rem !important;
+  border-radius: 2rem !important;
+  border: none !important;
+  text-decoration: none !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+  
+  &:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15) !important;
+    background: linear-gradient(135deg, #00d4e0, #00a0c0) !important;
+  }
+  
+  &:focus {
+    box-shadow: 0 0 0 2px rgba(10, 239, 255, 0.25) !important;
+  }
+  
+  .p-button-icon {
+    margin-right: 0.5rem !important;
+  }
+}
+
+.p-button.p-button-danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f87171, #ef4444) !important;
+  color: white !important;
+  font-weight: 500 !important;
+  padding: 0.75rem 1.5rem !important;
+  border-radius: 2rem !important;
+  border: none !important;
+  text-decoration: none !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+  
+  &:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15) !important;
+    background: linear-gradient(135deg, #dc5555, #dd3333) !important;
+  }
+  
+  &:focus {
+    box-shadow: 0 0 0 2px rgba(248, 113, 113, 0.25) !important;
+  }
+  
+  .p-button-icon {
+    margin-right: 0.5rem !important;
+  }
+}
+
+/* Text button styling */
+.p-button.p-button-text {
+  background: transparent !important;
+  color: #00b4d8 !important;
+  border: none !important;
+  padding: 0.5rem 1rem !important;
+  font-weight: 500 !important;
+  transition: all 0.3s ease !important;
+  border-radius: 2rem !important;
+  
+  &:hover {
+    background: rgba(0, 180, 216, 0.1) !important;
+    transform: translateY(-1px) !important;
+  }
+  
+  &:focus {
+    box-shadow: 0 0 0 2px rgba(0, 180, 216, 0.15) !important;
+  }
+  
+  .p-button-icon {
+    margin-right: 0.5rem !important;
+  }
+}
+
+/* Outlined button styling */
+.p-button.p-button-outlined {
+  background: transparent !important;
+  color: #00b4d8 !important;
+  border: 1px solid #00b4d8 !important;
+  padding: 0.75rem 1.5rem !important;
+  font-weight: 500 !important;
+  border-radius: 2rem !important;
+  transition: all 0.3s ease !important;
+  
+  &:hover {
+    background: rgba(0, 180, 216, 0.1) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05) !important;
+  }
+  
+  &:focus {
+    box-shadow: 0 0 0 2px rgba(0, 180, 216, 0.15) !important;
+  }
+  
+  .p-button-icon {
+    margin-right: 0.5rem !important;
+  }
+}
+
+/* Auth Layout Styles */
+.auth-container {
+    min-height: calc(100vh - 62px); /* Account for navbar height */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #041e42 0%, #01111f 100%);
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+}
+
+@keyframes gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.auth-wrapper {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    transform: translateY(0);
+    transition: transform 0.3s ease;
+    
+    &:hover {
+        transform: translateY(-5px);
+    }
+}
+
+.auth-card {
+    background: rgba(5, 15, 30, 0.8) !important;
+    backdrop-filter: blur(20px) !important;
+    border: 1px solid rgba(0, 212, 255, 0.2) !important;
+    border-radius: 1.5rem !important;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4),
+                0 8px 10px -6px rgba(0, 0, 0, 0.2) !important;
+    overflow: hidden !important;
+    position: relative !important;
+    
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 6px;
+        background: linear-gradient(90deg, #0077b6, #00b4d8, #00d4ff);
+    }
+    
+    .p-card-content {
+        padding: 2rem !important;
+    }
+
+    h2 {
+        color: #ffffff !important;
+        font-size: var(--text-3xl) !important;
+        font-weight: var(--font-bold) !important;
+        margin-bottom: 0.5rem !important;
+        background: linear-gradient(90deg, #0077b6, #00b4d8, #00d4ff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-family: var(--font-primary) !important;
+        letter-spacing: var(--tracking-tight) !important;
+    }
+
+    p {
+        color: #a3c1d9 !important;
+        font-size: var(--text-base) !important;
+        font-family: var(--font-secondary) !important;
+        font-weight: var(--font-regular) !important;
+    }
+}
+
+/* Two-column layout styles */
+.field-row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.field-col {
+    flex: 1;
+    width: 50%;
+    position: relative;
+    min-height: 4rem; /* Fixed height to accommodate input and error message */
+}
+
+/* Form field styling - consolidated base styles */
+.p-inputtext, .p-password, .p-select {
+    background-color: rgba(5, 15, 30, 0.7) !important;
+    border: 1px solid rgba(0, 180, 216, 0.25) !important;
+    border-radius: 0.75rem !important;
+    transition: all 0.3s ease !important;
+    font-family: var(--font-secondary) !important;
+    font-size: var(--text-base) !important;
+    height: 3.25rem !important; /* Consistent height for all inputs */
+    color: #f0f9ff !important;
+    
+    &:hover, &:focus {
+        border-color: rgba(0, 212, 255, 0.7) !important;
+        box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.25) !important;
+    }
+}
+
+/* Base Float Label styling */
+.p-float-label {
+    position: relative;
+    
+    label {
+        font-family: var(--font-secondary) !important;
+        font-weight: var(--font-regular) !important;
+        letter-spacing: var(--tracking-normal) !important;
+        font-size: var(--text-sm) !important;
+        color: #a3c1d9 !important;
+        transition: all 0.3s ease !important;
+    }
+}
+
+/* Main password field fixes - adjusted for lower label */
+p-floatLabel[variant='on'] {
+    position: relative;
+    display: block;
+    
+    /* Basic label styling - adjusted position */
+    > label {
+        position: absolute !important;
+        top: 1.6rem !important; /* Adjusted lower */
+        left: 0.75rem !important; 
+        color: #94a3b8 !important;
+        font-family: var(--font-secondary) !important;
+        font-size: var(--text-sm) !important;
+        background-color: transparent;
+        pointer-events: none;
+        transition: all 0.15s ease;
+        z-index: 2;
+    }
+}
+
+/* Float label for select components - adjusted for lower label */
+p-floatLabel[variant='on'] p-select {
+    display: block;
+    width: 100%;
+    margin-bottom: 0 !important;
+    
+    .p-select {
+        width: 100%;
+        margin-bottom: 0 !important;
+    }
+    
+    & ~ label {
+        top: 1.25rem !important; /* Adjusted lower */
+    }
+}
+
+/* Password panel styling */
+.p-password .p-password-panel {
+    background: rgba(5, 15, 30, 0.95) !important;
+    border-radius: 0.75rem !important;
+    border: 1px solid rgba(0, 180, 216, 0.25) !important;
+}
+
+.p-password-meter {
+    background: rgba(5, 15, 30, 0.9) !important;
+}
+
+.p-password-info {
+    color: #a3c1d9 !important;
+    font-family: var(--font-secondary) !important;
+}
+
+.p-select-panel {
+    background-color: rgba(5, 15, 30, 0.95) !important;
+    border-radius: 0.75rem !important;
+    border: 1px solid rgba(0, 180, 216, 0.25) !important;
+    margin-top: 0.5rem !important;
+    padding: 0.5rem !important;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4) !important;
+    
+    .p-select-items {
+        padding: 0.25rem !important;
+    }
+    
+    .p-select-item {
+        border-radius: 0.5rem !important;
+        margin-bottom: 0.25rem !important;
+        padding: 0.75rem !important;
+        font-family: var(--font-secondary) !important;
+        font-size: var(--text-base) !important;
+        color: #f0f9ff !important;
+        
+        &:hover {
+            background-color: rgba(0, 180, 216, 0.15) !important;
+        }
+        
+        &.p-highlight {
+            background-color: rgba(0, 180, 216, 0.25) !important;
+            color: #ffffff !important;
+            font-weight: var(--font-medium) !important;
+        }
+    }
+}
+
+.button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 2rem;
+    width: 100%;
+
+    .submit-button {
+        width: 100%;
+        max-width: 320px;
+        height: 3.25rem;
+        background: linear-gradient(90deg, #0077b6, #00b4d8) !important;
+        border: none !important;
+        border-radius: 0.75rem !important;
+        font-weight: var(--font-semibold) !important;
+        letter-spacing: 0.5px !important;
+        transition: all 0.3s ease !important;
+        font-family: var(--font-secondary) !important;
+        font-size: var(--text-base) !important;
+        text-transform: uppercase;
+        letter-spacing: var(--tracking-wide) !important;
+        
+        &:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: 0 4px 12px rgba(0, 180, 216, 0.4) !important;
+            background: linear-gradient(90deg, #0077b6, #00d4ff) !important;
+        }
+        
+        &:active {
+            transform: translateY(0) !important;
+        }
+    }
+
+    .sign-up-link, .sign-in-link {
+        margin-top: 1.75rem;
+        text-align: center;
+
+        span {
+            color: #a3c1d9;
+            font-family: var(--font-secondary) !important;
+            font-size: var(--text-sm) !important;
+        }
+
+        a {
+            color: #00d4ff;
+            font-weight: var(--font-medium);
+            margin-left: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            position: relative;
+            font-family: var(--font-secondary) !important;
+            font-size: var(--text-sm) !important;
+            
+            &::after {
+                content: '';
+                position: absolute;
+                bottom: -2px;
+                left: 0;
+                width: 0;
+                height: 2px;
+                background: linear-gradient(90deg, #0077b6, #00d4ff);
+                transition: width 0.3s ease;
+            }
+
+            &:hover {
+                color: #90e0ef;
+                text-decoration: none;
+                
+                &::after {
+                    width: 100%;
+                }
+            }
+        }
+    }
+}
+
+/* Error message styling */
+.p-error {
+    position: absolute;
+    bottom: -0.45rem;
+    left: 0.5rem;
+    color: #f87171 !important;
+    font-size: 0.8rem !important;
+    display: block !important;
+    transition: all 0.2s ease !important;
+    font-family: 'Inter', var(--font-family) !important;
+    font-weight: 400 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.35rem !important;
+    
+    .pi {
+        font-size: 0.875rem !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+}
+
+/* Responsive styles for two-column layout */
+@media (max-width: 480px) {
+    .field-row {
+        flex-direction: column;
+        gap: 0;
+    }
+    
+    .field-col {
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .auth-card .p-card-content {
+        padding: 1.5rem !important;
+    }
+
+    .button-container .submit-button {
+        max-width: 100%;
+    }
+}
+
+/* Basic text helper classes */
+.text-surface-400 {
+    color: #94a3b8;
+}
+
+.text-primary {
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    
+    &:hover {
+        color: #60a5fa;
+        text-decoration: underline;
+    }
+}
+
+/* Utility Classes */
+ul, ol {
+    margin: 1px;
+    padding: 2px;
+}
+
+/* Page Headings and Section Titles */
+.page-title {
+    font-family: var(--font-primary);
+    font-size: var(--text-3xl);
+    font-weight: var(--font-bold);
+    letter-spacing: var(--tracking-tight);
+    color: #f1f5f9;
+    margin-bottom: 1rem;
+    
+    &.gradient-text {
+        background: linear-gradient(90deg, #0077b6, #00b4d8, #00d4ff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+}
+
+.section-title {
+    font-family: var(--font-primary);
+    font-size: var(--text-xl);
+    font-weight: var(--font-semibold);
+    letter-spacing: var(--tracking-tight);
+    color: #e2e8f0;
+    margin-bottom: 1rem;
+}
+
+/* Card and Panel Typography */
+.card-title {
+    font-family: var(--font-primary);
+    font-size: var(--text-lg);
+    font-weight: var(--font-semibold);
+    letter-spacing: var(--tracking-tight);
+    color: #f1f5f9;
+    margin-bottom: 0.75rem;
+}
+
+.accent-heading {
+    font-family: var(--font-accent);
+    font-weight: var(--font-bold);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+}
+
+/* Button Typography Variations */
+.btn-primary {
+    font-family: var(--font-secondary);
+    font-weight: var(--font-semibold);
+    letter-spacing: var(--tracking-normal);
+}
+
+.btn-accent {
+    font-family: var(--font-accent);
+    font-weight: var(--font-medium);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+}
+
+/* Table Typography */
+.p-datatable {
+    .p-datatable-header {
+        font-family: var(--font-primary);
+        font-weight: var(--font-semibold);
+        font-size: var(--text-md);
+    }
+    
+    .p-datatable-thead > tr > th {
+        font-family: var(--font-secondary);
+        font-weight: var(--font-medium);
+        font-size: var(--text-sm);
+        text-transform: uppercase;
+        letter-spacing: var(--tracking-wide);
+    }
+    
+    .p-datatable-tbody > tr > td {
+        font-family: var(--font-secondary);
+        font-size: var(--text-sm);
+    }
+}
+
+/* Menu Typography */
+.p-menu {
+    .p-menuitem-text {
+        font-family: var(--font-secondary);
+        font-size: var(--text-sm);
+        font-weight: var(--font-medium);
+    }
+}
+
+.p-menubar {
+    .p-menubar-root-list > .p-menuitem > .p-menuitem-link .p-menuitem-text {
+        font-family: var(--font-secondary);
+        font-weight: var(--font-medium);
+        font-size: var(--text-sm);
+    }
+}
+
+/* Callout/Info Box Typography */
+.info-box {
+    .info-title {
+        font-family: var(--font-primary);
+        font-size: var(--text-md);
+        font-weight: var(--font-semibold);
+    }
+    
+    .info-content {
+        font-family: var(--font-secondary);
+        font-size: var(--text-sm);
+        line-height: var(--leading-normal);
+    }
+}
+
+/* Responsive Typography Adjustments */
+@media (max-width: 768px) {
+    :root {
+        --text-4xl: 2.5rem;
+        --text-3xl: 2rem;
+        --text-2xl: 1.75rem;
+        --text-xl: 1.25rem;
+    }
+    
+    .page-title {
+        font-size: var(--text-2xl);
+    }
+    
+    .section-title {
+        font-size: var(--text-lg);
+    }
+}
+
+/* Ensure focus/filled styles for select match other components */
+p-floatLabel[variant='on'] p-select.p-inputwrapper-focus ~ label,
+p-floatLabel[variant='on'] p-select.p-inputwrapper-filled ~ label {
+    top: -0.5rem !important;
+    font-size: 0.75rem !important;
+    padding: 0 0.375rem !important;
+    background-color: rgba(5, 15, 30, 0.95) !important;
+    color: #00d4ff !important;
+    transform: translateY(0) !important;
+    border-radius: 4px;
+}
+
+/* Select component specific styling */
+.p-select {
+    display: flex !important;
+    align-items: center !important;
+    color: #f8fafc !important;
+    
+    .p-select-label {
+        padding: 0.75rem !important;
+        color: #f8fafc !important;
+        line-height: 1.5 !important;
+        height: auto !important;
+        overflow: visible !important;
+        text-overflow: clip !important;
+        white-space: normal !important;
+    }
+    
+    .p-select-trigger {
+        width: 3rem !important;
+        padding-right: 0.75rem !important;
+        color: #818cf8 !important;
+    }
+}
+
+/* Fixed panel styling for dropdowns */
+.p-select-panel {
+    background-color: rgba(5, 15, 30, 0.95) !important;
+    border-radius: 0.75rem !important;
+    border: 1px solid rgba(0, 180, 216, 0.25) !important;
+    margin-top: 0.5rem !important;
+    padding: 0.5rem !important;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4) !important;
+    
+    .p-select-items {
+        padding: 0.25rem !important;
+    }
+    
+    .p-select-item {
+        border-radius: 0.5rem !important;
+        margin-bottom: 0.25rem !important;
+        padding: 0.75rem !important;
+        font-family: var(--font-secondary) !important;
+        font-size: var(--text-base) !important;
+        color: #f0f9ff !important;
+        
+        &:hover {
+            background-color: rgba(0, 180, 216, 0.15) !important;
+        }
+        
+        &.p-highlight {
+            background-color: rgba(0, 180, 216, 0.25) !important;
+            color: #ffffff !important;
+            font-weight: var(--font-medium) !important;
+        }
+    }
+}
+
+/* Direct selector for password component */
+p-floatLabel[variant='on'] p-password {
+    display: block;
+    width: 100%;
+    
+    .p-password {
+        width: 100%;
+    }
+    
+    input.p-inputtext {
+        width: 100%;
+        background-color: rgba(5, 15, 30, 0.7) !important;
+        border: 1px solid rgba(0, 180, 216, 0.25) !important;
+        color: #f0f9ff !important;
+        border-radius: 0.75rem !important;
+        padding: 0.75rem !important;
+        font-family: var(--font-secondary) !important;
+        font-size: var(--text-base) !important;
+    }
+}
+
+/* Move label to top when fields are focused/filled */
+p-floatLabel[variant='on']:has(p-password:focus) > label,
+p-floatLabel[variant='on']:has(p-password.p-inputwrapper-filled) > label,
+p-floatLabel[variant='on']:has(input:focus) > label,
+p-floatLabel[variant='on']:has(input.p-filled) > label {
+    top: -0.5rem !important;
+    font-size: 0.75rem !important;
+    padding: 0 0.375rem !important;
+    background-color: rgba(5, 15, 30, 0.95) !important;
+    color: #00d4ff !important;
+    transform: translateY(0) !important;
+    border-radius: 4px;
+}
+
+/* Alternative approach for older browsers without :has() support */
+p-floatLabel[variant='on'] p-password:focus ~ label,
+p-floatLabel[variant='on'] p-password.p-inputwrapper-focus ~ label,
+p-floatLabel[variant='on'] p-password.p-inputwrapper-filled ~ label,
+p-floatLabel[variant='on'] input:focus ~ label,
+p-floatLabel[variant='on'] input.p-filled ~ label {
+    top: -0.5rem !important;
+    font-size: 0.75rem !important;
+    padding: 0 0.375rem !important;
+    background-color: rgba(5, 15, 30, 0.95) !important;
+    color: #00d4ff !important;
+    transform: translateY(0) !important;
+    border-radius: 4px;
+}
+
+.field-col .p-error {
+    position: absolute;
+    bottom: -1.2rem;
+    left: 0;
+}
+
+/* Button icon alignment */
+.p-button {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    
+    .p-button-icon {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        margin-right: 0.5rem !important;
+    }
+}
+
+/* Custom Toast Styling */
+.p-toast {
+  width: 300px !important;
+  
+  .p-toast-message {
+    border-radius: 0.75rem !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+    backdrop-filter: blur(8px) !important;
+    border-left: 4px solid transparent !important;
+    margin-bottom: 0.75rem !important;
+    padding: 0 !important;
+    min-height: auto !important;
+    max-width: 300px !important;
+    overflow: hidden !important;
+    
+    &.p-toast-message-success {
+      background: rgba(0, 132, 112, 0.95) !important;
+      border-left-color: #0aefff !important;
+      
+      &::before {
+        background: linear-gradient(90deg, #0aefff, #00b4d8);
+      }
+      
+      .p-toast-icon-close {
+        color: #dcfce7 !important;
+        
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.1) !important;
+        }
+      }
+    }
+    
+    &.p-toast-message-info {
+      background: rgba(0, 119, 182, 0.95) !important;
+      border-left-color: #00b4d8 !important;
+      
+      &::before {
+        background: linear-gradient(90deg, #00b4d8, #0077b6);
+      }
+      
+      .p-toast-icon-close {
+        color: #dbeafe !important;
+        
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.1) !important;
+        }
+      }
+    }
+    
+    &.p-toast-message-warn {
+      background: rgba(146, 64, 14, 0.9) !important;
+      border-left-color: #fb923c !important;
+      
+      &::before {
+        background: linear-gradient(90deg, #fb923c, #f97316);
+      }
+      
+      .p-toast-icon-close {
+        color: #ffedd5 !important;
+        
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.1) !important;
+        }
+      }
+    }
+    
+    &.p-toast-message-error {
+      background: rgba(153, 27, 27, 0.9) !important;
+      border-left-color: #f87171 !important;
+      
+      &::before {
+        background: linear-gradient(90deg, #f87171, #ef4444);
+      }
+      
+      .p-toast-icon-close {
+        color: #fee2e2 !important;
+        
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.1) !important;
+        }
+      }
+    }
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      z-index: 1;
+    }
+    
+    .p-toast-message-content {
+      padding: 0.875rem 1rem !important;
+      display: flex !important;
+      align-items: center !important;
+      
+      .p-toast-message-icon {
+        font-size: 1.25rem !important;
+        margin-right: 0.75rem !important;
+      }
+      
+      .p-toast-summary {
+        font-family: var(--font-primary) !important;
+        font-weight: var(--font-semibold) !important;
+        font-size: 0.875rem !important;
+        margin-bottom: 0.125rem !important;
+        color: white !important;
+      }
+      
+      .p-toast-detail {
+        font-family: var(--font-secondary) !important;
+        font-weight: var(--font-regular) !important;
+        font-size: 0.75rem !important;
+        line-height: 1.3 !important;
+        color: rgba(255, 255, 255, 0.9) !important;
+      }
+    }
+    
+    .p-toast-icon-close {
+      width: 1.5rem !important;
+      height: 1.5rem !important;
+      border-radius: 0.375rem !important;
+      background: transparent !important;
+      transition: background-color 0.2s ease !important;
+      opacity: 0.7 !important;
+      top: 0.5rem !important;
+      right: 0.5rem !important;
+      
+      &:hover {
+        opacity: 1 !important;
+      }
+      
+      &:focus {
+        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1) !important;
+      }
+    }
+    
+    /* Add slide-in animation */
+    animation: toast-slide-in 0.3s ease-out forwards;
+  }
+  
+  @keyframes toast-slide-in {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+}
+
+/* Adjust toast container position */
+.p-toast-top-right {
+  top: 1rem !important;
+  right: 1rem !important;
+}
+
+/* Mobile adjustments for toast */
+@media (max-width: 768px) {
+  .p-toast {
+    width: calc(100% - 2rem) !important;
+    max-width: 300px !important;
+    
+    .p-toast-message {
+      width: 100% !important;
+    }
+  }
+}
+
+/* Special Text Styles */
+.text-gradient {
+    background: linear-gradient(90deg, #0077b6, #00b4d8, #00d4ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Button styling */
+.p-button {
+    background: linear-gradient(90deg, #0077b6, #00b4d8);
+    border: none;
+    color: white;
+    transition: all 0.3s ease;
+    
+    &:hover {
+        background: linear-gradient(90deg, #005f92, #0090b3);
+        box-shadow: 0 4px 12px rgba(0, 180, 216, 0.35);
+    }
+    
+    &:focus {
+        box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.35);
+    }
+}
+
+.p-button.p-button-outlined {
+    background: transparent;
+    border: 1px solid #00b4d8;
+    color: #00b4d8;
+    
+    &:hover {
+        background: rgba(0, 180, 216, 0.1);
+    }
+}
+
+.p-button.p-button-text {
+    background: transparent;
+    border: none;
+    color: #00b4d8;
+    
+    &:hover {
+        background: rgba(0, 180, 216, 0.1);
+    }
+}
+
+/* Card Styles */
+.p-card {
+    border-radius: 1rem;
+    background: rgba(5, 15, 30, 0.8);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 
+                0 2px 4px -1px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    
+    .p-card-header {
+        background: linear-gradient(90deg, #0077b6, #00b4d8);
+        padding: 1rem;
+        color: white;
+    }
+}
+
+/* Table Styles */
+.p-datatable .p-datatable-header {
+    background: linear-gradient(90deg, #0077b6, #00b4d8);
+    color: white;
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+}
+
+.p-datatable .p-datatable-thead > tr > th {
+    background-color: #041e42;
+    color: #a3c1d9;
+}
+
+.p-datatable .p-datatable-tbody > tr {
+    background-color: rgba(5, 15, 30, 0.8);
+    color: #f0f9ff;
+    border-bottom: 1px solid rgba(0, 180, 216, 0.15);
+    
+    &:hover {
+        background-color: rgba(0, 180, 216, 0.1);
+    }
+}
+
+/* Status Colors */
+.status-active {
+    color: #00d4ff;
+}
+
+.status-pending {
+    color: #00b4d8;
+}
+
+.status-completed {
+    color: #0077b6;
+}
+
+/* Panel styling */
+.p-panel {
+  background: rgba(9, 25, 43, 0.8) !important;
+  border: 1px solid rgba(0, 180, 216, 0.25) !important;
+  border-radius: 1rem !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+  transition: all 0.3s ease !important;
+  
+  &:hover {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+    border-color: rgba(0, 180, 216, 0.4) !important;
+  }
+  
+  .p-panel-header {
+    background: rgba(15, 25, 40, 0.6) !important;
+    border-bottom: 1px solid rgba(0, 180, 216, 0.25) !important;
+    padding: 1rem 1.5rem !important;
+    border-radius: 1rem 1rem 0 0 !important;
+    
+    .p-panel-title {
+      color: #f1f5f9 !important;
+      font-weight: 600 !important;
+      font-size: 1.1rem !important;
+    }
+    
+    .p-panel-header-icon {
+      color: #a3c1d9 !important;
+      
+      &:hover {
+        background: rgba(0, 180, 216, 0.1) !important;
+        color: #00b4d8 !important;
+      }
+    }
+  }
+  
+  .p-panel-content {
+    background: transparent !important;
+    color: #f1f5f9 !important;
+    padding: 1.25rem 1.5rem !important;
+    border: none !important;
+    border-radius: 0 0 1rem 1rem !important;
+  }
+  
+  .p-panel-footer {
+    background: rgba(15, 25, 40, 0.6) !important;
+    border-top: 1px solid rgba(0, 180, 216, 0.25) !important;
+    padding: 1rem 1.5rem !important;
+    border-radius: 0 0 1rem 1rem !important;
+  }
+}
+
+/* Card styling */
+.p-card {
+    background: rgba(15, 25, 40, 0.8) !important;
+    border-radius: 8px !important;
+    border: 1px solid rgba(0, 180, 216, 0.25) !important;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1) !important;
+    overflow: hidden !important;
+    
+    .p-card-title {
+        color: #f1f5f9 !important;
+    }
+    
+    .p-card-subtitle {
+        color: #a3c1d9 !important;
+    }
+    
+    .p-card-content {
+        color: #f1f5f9 !important;
+    }
+}
+
+/* Tag component styling */
+.p-tag {
+  border-radius: 4px !important;
+  padding: 0.25rem 0.5rem !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  
+  &.p-tag-success {
+    background-color: rgba(10, 239, 255, 0.1) !important;
+    color: #0aefff !important;
+    border: 1px solid rgba(10, 239, 255, 0.2) !important;
+  }
+  
+  &.p-tag-info {
+    background-color: rgba(0, 180, 216, 0.1) !important;
+    color: #00b4d8 !important;
+    border: 1px solid rgba(0, 180, 216, 0.2) !important;
+  }
+  
+  &.p-tag-warning {
+    background-color: rgba(251, 146, 60, 0.1) !important;
+    color: #fb923c !important;
+    border: 1px solid rgba(251, 146, 60, 0.2) !important;
+  }
+  
+  &.p-tag-danger {
+    background-color: rgba(248, 113, 113, 0.1) !important;
+    color: #f87171 !important;
+    border: 1px solid rgba(248, 113, 113, 0.2) !important;
+  }
+}
+
+/* Ultimate TabView Overrides - Direct Element Targeting */
+.p-tabview,
+.p-tabview-nav,
+.p-tabview-nav-container,
+.p-tabview-panels,
+.p-tabview-panel,
+.p-tablist,
+.p-tabpanels {
+  background-color: transparent !important;
+  color: #f1f5f9 !important;
+  border: none !important;
+}
+
+.p-tabview-nav li,
+.p-tablist-item {
+  background-color: transparent !important;
+  
+  .p-tabview-nav-link,
+  &.p-element {
+    background-color: transparent !important;
+    color: #a3c1d9 !important;
+    border: none !important;
+    
+    .p-tabview-title,
+    .p-tablist-item-title {
+      color: #a3c1d9 !important;
+    }
+  }
+  
+  &.p-highlight {
+    .p-tabview-nav-link,
+    &.p-element {
+      background-color: rgba(0, 180, 216, 0.1) !important;
+      position: relative !important;
+      
+      &::after {
+        content: '' !important;
+        position: absolute !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        height: 3px !important;
+        background: linear-gradient(90deg, #0077b6, #00d4ff) !important;
+      }
+      
+      .p-tabview-title,
+      .p-tablist-item-title {
+        color: #00d4ff !important;
+      }
+    }
+  }
+}
+
+/* Emergency fix for any black backgrounds */
+[class*="tabview"], 
+[class*="tablist"], 
+[class*="tabpanel"],
+p-tabview,
+p-tabpanel,
+p-tablist {
+  background-color: transparent !important;
+}
+
+/* Force text colors */
+[class*="tabview"] [class*="title"], 
+[class*="tablist"] [class*="title"],
+[class*="tabview"] span, 
+[class*="tablist"] span {
+  color: #a3c1d9 !important;
+}
+
+/* Force highlight colors */
+[class*="highlight"] [class*="title"], 
+[class*="highlight"] span {
+  color: #00d4ff !important;
+}
+
+/* Add !important to every CSS property related to tabView */
+.p-tabview, p-tabview, *[class*="tabview"] {
+  * {
+    background-color: transparent !important;
+  }
+}
+
+/* Target the tab active indicator bar */
+.p-tablist-active-bar,
+.p-tabview-ink-bar,
+[class*="tablist-active-bar"],
+[class*="tabview-ink-bar"] {
+  background: linear-gradient(90deg, #0077b6, #00d4ff) !important;
+  height: 3px !important;
+  border-radius: 3px !important;
+  box-shadow: 0 1px 3px rgba(0, 180, 216, 0.3) !important;
+  z-index: 2 !important;
+  bottom: 0 !important;
+}
