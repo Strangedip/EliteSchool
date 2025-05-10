@@ -1,0 +1,315 @@
+.game-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.game-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2rem;
+  
+  h1 {
+    margin: 0;
+    font-size: 2.5rem;
+    background: linear-gradient(90deg, var(--primary-color, #00b4d8), var(--primary-light-color, #00d4ff));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    flex: 1;
+    text-align: center;
+  }
+  
+  .back-button {
+    ::ng-deep .p-button {
+      color: var(--primary-color, #00b4d8);
+      
+      &:hover {
+        color: var(--primary-light-color, #00d4ff);
+      }
+    }
+  }
+}
+
+.game-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+// Game Mode Dialog
+::ng-deep .game-mode-dialog {
+  .p-dialog-header {
+    background: var(--dark-bg, rgba(5, 15, 30, 0.95));
+    color: var(--text-light, #f1f5f9);
+    border-bottom: 1px solid var(--border-color, rgba(0, 180, 216, 0.25));
+  }
+  
+  .p-dialog-content {
+    background: var(--dark-bg, rgba(5, 15, 30, 0.95));
+    color: var(--text-light, #f1f5f9);
+    padding: 2rem;
+  }
+}
+
+.game-mode-options {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  
+  ::ng-deep .p-button {
+    min-width: 150px;
+    
+    &.p-button-primary {
+      background: linear-gradient(135deg, var(--primary-color, #00b4d8), var(--primary-light-color, #00d4ff));
+      border: none;
+      
+      &:hover {
+        background: linear-gradient(135deg, var(--primary-light-color, #00d4ff), var(--primary-color, #00b4d8));
+      }
+    }
+    
+    &.p-button-secondary {
+      background: rgba(0, 180, 216, 0.15);
+      border: 1px solid var(--primary-color, #00b4d8);
+      color: var(--primary-light-color, #00d4ff);
+      
+      &:hover {
+        background: rgba(0, 180, 216, 0.25);
+      }
+    }
+  }
+}
+
+// Game Info Section
+.game-info {
+  background: var(--card-bg, rgba(15, 25, 40, 0.8));
+  border: 1px solid var(--border-color, rgba(0, 180, 216, 0.25));
+  border-radius: 12px;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 500px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  
+  .player-info {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 1.5rem;
+    
+    .player, .draw-info {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      
+      &.active {
+        background: rgba(0, 180, 216, 0.15);
+        box-shadow: 0 0 15px rgba(0, 180, 216, 0.3);
+      }
+    }
+    
+    .player-symbol {
+      font-size: 2rem;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      
+      &.x-player {
+        color: var(--primary-light-color, #00d4ff);
+      }
+      
+      &.o-player {
+        color: var(--warning-color, #fb923c);
+      }
+    }
+    
+    .player-score, .draw-score {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--text-light, #f1f5f9);
+    }
+    
+    .draw-label {
+      font-size: 1rem;
+      color: var(--text-muted, #a3c1d9);
+      margin-bottom: 0.5rem;
+    }
+  }
+  
+  .game-status {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    min-height: 30px;
+    
+    .current-turn, .game-result {
+      font-size: 1.25rem;
+      
+      .x-player {
+        color: var(--primary-light-color, #00d4ff);
+        font-weight: bold;
+      }
+      
+      .o-player {
+        color: var(--warning-color, #fb923c);
+        font-weight: bold;
+      }
+    }
+    
+    .game-result.winner {
+      animation: pulse 1.5s infinite;
+    }
+    
+    .game-result.draw {
+      color: var(--text-muted, #a3c1d9);
+    }
+  }
+  
+  .game-actions {
+    display: flex;
+    justify-content: center;
+    
+    ::ng-deep .p-button {
+      background: linear-gradient(90deg, var(--primary-color, #00b4d8), var(--primary-light-color, #00d4ff));
+      border: none;
+      box-shadow: 0 4px 8px rgba(0, 180, 216, 0.3);
+      transition: all 0.3s ease;
+      
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0, 180, 216, 0.4);
+      }
+    }
+  }
+}
+
+// Game Rules
+.game-rules {
+  background: rgba(0, 119, 182, 0.1);
+  border: 1px dashed var(--border-color, rgba(0, 180, 216, 0.25));
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  
+  .rule-text {
+    color: var(--text-muted, #a3c1d9);
+    font-size: 0.9rem;
+    margin: 0;
+  }
+}
+
+// Game Board
+.game-board {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--card-bg, rgba(15, 25, 40, 0.8));
+  border: 1px solid var(--border-color, rgba(0, 180, 216, 0.25));
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.board-row {
+  display: flex;
+  gap: 8px;
+}
+
+.board-cell {
+  width: 100px;
+  height: 100px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border-color, rgba(0, 180, 216, 0.25));
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover:not(.x-cell):not(.o-cell) {
+    background: rgba(0, 180, 216, 0.1);
+  }
+  
+  &.x-cell {
+    background: rgba(0, 180, 216, 0.15);
+  }
+  
+  &.o-cell {
+    background: rgba(251, 146, 60, 0.15);
+  }
+  
+  .x-symbol, .o-symbol {
+    font-size: 3rem;
+    font-weight: bold;
+    
+    &.fading {
+    //   animation: pulse 1.5s infinite;
+      text-shadow: 0 0 8px currentColor;
+    }
+  }
+  
+  .x-symbol {
+    color: var(--primary-light-color, #00d4ff);
+  }
+  
+  .o-symbol {
+    color: var(--warning-color, #fb923c);
+  }
+}
+
+// Animations
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+// Responsive adjustments
+@media (min-width: 768px) {
+  .game-content {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .game-info {
+    margin-bottom: 0;
+    width: 100%;
+    max-width: 600px;
+    margin-top: 2rem;
+  }
+  
+  .game-board {
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 767px) {
+  .game-board {
+    margin: 0 auto;
+  }
+  
+  .board-cell {
+    width: 80px;
+    height: 80px;
+  }
+}
+
+@media (max-width: 480px) {
+  .board-cell {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .x-symbol, .o-symbol {
+    font-size: 2.5rem;
+  }
+} 

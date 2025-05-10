@@ -59,10 +59,12 @@ public class JwtAuthenticationFilter implements WebFilter {
             username = jwtUtil.extractUsername(token);
             role = jwtUtil.extractRole(token);
         } catch (Exception e) {
+            logger.info("Unauthorised at API gateway, extraction failed");
             return unauthorizedResponse(exchange);
         }
 
         if (ObjectUtils.isEmpty(username) || !jwtUtil.validateToken(token, username)) {
+            logger.info("Unauthorised at API gateway, username or token invalid");
             return unauthorizedResponse(exchange);
         }
 
@@ -80,7 +82,7 @@ public class JwtAuthenticationFilter implements WebFilter {
                 new UsernamePasswordAuthenticationToken(username, null, List.of(new SimpleGrantedAuthority("ELITE")));
 
         SecurityContext securityContext = new SecurityContextImpl(authentication);
-
+        logger.info("Authorised at API gateway, user: {}, role: {}", username, role);
         return chain.filter(mutatedExchange)
                 .contextWrite(ReactiveSecurityContextHolder.withSecurityContext(Mono.just(securityContext)));
     }

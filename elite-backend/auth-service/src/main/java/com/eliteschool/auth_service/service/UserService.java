@@ -1,65 +1,30 @@
 package com.eliteschool.auth_service.service;
 
+import com.eliteschool.auth_service.dto.UserDTO;
+import com.eliteschool.auth_service.dto.request.UpdateUserRequestDTO;
 import com.eliteschool.auth_service.model.User;
-import com.eliteschool.auth_service.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import com.eliteschool.auth_service.model.enums.RoleType;
+
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
-@Service
-@RequiredArgsConstructor
-public class UserService {
+public interface UserService {
+    // Common user operations
+    User createUser(User userDTO);
+    User getUserById(UUID id);
+    List<User> getAllUsers();
+    User updateUser(UUID id, UpdateUserRequestDTO userDTO);
+    void deleteUser(UUID id);
+    Optional<User> findByUsername(String username);
+    Optional<User> findByEmail(String email);
+    boolean existsByUsername(String username);
+    boolean existsByEmail(String email);
+    User getUserEntityByUsername(String username);
 
-    private UserRepository userRepository;
+    // Student-specific operations
 
-    @Autowired
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    List<UserDTO> getAllStudents();
 
-    /**
-     * Finds a user by email.
-     * @param email The email of the user.
-     * @return Optional<User>
-     */
-    public Optional<User> findByEmail(String email) {
-        return userRepository.findByEmail(email);
-    }
-
-    /**
-     * Finds a user by username.
-     * @param username The username of the user.
-     * @return Optional<User>
-     */
-    public Optional<User> findByUsername(String username) {
-        return userRepository.findByUsername(username);
-    }
-
-    /**
-     * Checks if an email is already registered.
-     * @param email The email to check.
-     * @return boolean
-     */
-    public boolean emailExists(String email) {
-        return userRepository.existsByEmail(email);
-    }
-
-    /**
-     * Checks if a username is already taken.
-     * @param username The username to check.
-     * @return boolean
-     */
-    public boolean usernameExists(String username) {
-        return userRepository.existsByUsername(username);
-    }
-
-    /**
-     * Saves a new user.
-     * @param user The user entity to save.
-     * @return User (saved entity)
-     */
-    public User saveUser(User user) {
-        return userRepository.save(user);
-    }
+    List<UserDTO> getAllFaculty();
 }

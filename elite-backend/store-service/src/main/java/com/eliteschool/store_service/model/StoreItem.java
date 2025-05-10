@@ -28,4 +28,6 @@ public class StoreItem {
     private int stock; // Available stock quantity
 
     private String description; // Optional item description
+    
+    private String imageUrl; // Optional image URL for the item
 }

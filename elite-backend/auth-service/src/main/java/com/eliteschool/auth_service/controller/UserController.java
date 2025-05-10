@@ -1,77 +1,121 @@
 package com.eliteschool.auth_service.controller;
 
+import com.eliteschool.auth_service.dto.UserDTO;
+import com.eliteschool.auth_service.dto.request.UpdateUserRequestDTO;
+import com.eliteschool.auth_service.dto.response.UserResponseDTO;
+import com.eliteschool.auth_service.mapper.UserMapper;
 import com.eliteschool.auth_service.model.User;
 import com.eliteschool.auth_service.service.UserService;
+import com.eliteschool.common_utils.util.ResponseUtil;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/user")
+@RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
 
-    @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
-
-    /**
-     * Get user by email.
-     * @param email The email of the user.
-     * @return ResponseEntity<User>
-     */
     @GetMapping("/email/{email}")
-    public ResponseEntity<User> getUserByEmail(@PathVariable String email) {
+    public ResponseEntity<?> getUserByEmail(@PathVariable String email) {
         Optional<User> user = userService.findByEmail(email);
-        return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return user.map(u -> ResponseUtil.success("User found", UserMapper.toResponseDTO(u)))
+                .orElseGet(() -> ResponseUtil.error(HttpStatus.NOT_FOUND, "USER_NOT_FOUND",
+                        "User not found with email: " + email, null));
     }
 
-    /**
-     * Get user by username.
-     * @param username The username of the user.
-     * @return ResponseEntity<User>
-     */
     @GetMapping("/username/{username}")
-    public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
+    public ResponseEntity<?> getUserByUsername(@PathVariable String username) {
         Optional<User> user = userService.findByUsername(username);
-        return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return user.map(u -> ResponseUtil.success("User found", UserMapper.toResponseDTO(u)))
+                .orElseGet(() -> ResponseUtil.error(HttpStatus.NOT_FOUND, "USER_NOT_FOUND",
+                        "User not found with username: " + username, null));
     }
 
-    /**
-     * Check if an email exists.
-     * @param email The email to check.
-     * @return ResponseEntity<Boolean>
-     */
     @GetMapping("/exists/email/{email}")
-    public ResponseEntity<Boolean> emailExists(@PathVariable String email) {
-        return ResponseEntity.ok(userService.emailExists(email));
+    public ResponseEntity<?> emailExists(@PathVariable String email) {
+        boolean exists = userService.existsByEmail(email);
+        return ResponseUtil.success("Email existence checked", exists);
     }
 
-    /**
-     * Check if a username exists.
-     * @param username The username to check.
-     * @return ResponseEntity<Boolean>
-     */
     @GetMapping("/exists/username/{username}")
-    public ResponseEntity<Boolean> usernameExists(@PathVariable String username) {
-        return ResponseEntity.ok(userService.usernameExists(username));
+    public ResponseEntity<?> usernameExists(@PathVariable String username) {
+        boolean exists = userService.existsByUsername(username);
+        return ResponseUtil.success("Username existence checked", exists);
     }
 
-    /**
-     * Create a new user.
-     * @param user The user to save.
-     * @return ResponseEntity<User>
-     */
     @PostMapping("/create")
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        if (userService.emailExists(user.getEmail()) || userService.usernameExists(user.getUsername())) {
-            return ResponseEntity.internalServerError().build();
+    public ResponseEntity<?> createUser(@RequestBody User user) {
+        if (userService.existsByEmail(user.getEmail()) || userService.existsByUsername(user.getUsername())) {
+            return ResponseUtil.error(HttpStatus.BAD_REQUEST, "USER_EXISTS",
+                    "Email or Username already exists", "User creation failed");
         }
-        return ResponseEntity.ok(userService.saveUser(user));
+        User createdUser = userService.createUser(user);
+        return ResponseUtil.success("User created successfully", UserMapper.toResponseDTO(createdUser));
+    }
+
+    @GetMapping("/students")
+    public ResponseEntity<?> getAllStudents() {
+        List<UserDTO> students = userService.getAllStudents();
+        return ResponseUtil.success("All students retrieved", students);
+    }
+
+    @GetMapping("/faculty")
+    public ResponseEntity<?> getAllFaculty() {
+        List<UserDTO> faculty = userService.getAllFaculty();
+        return ResponseUtil.success("All faculty retrieved", faculty);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateUser(
+            @PathVariable UUID id,
+            @Valid @RequestBody UpdateUserRequestDTO userDTO) {
+        try {
+            User updatedUser = userService.updateUser(id, userDTO);
+            return ResponseUtil.success("User updated successfully", UserMapper.toResponseDTO(updatedUser));
+        } catch (RuntimeException e) {
+            return ResponseUtil.error(HttpStatus.NOT_FOUND, "USER_NOT_FOUND",
+                    e.getMessage(), null);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable UUID id) {
+        try {
+            userService.deleteUser(id);
+            return ResponseUtil.success("User deleted successfully", null);
+        } catch (RuntimeException e) {
+            return ResponseUtil.error(HttpStatus.NOT_FOUND, "USER_NOT_FOUND",
+                    e.getMessage(), null);
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getUserById(@PathVariable UUID id) {
+        try {
+            User user = userService.getUserById(id);
+            return ResponseUtil.success("User found", UserMapper.toResponseDTO(user));
+        } catch (RuntimeException e) {
+            return ResponseUtil.error(HttpStatus.NOT_FOUND, "USER_NOT_FOUND",
+                    e.getMessage(), null);
+        }
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getAllUsers() {
+        List<User> users = userService.getAllUsers();
+        List<UserResponseDTO> responseDTOs = users.stream()
+                .map(UserMapper::toResponseDTO)
+                .collect(Collectors.toList());
+        return ResponseUtil.success("All users retrieved", responseDTOs);
     }
 }

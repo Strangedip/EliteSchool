@@ -1,0 +1,113 @@
+<div class="wallet-container">
+  <div class="wallet-header">
+    <h1 class="wallet-title">Wallet Center</h1>
+    <p class="wallet-subtitle">Manage your wallet and view transaction history</p>
+  </div>
+
+  <div class="wallet-grid">
+    <!-- Balance Card -->
+    <div class="wallet-card balance-card">
+      <div class="card-header">
+        <h3>Current Balance</h3>
+      </div>
+      <div class="balance-amount d-flex justify-content-between" *ngIf="!loading">
+        <span *ngIf="showBalance">{{ walletBalance }} points</span>
+        <span *ngIf="!showBalance">••••</span>
+        <button pButton class="p-button-sm p-button-success showBalance" (click)="toggleBalanceVisibility()">
+          <i class="pi" [ngClass]="showBalance ? 'pi-eye-slash' : 'pi-eye'"></i>
+        </button>
+      </div>
+      <div class="balance-loading" *ngIf="loading">
+        <i class="pi pi-spin pi-spinner"></i>
+        <span>Loading balance...</span>
+      </div>
+      <p class="balance-info">Use your points to purchase items in the store</p>
+      <div class="balance-actions d-flex justify-content-around">
+        <a routerLink="/auth/store" class="btn-primary">Go to Store</a>
+      </div>
+    </div>
+
+    <!-- Transaction Summary Card -->
+    <div class="wallet-card summary-card">
+      <h3>Transaction Summary</h3>
+      <div class="summary-content" *ngIf="!transactionLoading">
+        <div class="summary-item credit">
+          <div class="summary-icon">
+            <i class="pi pi-arrow-up"></i>
+          </div>
+          <div class="summary-details">
+            <span class="summary-label">Total Credits</span>
+            <span class="summary-value">{{ getTotalCreditPoints() }} points</span>
+          </div>
+        </div>
+        <div class="summary-item debit">
+          <div class="summary-icon">
+            <i class="pi pi-arrow-down"></i>
+          </div>
+          <div class="summary-details">
+            <span class="summary-label">Total Debits</span>
+            <span class="summary-value">{{ getTotalDebitPoints() }} points</span>
+          </div>
+        </div>
+      </div>
+      <div class="summary-loading" *ngIf="transactionLoading">
+        <i class="pi pi-spin pi-spinner"></i>
+        <span>Loading summary...</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Transaction History -->
+  <div class="wallet-card transaction-card">
+    <div class="card-header with-filters">
+      <h3>Transaction History</h3>
+      <div class="filter-buttons">
+        <button pButton class="p-button-sm p-button-success" [class.p-button-outlined]="viewMode !== 'all'"
+          (click)="setViewMode('all')">All</button>
+        <button pButton class="p-button-sm p-button-success" [class.p-button-outlined]="viewMode !== 'credit'"
+          (click)="setViewMode('credit')">Credits</button>
+        <button pButton class="p-button-sm p-button-danger" [class.p-button-outlined]="viewMode !== 'debit'"
+          (click)="setViewMode('debit')">Debits</button>
+      </div>
+    </div>
+
+    <p-table [value]="getFilteredTransactions()" [loading]="transactionLoading"
+      styleClass="p-datatable-sm p-datatable-striped" responsiveLayout="scroll">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Date</th>
+          <th>Description</th>
+          <th>Type</th>
+          <th>Points</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-transaction>
+        <tr>
+          <td>{{ formatDate(transaction.createdAt) }}</td>
+          <td>{{ transaction.description }}</td>
+          <td>
+            <span [ngClass]="getTransactionColor(transaction.transactionType)">
+              <i class="pi" [ngClass]="transaction.transactionType === 'CREDIT' ? 'pi-arrow-up' : 'pi-arrow-down'"></i>
+              {{ transaction.transactionType }}
+            </span>
+          </td>
+          <td [ngClass]="getTransactionColor(transaction.transactionType)">
+            {{ formatPoints(transaction) }}
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="4" class="text-center">
+            <div *ngIf="transactionLoading">
+              <i class="pi pi-spin pi-spinner"></i> Loading transactions...
+            </div>
+            <div *ngIf="!transactionLoading">
+              No transactions found.
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>

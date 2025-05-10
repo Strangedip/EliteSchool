@@ -47,7 +47,7 @@
   }
 }
 
-// Sidebar Navigation (was formerly "Side Navigation")
+// Sidebar Navigation
 .side-nav {
   width: var(--sidebar-width);
   height: 100%;
@@ -57,6 +57,7 @@
   flex-direction: column;
   transition: all var(--transition-speed) ease;
   z-index: 10;
+  overflow: hidden; // Prevent content from overflowing
   
   // Brand/Logo area
   .brand {
@@ -64,6 +65,7 @@
     display: flex;
     align-items: center;
     gap: 1rem;
+    flex-shrink: 0; // Prevent brand section from shrinking
     
     .logo {
       min-width: 2.75rem;
@@ -96,78 +98,98 @@
     }
   }
   
-  // Sidebar menu items (was "Navigation menu")
+  // Main navigation section
   .nav-menu {
+    display: flex;
+    flex-direction: column;
     flex: 1;
-    padding: 1rem 0;
-    overflow-y: auto;
+    height: calc(100% - 85px); // Account for the brand section
+    overflow: hidden; // Prevent overall overflow
     
-    ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
+    .menu-items {
+      flex: 1;
+      overflow-y: auto; // Allow scrolling for menu items
+      padding: 1rem 0;
       
-      li {
-        position: relative;
-        transition: all var(--transition-speed) ease;
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
         
-        &:before {
-          content: '';
-          position: absolute;
-          left: 0;
-          top: 0;
-          height: 100%;
-          width: 4px;
-          background: transparent;
-          transition: background-color var(--transition-speed) ease;
-        }
-        
-        &.active {
-          background: rgba(0, 180, 216, 0.15);
+        li {
+          position: relative;
+          transition: all var(--transition-speed) ease;
           
           &:before {
-            background: var(--primary-light);
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: transparent;
+            transition: background-color var(--transition-speed) ease;
+          }
+          
+          &.active {
+            background: rgba(0, 180, 216, 0.15);
+            
+            &:before {
+              background: var(--primary-light);
+            }
+            
+            a {
+              color: var(--text-light);
+              
+              i {
+                color: var(--primary-light);
+              }
+            }
           }
           
           a {
-            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 0.875rem;
+            padding: 1rem 1.5rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: all var(--transition-speed) ease;
+            cursor: pointer;
+            
+            &:hover {
+              color: var(--text-light);
+              background: rgba(0, 180, 216, 0.1);
+            }
             
             i {
-              color: var(--primary-light);
+              font-size: 1.25rem;
+              color: var(--primary-color);
+              width: 1.5rem;
+              text-align: center;
+              transition: all var(--transition-speed) ease;
+            }
+            
+            span {
+              font-weight: 500;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
             }
           }
         }
-        
-        a {
-          display: flex;
-          align-items: center;
-          gap: 0.875rem;
-          padding: 1rem 1.5rem;
-          color: var(--text-muted);
-          text-decoration: none;
-          transition: all var(--transition-speed) ease;
-          cursor: pointer;
-          
-          &:hover {
-            color: var(--text-light);
-            background: rgba(0, 180, 216, 0.1);
-          }
-          
-          i {
-            font-size: 1.25rem;
-            color: var(--primary-color);
-            width: 1.5rem;
-            text-align: center;
-            transition: all var(--transition-speed) ease;
-          }
-          
-          span {
-            font-weight: 500;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-          }
-        }
+      }
+    }
+    
+    .bottom-menu {
+      margin-top: auto; // Push to the bottom
+      padding: 0;
+      flex-shrink: 0; // Prevent from shrinking
+      
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
       }
     }
   }
@@ -332,4 +354,68 @@
       display: none; // Hide welcome text on mobile to save space
     }
   }
+}
+
+// Style for the logout item in sidebar
+.logout-item {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 10px;
+  
+  a {
+    color: #ff5a5a;
+    display: flex;
+    justify-content: center;
+    padding: 1rem 1.5rem;
+    align-items: center;
+    
+    i {
+      order: 2;
+      margin-left: 8px;
+      font-size: 1.25rem;
+    }
+    
+    span {
+      order: 1;
+      font-weight: 500;
+    }
+    
+    &:hover {
+      background-color: rgba(255, 0, 0, 0.1);
+    }
+  }
+}
+
+// Style for the header right section and logout button
+.header-right {
+  display: flex;
+  align-items: center;
+  
+  .logout-btn {
+    background: none;
+    border: none;
+    color: #ff5a5a;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 4px;
+    
+    &:hover {
+      background-color: rgba(255, 0, 0, 0.1);
+    }
+    
+    i {
+      font-size: 16px;
+    }
+  }
+}
+
+// Adjust the header layout
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
 }

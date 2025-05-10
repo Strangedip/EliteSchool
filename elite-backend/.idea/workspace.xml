@@ -5,54 +5,43 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0b203c44-13b9-4b82-a17c-878dedd4fafe" name="Changes" comment="added reward-service and test dependencies">
-      <change afterPath="$PROJECT_DIR$/api-gateway/src/main/java/com/eliteschool/api_gateway/security/JwtAuthenticationFilter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/api-gateway/src/main/java/com/eliteschool/api_gateway/security/JwtUtil.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/api-gateway/src/main/resources/application.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/store-service/src/main/java/com/eliteschool/store_service/controller/StoreController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/store-service/src/main/java/com/eliteschool/store_service/model/StoreItem.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/store-service/src/main/java/com/eliteschool/store_service/repository/StoreItemRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/store-service/src/main/java/com/eliteschool/store_service/service/StoreService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/mvnw" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/mvnw.cmd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/DTO/CommonResponseDto.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/DTO/TaskRequestDto.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/DTO/UserCreateRequestDto.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/DTO/UserUpdateRequestDto.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/EliteApplication.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/common/CommonBean.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/config/SecurityConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/controller/AdminController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/controller/AuthController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/controller/TaskController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/controller/UserAccountController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/controller/UserController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/entity/Task.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/entity/TaskReviewRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/entity/User.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/entity/UserAccount.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/exception/GlobalExceptionHandler.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/exception/TaskException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/exception/UserException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/repository/TaskRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/repository/TaskReviewRequestRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/repository/UserAccountRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/repository/UserRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/repository/dbservice/EliteDBService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/service/AuthService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/service/TaskService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/service/UserService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/service/impl/AuthServiceImpl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/service/impl/TaskServiceImpl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/service/impl/UserServiceImpl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/utils/Constants.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/utils/TimeUtil.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/school/elite/utils/Utils.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/school/elite/EliteApplicationTests.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/school/elite/controller/UserControllerTest.java" beforeDir="false" />
+      <change afterPath="$PROJECT_DIR$/wallet-service/src/main/java/com/eliteschool/wallet_service/model/enums/TransactionType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/reward-service/.gitattributes" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/reward-service/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/reward-service/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/reward-service/mvnw" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/reward-service/mvnw.cmd" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/reward-service/pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/reward-service/src/main/java/com/eliteschool/reward_service/RewardServiceApplication.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/reward-service/src/main/java/com/eliteschool/reward_service/client/StoreServiceClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/wallet-service/src/main/java/com/eliteschool/wallet_service/client/StoreServiceClient.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/reward-service/src/main/java/com/eliteschool/reward_service/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/wallet-service/src/main/java/com/eliteschool/wallet_service/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/reward-service/src/main/java/com/eliteschool/reward_service/controller/RewardController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/reward-service/src/main/java/com/eliteschool/reward_service/dto/RedeemableItemDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/reward-service/src/main/java/com/eliteschool/reward_service/dto/RedeemableItemMapper.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/reward-service/src/main/java/com/eliteschool/reward_service/dto/RewardTransactionDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/reward-service/src/main/java/com/eliteschool/reward_service/dto/RewardTransactionMapper.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/reward-service/src/main/java/com/eliteschool/reward_service/dto/RewardWalletDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/reward-service/src/main/java/com/eliteschool/reward_service/dto/RewardWalletMapper.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/reward-service/src/main/java/com/eliteschool/reward_service/exception/InsufficientPointsException.java" beforeDir="false" afterPath="$PROJECT_DIR$/wallet-service/src/main/java/com/eliteschool/wallet_service/exception/InsufficientPointsException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/reward-service/src/main/java/com/eliteschool/reward_service/exception/ItemOutOfStockException.java" beforeDir="false" afterPath="$PROJECT_DIR$/wallet-service/src/main/java/com/eliteschool/wallet_service/exception/ItemOutOfStockException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/reward-service/src/main/java/com/eliteschool/reward_service/model/RedeemableItem.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/reward-service/src/main/java/com/eliteschool/reward_service/model/RewardTransaction.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/reward-service/src/main/java/com/eliteschool/reward_service/model/RewardWallet.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/reward-service/src/main/java/com/eliteschool/reward_service/model/enums/TransactionType.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/reward-service/src/main/java/com/eliteschool/reward_service/repository/RedeemableItemRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/reward-service/src/main/java/com/eliteschool/reward_service/repository/RewardTransactionRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/reward-service/src/main/java/com/eliteschool/reward_service/repository/RewardWalletRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/reward-service/src/main/java/com/eliteschool/reward_service/service/RewardService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/reward-service/src/main/resources/application.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/reward-service/src/test/java/com/eliteschool/reward_service/RewardServiceApplicationTests.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/store-service/src/main/java/com/eliteschool/store_service/controller/StoreController.java" beforeDir="false" afterPath="$PROJECT_DIR$/store-service/src/main/java/com/eliteschool/store_service/controller/StoreController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../elite-frontend/src/app/auth/auth-layout.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../elite-frontend/src/app/auth/auth-layout.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../elite-frontend/src/app/auth/auth-routing.module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../elite-frontend/src/app/auth/auth-routing.module.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../elite-frontend/src/app/auth/store/store.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../elite-frontend/src/app/auth/store/store.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../elite-frontend/src/app/core/services/reward.service.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../elite-frontend/src/app/core/services/store.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../elite-frontend/src/app/core/services/store.service.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -112,7 +101,7 @@
     "Maven.elite-backend [clean,install,-DskipTests].executor": "Run",
     "Maven.elite-backend [clean,install].executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "restructure-to-microservice",
+    "git-widget-placeholder": "user-section",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/sg022/OneDrive/Desktop/Git/EliteSchool/elite-backend/store-service/src/main/java/com/eliteschool/store_service"
   }
@@ -120,6 +109,9 @@
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\sg022\OneDrive\Desktop\Git\EliteSchool\elite-backend\store-service\src\main\java\com\eliteschool\store_service" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\sg022\OneDrive\Desktop\Git\EliteSchool\elite-backend\wallet-service\src\main\java\com\eliteschool\wallet_service" />
     </key>
   </component>
   <component name="RunAnythingCache">

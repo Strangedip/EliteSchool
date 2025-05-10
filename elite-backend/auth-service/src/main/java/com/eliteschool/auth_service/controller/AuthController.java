@@ -1,5 +1,6 @@
 package com.eliteschool.auth_service.controller;
 
+import com.eliteschool.auth_service.mapper.UserMapper;
 import com.eliteschool.auth_service.model.User;
 import com.eliteschool.auth_service.security.JwtUtil;
 import com.eliteschool.auth_service.service.UserService;
@@ -27,15 +28,15 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@RequestBody User user) {
-        if (userService.emailExists(user.getEmail()) || userService.usernameExists(user.getUsername())) {
+        if (userService.existsByEmail(user.getEmail()) || userService.existsByUsername(user.getUsername())) {
             return ResponseUtil.error(HttpStatus.BAD_REQUEST, "USER_EXISTS",
                     "Email or Username already exists", "Registration failed");
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        User savedUser = userService.saveUser(user);
+        User savedUser = userService.createUser(user);
 
-        return ResponseUtil.success("User registered successfully", null);
+        return ResponseUtil.success("User registered successfully", UserMapper.toResponseDTO(savedUser));
     }
 
     @PostMapping("/login")
@@ -48,7 +49,10 @@ public class AuthController {
                 .map(user -> {
                     String token = jwtUtil.generateToken(user.getUsername(),user.getRole() );
                     response.setHeader("Authorization", "Bearer " + token);
-                    return ResponseUtil.success("Login successful", Map.of("token", token));
+                    return ResponseUtil.success("Login successful", Map.of(
+                        "token", token,
+                        "user", UserMapper.toResponseDTO(user)
+                    ));
                 })
                 .orElseGet(() -> ResponseUtil.error(
                         HttpStatus.UNAUTHORIZED, "INVALID_CREDENTIALS",
@@ -74,9 +78,46 @@ public class AuthController {
             return ResponseUtil.error(HttpStatus.UNAUTHORIZED, "FAILED_AUTHORIZATION", "Invalid Token", null);
         }
 
-        return ResponseUtil.success("User validated successfully", null);
+        // Return user details along with the validation
+        try {
+            User user = userService.getUserEntityByUsername(username);
+            return ResponseUtil.success("User validated successfully", UserMapper.toResponseDTO(user));
+        } catch (Exception e) {
+            return ResponseUtil.success("User validated successfully, but profile data not available", null);
+        }
     }
 
+    /**
+     * Get the current user's profile
+     * This endpoint uses the JWT token to identify the user and return their profile data
+     */
+    @GetMapping("/profile")
+    public ResponseEntity<?> getUserProfile(HttpServletRequest request) {
+        String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseUtil.error(HttpStatus.UNAUTHORIZED, "FAILED_AUTHORIZATION", "Token missing", null);
+        }
+
+        String token = authHeader.substring(7);
+        String username = jwtUtil.extractUsername(token);
+
+        if (ObjectUtils.isEmpty(username)) {
+            return ResponseUtil.error(HttpStatus.UNAUTHORIZED, "FAILED_AUTHORIZATION", "Invalid Token", null);
+        }
+
+        if (!jwtUtil.validateToken(token, username)) {
+            return ResponseUtil.error(HttpStatus.UNAUTHORIZED, "FAILED_AUTHORIZATION", "Invalid Token", null);
+        }
+
+        try {
+            User user = userService.getUserEntityByUsername(username);
+            return ResponseUtil.success("User profile retrieved successfully", UserMapper.toResponseDTO(user));
+        } catch (Exception e) {
+            return ResponseUtil.error(HttpStatus.NOT_FOUND, "USER_NOT_FOUND", 
+                "User profile not found: " + e.getMessage(), null);
+        }
+    }
 
     @PostMapping("/logout")
     public ResponseEntity<?> logoutUser(HttpServletRequest request, HttpServletResponse response) {

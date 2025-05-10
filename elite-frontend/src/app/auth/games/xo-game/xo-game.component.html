@@ -1,0 +1,117 @@
+<div class="game-container">
+  <div class="game-header">
+    <div class="back-button">
+      <p-button icon="pi pi-arrow-left" (onClick)="backToGames()" styleClass="p-button-rounded p-button-text"></p-button>
+    </div>
+    <h1>Tic Tac Toe</h1>
+  </div>
+
+  <!-- Game Mode Selection Dialog -->
+  <p-dialog 
+    header="Select Game Mode" 
+    [(visible)]="showGameModeDialog"
+    [modal]="true"
+    [closable]="false"
+    [draggable]="false"
+    [resizable]="false"
+    styleClass="game-mode-dialog">
+    
+    <div class="game-mode-options">
+      <p-button 
+        label="Single Player" 
+        icon="pi pi-user" 
+        styleClass="p-button-primary" 
+        (onClick)="selectGameMode('single')">
+      </p-button>
+      
+      <p-button 
+        label="Two Players" 
+        icon="pi pi-users" 
+        styleClass="p-button-secondary" 
+        (onClick)="selectGameMode('multi')">
+      </p-button>
+    </div>
+  </p-dialog>
+
+  <div class="game-content">
+    <!-- Game Board - Now on top -->
+    <div class="game-board">
+      <div class="board-row" *ngFor="let row of [0, 1, 2]">
+        <div 
+          *ngFor="let col of [0, 1, 2]" 
+          class="board-cell" 
+          [class.x-cell]="board[row * 3 + col] === 'X'"
+          [class.o-cell]="board[row * 3 + col] === 'O'"
+          (click)="makeMove(row * 3 + col)">
+          <span 
+            *ngIf="board[row * 3 + col] === 'X'" 
+            class="x-symbol"
+            [class.fading]="getCellOpacity(row * 3 + col) < 1"
+            [style.opacity]="getCellOpacity(row * 3 + col)">X</span>
+          <span 
+            *ngIf="board[row * 3 + col] === 'O'" 
+            class="o-symbol"
+            [class.fading]="getCellOpacity(row * 3 + col) < 1"
+            [style.opacity]="getCellOpacity(row * 3 + col)">O</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Game Info -->
+    <div class="game-info">
+      <div class="game-rules">
+        <p class="rule-text">Each player can have max 3 moves on the board. After the 3rd move, the oldest move (faded one) will be removed when making a new move.</p>
+      </div>
+      
+      <div class="player-info">
+        <div class="player" [class.active]="currentPlayer === 'X' && !gameOver">
+          <span class="player-symbol x-player">X</span>
+          <span class="player-score">{{xWins}}</span>
+        </div>
+        
+        <div class="player" [class.active]="currentPlayer === 'O' && !gameOver">
+          <span class="player-symbol o-player">O</span>
+          <span class="player-score">{{oWins}}</span>
+        </div>
+        
+        <div class="draw-info">
+          <span class="draw-label">Draws</span>
+          <span class="draw-score">{{draws}}</span>
+        </div>
+      </div>
+      
+      <div class="game-status">
+        <div *ngIf="!gameOver" class="current-turn">
+          <span>Current Turn: </span>
+          <span [ngClass]="{'x-player': currentPlayer === 'X', 'o-player': currentPlayer === 'O'}">
+            {{currentPlayer}}
+          </span>
+          <span *ngIf="gameMode === 'single' && currentPlayer === 'O'"> (Computer)</span>
+        </div>
+        
+        <div *ngIf="gameOver && !isDraw" class="game-result winner">
+          <span>Player </span>
+          <span [ngClass]="{'x-player': winner === 'X', 'o-player': winner === 'O'}">
+            {{winner}}
+          </span>
+          <span> wins!</span>
+        </div>
+        
+        <div *ngIf="gameOver && isDraw" class="game-result draw">
+          It's a draw!
+        </div>
+      </div>
+      
+      <div class="game-actions">
+        <p-button 
+          label="New Game" 
+          icon="pi pi-refresh" 
+          (onClick)="resetGame()" 
+          styleClass="p-button-primary">
+        </p-button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-toast></p-toast> 

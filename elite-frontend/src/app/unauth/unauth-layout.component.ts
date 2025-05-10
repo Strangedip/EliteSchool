@@ -1,7 +1,7 @@
 // unauth/unauth-layout.component.ts
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { TopNavbarComponent } from '../components/top-navbar/top-navbar.component';
+import { TopNavbarComponent } from '../auth/common/top-navbar/top-navbar.component';
 
 @Component({
     selector: 'app-unauth-layout',

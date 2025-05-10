@@ -1,9 +1,8 @@
 import { Component, OnInit, ChangeDetectorRef, inject, NO_ERRORS_SCHEMA } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from 'src/app/service/auth.service';
-import { UserService } from 'src/app/service/user.service';
-import { UserData } from 'src/app/model/user-data.model';
-import { Gender, Role } from 'src/app/model/common.model';
+import { AuthService, UserRegistrationData } from 'src/app/core/services/auth.service';
+import { UserService } from 'src/app/core/services/user.service';
+import { CommonResponseDto } from 'src/app/core/models/common-response.model';
 import { SelectItem, MessageService } from 'primeng/api';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -16,7 +15,25 @@ import { RippleModule } from 'primeng/ripple';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { ToastModule } from 'primeng/toast';
 import { finalize } from 'rxjs';
-import { CommonResponseDto } from 'src/app/model/common-response.model';
+
+/**
+ * Gender enum for registration
+ */
+export enum Gender {
+  MALE = 'MALE',
+  FEMALE = 'FEMALE',
+  OTHER = 'OTHER'
+}
+
+/**
+ * Role enum for registration
+ */
+export enum Role {
+  ADMIN = 'ADMIN',
+  FACULTY = 'FACULTY',
+  STUDENT = 'STUDENT',
+  GUEST = 'GUEST'
+}
 
 @Component({
   selector: 'app-register',
@@ -47,9 +64,9 @@ export class RegisterComponent implements OnInit {
 
   loading: boolean = false;
 
-  userData: UserData = {
+  userData: UserRegistrationData = {
     name: '',
-    age: null,
+    age: null as any,
     gender: '',
     email: '',
     mobileNumber: '',
@@ -182,10 +199,6 @@ export class RegisterComponent implements OnInit {
 
   navigateToDashboard(): void {
     this.router.navigate(['/auth/dashboard']);
-  }
-
-  info(): void {
-    console.log(this.userData);  // Display user data for debugging
   }
 
   testToast() {

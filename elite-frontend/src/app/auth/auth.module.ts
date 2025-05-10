@@ -6,8 +6,6 @@ import { TaskCreateComponent } from './taskboard/task-create/task-create.compone
 import { AuthRoutingModule } from './auth-routing.module';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { UserProfileComponent } from './user-profile/user-profile.component';
-import { TaskboardComponent } from './taskboard/taskboard.component';
-import { StoreComponent } from './store/store.component';
 import { RouterModule } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
@@ -20,12 +18,20 @@ import { UnauthRoutingModule } from '../unauth/unauth-routing.module';
 import { AuthLayoutComponent } from './auth-layout.component';
 import { AuthGuard } from './auth.guard';
 
+/**
+ * Note: Several components in this module are now standalone components:
+ * - AuthLayoutComponent
+ * - TaskboardComponent
+ * - RewardsComponent
+ * - StoreComponent
+ * 
+ * These components should not be imported directly in this module.
+ * They are loaded directly by the router.
+ */
 @NgModule({
   declarations: [
     TaskCreateComponent,
     DashboardComponent,
-    UserProfileComponent,
-    StoreComponent
   ],
   imports: [
     CommonModule,
@@ -40,8 +46,7 @@ import { AuthGuard } from './auth.guard';
     ToolbarModule,
     MenuModule,
     TabMenuModule,
-    AuthLayoutComponent,
-    TaskboardComponent
+    // Note: AuthLayoutComponent is a standalone component and should be imported through the router
   ],
   providers: [
     AuthGuard
