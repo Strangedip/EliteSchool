@@ -2,6 +2,7 @@ package com.eliteschool.auth_service.controller;
 
 import com.eliteschool.auth_service.dto.UserDTO;
 import com.eliteschool.auth_service.dto.request.UpdateUserRequestDTO;
+import com.eliteschool.auth_service.dto.request.UserRequestDTO;
 import com.eliteschool.auth_service.dto.response.UserResponseDTO;
 import com.eliteschool.auth_service.mapper.UserMapper;
 import com.eliteschool.auth_service.model.User;
@@ -54,11 +55,12 @@ public class UserController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> createUser(@RequestBody User user) {
-        if (userService.existsByEmail(user.getEmail()) || userService.existsByUsername(user.getUsername())) {
+    public ResponseEntity<?> createUser(@Valid @RequestBody UserRequestDTO userDTO) {
+        if (userService.existsByEmail(userDTO.getEmail()) || userService.existsByUsername(userDTO.getUsername())) {
             return ResponseUtil.error(HttpStatus.BAD_REQUEST, "USER_EXISTS",
                     "Email or Username already exists", "User creation failed");
         }
+        User user = UserMapper.fromRequestDTO(userDTO);
         User createdUser = userService.createUser(user);
         return ResponseUtil.success("User created successfully", UserMapper.toResponseDTO(createdUser));
     }

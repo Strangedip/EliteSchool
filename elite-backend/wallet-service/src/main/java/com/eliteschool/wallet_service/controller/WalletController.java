@@ -21,119 +21,53 @@ public class WalletController {
 
     private final WalletService walletService;
 
-    /**
-     * Get a student's wallet balance.
-     * @param studentId The student's ID.
-     * @return Wallet balance.
-     */
     @GetMapping("/{studentId}/balance")
     public ResponseEntity<CommonResponseDto<Integer>> getWalletBalance(@PathVariable UUID studentId) {
-        log.info("Request received to get wallet balance for student: {}", studentId);
-        int balance = walletService.getWalletBalance(studentId);
-        return ResponseUtil.success("Wallet balance retrieved successfully", balance);
+        return ResponseUtil.success("Balance retrieved", walletService.getWalletBalance(studentId));
     }
 
-    /**
-     * Add points to wallet (credit operation).
-     * @param studentId The student's ID.
-     * @param points The points to add.
-     * @param description The reason for adding points.
-     * @return ResponseEntity with success message and new balance.
-     */
     @PostMapping("/{studentId}/credit")
     public ResponseEntity<CommonResponseDto<Integer>> creditPoints(
             @PathVariable UUID studentId,
             @RequestParam int points,
             @RequestParam String description) {
-        
-        log.info("Request received to credit {} points for student: {} with description: {}", 
-                points, studentId, description);
-        
         walletService.creditPoints(studentId, points, description);
-        int newBalance = walletService.getWalletBalance(studentId);
-        return ResponseUtil.success("Points added successfully", newBalance);
+        return ResponseUtil.success("Points credited", walletService.getWalletBalance(studentId));
     }
 
-    /**
-     * Award points for task completion (internal service endpoint)
-     * @param request The award points request.
-     * @return ResponseEntity with success message.
-     */
+    // Internal endpoint for task-service to award points on task completion
     @PostMapping("/award")
     public ResponseEntity<CommonResponseDto<Void>> awardTaskPoints(@Valid @RequestBody AwardPointsRequest request) {
-        log.info("Request received to award {} points to student: {} for: {}", 
-                request.points(), request.studentId(), request.description());
-        
         walletService.creditPoints(request.studentId(), request.points(), request.description());
-        return ResponseUtil.success("Points awarded successfully", null);
+        return ResponseUtil.success("Points awarded", null);
     }
 
-    /**
-     * Deduct points from wallet (debit operation).
-     * @param studentId The student's ID.
-     * @param points The points to deduct.
-     * @param description The reason for deducting points.
-     * @return ResponseEntity with success message and new balance.
-     */
     @PostMapping("/{studentId}/debit")
     public ResponseEntity<CommonResponseDto<Integer>> debitPoints(
             @PathVariable UUID studentId,
             @RequestParam int points,
             @RequestParam String description) {
-        
-        log.info("Request received to debit {} points from student: {} with description: {}", 
-                points, studentId, description);
-        
         walletService.debitPoints(studentId, points, description);
-        int newBalance = walletService.getWalletBalance(studentId);
-        return ResponseUtil.success("Points deducted successfully", newBalance);
+        return ResponseUtil.success("Points debited", walletService.getWalletBalance(studentId));
     }
 
-    /**
-     * Purchase an item from the store using wallet points.
-     * @param studentId The student's ID.
-     * @param itemId The item ID to purchase.
-     * @return ResponseEntity with detailed response.
-     */
     @PostMapping("/{studentId}/purchase/{itemId}")
     public ResponseEntity<CommonResponseDto<PurchaseResponse>> purchaseItem(
-            @PathVariable UUID studentId, 
+            @PathVariable UUID studentId,
             @PathVariable UUID itemId) {
-        
-        log.info("Request received to purchase item: {} for student: {}", itemId, studentId);
-        
-        boolean success = walletService.purchaseItem(studentId, itemId);
+        log.info("Purchase request: student={}, item={}", studentId, itemId);
+        walletService.purchaseItem(studentId, itemId);
         int remainingBalance = walletService.getWalletBalance(studentId);
-        
-        PurchaseResponse response = new PurchaseResponse(
-            true,
-            "Item purchased successfully!",
-            remainingBalance
-        );
-        return ResponseUtil.success("Item purchased successfully", response);
+        return ResponseUtil.success("Purchase successful", 
+            new PurchaseResponse(true, "Item purchased!", remainingBalance));
     }
 
-    /**
-     * Get a student's transaction history.
-     * @param studentId The student's ID.
-     * @return List of transactions.
-     */
     @GetMapping("/{studentId}/transactions")
     public ResponseEntity<CommonResponseDto<List<TransactionDto>>> getTransactionHistory(@PathVariable UUID studentId) {
-        log.info("Request received to get transaction history for student: {}", studentId);
-        List<TransactionDto> transactions = walletService.getTransactionHistory(studentId);
-        return ResponseUtil.success("Transaction history retrieved successfully", transactions);
+        return ResponseUtil.success("Transactions retrieved", walletService.getTransactionHistory(studentId));
     }
-    
-    // Request record for task completion points
-    private record AwardPointsRequest(
-            UUID studentId, 
-            int points, 
-            String description) {}
-    
-    // Response record for purchase operations
-    public record PurchaseResponse(
-            boolean success, 
-            String message, 
-            int remainingBalance) {}
+
+    private record AwardPointsRequest(UUID studentId, int points, String description) {}
+
+    public record PurchaseResponse(boolean success, String message, int remainingBalance) {}
 }

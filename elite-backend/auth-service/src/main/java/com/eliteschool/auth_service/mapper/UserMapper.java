@@ -2,15 +2,13 @@ package com.eliteschool.auth_service.mapper;
 
 import com.eliteschool.auth_service.dto.UserDTO;
 import com.eliteschool.auth_service.dto.request.UpdateUserRequestDTO;
+import com.eliteschool.auth_service.dto.request.UserRequestDTO;
 import com.eliteschool.auth_service.dto.response.UserResponseDTO;
 import com.eliteschool.auth_service.model.User;
-import org.springframework.stereotype.Component;
 
 public final class UserMapper {
     
-    private UserMapper() {
-        // Private constructor to prevent instantiation
-    }
+    private UserMapper() {}
 
     public static UserResponseDTO toResponseDTO(User user) {
         if (user == null) {
@@ -152,5 +150,25 @@ public final class UserMapper {
         }
 
         return existingUser;
+    }
+
+    public static User fromRequestDTO(UserRequestDTO dto) {
+        if (dto == null) {
+            return null;
+        }
+
+        return User.builder()
+                .name(dto.getName())
+                .age(dto.getAge())
+                .gender(dto.getGender())
+                .email(dto.getEmail())
+                .mobileNumber(dto.getMobileNumber())
+                .username(dto.getUsername())
+                .password(dto.getPassword())
+                .role(dto.getRole())
+                .active(dto.isActive())
+                .emailVerified(dto.isEmailVerified())
+                .address(dto.getAddress())
+                .build();
     }
 } 

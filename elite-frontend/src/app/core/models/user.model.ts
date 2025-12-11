@@ -1,9 +1,9 @@
 /**
  * User model representing a user in the system
+ * Uses eliteId as the unique identifier (matches backend)
  */
 export interface User {
-  id: string;
-  eliteId?: string; // Keeping for backward compatibility
+  eliteId: string;
   name: string;
   email: string;
   username: string;
@@ -12,10 +12,12 @@ export interface User {
   mobileNumber?: string;
   gender?: string;
   age?: number;
+  address?: string;
+  emergencyContact?: string;
   createdAt?: string;
   updatedAt?: string;
-  isActive: boolean;
-  additionalInfo?: Record<string, any>;
+  active: boolean;
+  emailVerified?: boolean;
 }
 
 /**

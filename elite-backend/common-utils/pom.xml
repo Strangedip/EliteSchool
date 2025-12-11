@@ -41,6 +41,20 @@
 			<scope>provided</scope>
 		</dependency>
 
+		<!-- ✅ Jakarta Persistence API for EntityNotFoundException -->
+		<dependency>
+			<groupId>jakarta.persistence</groupId>
+			<artifactId>jakarta.persistence-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- ✅ Jakarta Validation API for ConstraintViolationException -->
+		<dependency>
+			<groupId>jakarta.validation</groupId>
+			<artifactId>jakarta.validation-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
 		<!-- ✅ Jackson for DTOs -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>

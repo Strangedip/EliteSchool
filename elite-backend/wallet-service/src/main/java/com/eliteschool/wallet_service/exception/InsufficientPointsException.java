@@ -9,10 +9,15 @@ import org.springframework.http.HttpStatus;
 public class InsufficientPointsException extends AppException {
     
     public InsufficientPointsException(String message) {
-        super(message, "You don't have enough points for this item", "INSUFFICIENT_POINTS", HttpStatus.OK);
+        super(message, "You don't have enough points for this transaction", "INSUFFICIENT_POINTS", HttpStatus.BAD_REQUEST);
     }
     
-    public InsufficientPointsException(String message, Throwable cause) {
-        super(message, "You don't have enough points for this item", "INSUFFICIENT_POINTS", HttpStatus.OK);
+    public InsufficientPointsException(int required, int available) {
+        super(
+            String.format("Insufficient points: required %d, available %d", required, available),
+            "You don't have enough points for this transaction",
+            "INSUFFICIENT_POINTS",
+            HttpStatus.BAD_REQUEST
+        );
     }
 } 

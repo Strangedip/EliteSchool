@@ -1,0 +1,170 @@
+<div class="home-container">
+  <!-- Navbar -->
+  <nav class="home-navbar">
+    <div class="nav-content">
+      <a routerLink="/home" class="nav-brand">
+        <i class="pi pi-bolt"></i>
+        <span>EliteSchool</span>
+      </a>
+      <div class="nav-links">
+        <a routerLink="/login" class="nav-link">Sign In</a>
+        <a routerLink="/register" class="nav-btn">Get Started</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-background">
+      <div class="gradient-orb orb-1"></div>
+      <div class="gradient-orb orb-2"></div>
+      <div class="gradient-orb orb-3"></div>
+    </div>
+    
+    <div class="hero-content">
+      <div class="hero-badge">
+        <i class="pi pi-bolt"></i>
+        <span>Welcome to the Future of Learning</span>
+      </div>
+      
+      <h1 class="hero-title">
+        Where <span class="gradient-text">Excellence</span> Meets
+        <span class="gradient-text">Rewards</span>
+      </h1>
+      
+      <p class="hero-subtitle">
+        EliteSchool is a gamified learning platform where students earn points by completing tasks, 
+        track their achievements, and redeem rewards. Transform your educational journey into an exciting adventure.
+      </p>
+      
+      <div class="hero-actions">
+        <button pButton pRipple label="Get Started" icon="pi pi-arrow-right" iconPos="right" 
+                class="p-button-lg hero-btn-primary" routerLink="/register"></button>
+        <button pButton pRipple label="Sign In" icon="pi pi-sign-in" 
+                class="p-button-lg p-button-outlined hero-btn-secondary" routerLink="/login"></button>
+      </div>
+      
+      <div class="hero-stats">
+        @for (stat of stats; track stat.label) {
+          <div class="stat-item">
+            <span class="stat-value">{{ stat.value }}</span>
+            <span class="stat-label">{{ stat.label }}</span>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features-section">
+    <div class="section-header">
+      <span class="section-badge">Features</span>
+      <h2 class="section-title">Everything You Need to <span class="gradient-text">Excel</span></h2>
+      <p class="section-subtitle">Discover the tools and features that make EliteSchool the ultimate learning companion</p>
+    </div>
+    
+    <div class="features-grid">
+      @for (feature of features; track feature.title) {
+        <div class="feature-card">
+          <div class="feature-icon"><i [class]="feature.icon"></i></div>
+          <h3 class="feature-title">{{ feature.title }}</h3>
+          <p class="feature-description">{{ feature.description }}</p>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="how-it-works-section">
+    <div class="section-header">
+      <span class="section-badge">How It Works</span>
+      <h2 class="section-title">Your Journey to <span class="gradient-text">Success</span></h2>
+    </div>
+    
+    <div class="steps-container">
+      <div class="step-card">
+        <div class="step-number">01</div>
+        <div class="step-content">
+          <h3>Sign Up</h3>
+          <p>Create your free account and join the EliteSchool community in seconds.</p>
+        </div>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step-card">
+        <div class="step-number">02</div>
+        <div class="step-content">
+          <h3>Complete Tasks</h3>
+          <p>Browse available tasks, submit your work, and get verified by faculty.</p>
+        </div>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step-card">
+        <div class="step-number">03</div>
+        <div class="step-content">
+          <h3>Earn Points</h3>
+          <p>Every approved task earns you Elite Points based on difficulty level.</p>
+        </div>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step-card">
+        <div class="step-number">04</div>
+        <div class="step-content">
+          <h3>Redeem Rewards</h3>
+          <p>Visit the Elite Store and exchange your points for amazing rewards.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section class="testimonials-section">
+    <div class="section-header">
+      <span class="section-badge">Testimonials</span>
+      <h2 class="section-title">Loved by <span class="gradient-text">Students</span></h2>
+    </div>
+    
+    <div class="testimonials-grid">
+      @for (testimonial of testimonials; track testimonial.name) {
+        <div class="testimonial-card">
+          <div class="quote-icon"><i class="pi pi-quote-left"></i></div>
+          <p class="testimonial-quote">"{{ testimonial.quote }}"</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">{{ testimonial.avatar }}</div>
+            <div class="author-info">
+              <span class="author-name">{{ testimonial.name }}</span>
+              <span class="author-role">{{ testimonial.role }}</span>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta-section">
+    <div class="cta-content">
+      <h2>Ready to Start Your <span class="gradient-text">Elite Journey</span>?</h2>
+      <p>Join thousands of students who are already achieving more with EliteSchool.</p>
+      <button pButton pRipple label="Create Free Account" icon="pi pi-user-plus" 
+              class="p-button-lg cta-btn" routerLink="/register"></button>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="home-footer">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <i class="pi pi-bolt"></i>
+        <span>EliteSchool</span>
+      </div>
+      <p class="footer-tagline">Empowering students through gamified learning</p>
+      <div class="footer-links">
+        <a routerLink="/login">Sign In</a>
+        <span class="divider">•</span>
+        <a routerLink="/register">Register</a>
+      </div>
+      <p class="footer-copyright">© 2025 EliteSchool. All rights reserved.</p>
+    </div>
+  </footer>
+</div>
+

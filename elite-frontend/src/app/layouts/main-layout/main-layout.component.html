@@ -1,0 +1,50 @@
+<div class="app-layout">
+  <div class="mobile-overlay" [class.active]="isMobileMenuOpen" (click)="toggleMobileMenu()"></div>
+  
+  <aside class="sidebar" [class.mobile-open]="isMobileMenuOpen">
+    <a routerLink="/home" class="brand">
+      <div class="logo"><span>E</span></div>
+      <h1 class="brand-name">Elite School</h1>
+    </a>
+    
+    <nav class="nav-menu">
+      <ul class="nav-list">
+        @for (item of navItems; track item.route; let i = $index) {
+          <li [class.active]="activeIndex === i" (click)="navigateTo(i)">
+            <a><i [class]="item.icon"></i><span>{{ item.label }}</span></a>
+          </li>
+        }
+      </ul>
+      
+      <div class="nav-footer">
+        <a routerLink="/home" class="nav-link">
+          <i class="pi pi-home"></i><span>Home</span>
+        </a>
+        <button class="logout-btn" (click)="logout()">
+          <i class="pi pi-sign-out"></i><span>Logout</span>
+        </button>
+      </div>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <header class="header">
+      <div class="header-left">
+        <button class="menu-toggle" (click)="toggleMobileMenu()">
+          <i class="pi" [class.pi-bars]="!isMobileMenuOpen" [class.pi-times]="isMobileMenuOpen"></i>
+        </button>
+        <h2 class="page-title">{{ pageTitle }}</h2>
+      </div>
+      
+      <div class="header-right">
+        <a routerLink="/home" class="icon-btn" title="Home"><i class="pi pi-home"></i></a>
+        <button class="icon-btn logout" (click)="logout()" title="Logout"><i class="pi pi-sign-out"></i></button>
+      </div>
+    </header>
+    
+    <div class="content">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+</div>
+
