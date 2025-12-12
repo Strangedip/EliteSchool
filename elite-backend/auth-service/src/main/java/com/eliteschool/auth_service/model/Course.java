@@ -36,6 +36,7 @@ public class Course {
     @Column(nullable = false)
     private String grade;    // e.g., Grade 1, Grade 2
 
+    @Builder.Default
     @Column
     private boolean isActive = true;
 

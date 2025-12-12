@@ -3,7 +3,6 @@ package com.eliteschool.auth_service.service;
 import com.eliteschool.auth_service.dto.UserDTO;
 import com.eliteschool.auth_service.dto.request.UpdateUserRequestDTO;
 import com.eliteschool.auth_service.model.User;
-import com.eliteschool.auth_service.model.enums.RoleType;
 
 import java.util.List;
 import java.util.Optional;

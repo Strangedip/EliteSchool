@@ -39,7 +39,11 @@ public class UserDTO {
     private String password;
     
     private RoleType role;
+    
+    @Builder.Default
     private boolean active = true;
+    
+    @Builder.Default
     private boolean emailVerified = false;
     
     // Common fields for all users

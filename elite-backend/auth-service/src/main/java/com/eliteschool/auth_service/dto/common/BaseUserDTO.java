@@ -7,8 +7,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
-import java.time.LocalDateTime;
-
 @Data
 public class BaseUserDTO {
     private String eliteId;

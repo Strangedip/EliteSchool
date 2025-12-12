@@ -74,6 +74,7 @@
 	</dependencyManagement>
 
 	<build>
+		<finalName>eureka-server</finalName>
 		<plugins>
 			<!-- Spring Boot Plugin -->
 			<plugin>

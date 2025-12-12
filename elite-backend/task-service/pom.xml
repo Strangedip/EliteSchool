@@ -133,6 +133,7 @@
 
 	<!-- Build Configuration -->
 	<build>
+		<finalName>task-service</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

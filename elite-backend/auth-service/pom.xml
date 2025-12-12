@@ -162,6 +162,7 @@
 	</repositories>
 
 	<build>
+		<finalName>auth-service</finalName>
 		<plugins>
 			<!-- Maven Compiler Plugin -->
 			<plugin>

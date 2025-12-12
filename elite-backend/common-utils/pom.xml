@@ -48,30 +48,65 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!-- ✅ Jakarta Validation API for ConstraintViolationException -->
-		<dependency>
-			<groupId>jakarta.validation</groupId>
-			<artifactId>jakarta.validation-api</artifactId>
-			<scope>provided</scope>
-		</dependency>
+	<!-- ✅ Jakarta Validation API for ConstraintViolationException -->
+	<dependency>
+		<groupId>jakarta.validation</groupId>
+		<artifactId>jakarta.validation-api</artifactId>
+		<scope>provided</scope>
+	</dependency>
 
-		<!-- ✅ Jackson for DTOs -->
+	<!-- ✅ Spring Data Commons for DataIntegrityViolationException -->
+	<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-tx</artifactId>
+		<scope>provided</scope>
+	</dependency>
+
+	<!-- ✅ Jackson for DTOs -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 			<version>2.17.1</version>
 		</dependency>
 
-		<!-- ✅ Lombok -->
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<version>1.18.30</version>
-			<scope>provided</scope>
-		</dependency>
-	</dependencies>
+	<!-- ✅ Lombok -->
+	<dependency>
+		<groupId>org.projectlombok</groupId>
+		<artifactId>lombok</artifactId>
+		<version>1.18.30</version>
+		<scope>provided</scope>
+	</dependency>
+
+	<!-- ✅ Testing Dependencies -->
+	<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-test</artifactId>
+		<scope>test</scope>
+	</dependency>
+	<dependency>
+		<groupId>org.junit.jupiter</groupId>
+		<artifactId>junit-jupiter</artifactId>
+		<scope>test</scope>
+	</dependency>
+	<dependency>
+		<groupId>org.mockito</groupId>
+		<artifactId>mockito-core</artifactId>
+		<scope>test</scope>
+	</dependency>
+	<dependency>
+		<groupId>org.mockito</groupId>
+		<artifactId>mockito-junit-jupiter</artifactId>
+		<scope>test</scope>
+	</dependency>
+	<dependency>
+		<groupId>org.assertj</groupId>
+		<artifactId>assertj-core</artifactId>
+		<scope>test</scope>
+	</dependency>
+</dependencies>
 
 	<build>
+		<finalName>common-utils</finalName>
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
