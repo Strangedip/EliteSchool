@@ -6,8 +6,7 @@ export const GAMES_ROUTES: Routes = [
     loadComponent: () => import('./components/games.component').then(m => m.GamesComponent),
     children: [
       { path: 'rps', loadComponent: () => import('./components/rps-game/rps-game.component').then(m => m.RpsGameComponent) },
-      { path: 'xo', loadComponent: () => import('./components/xo-game/xo-game.component').then(m => m.XoGameComponent) },
-      { path: '', redirectTo: 'rps', pathMatch: 'full' }
+      { path: 'xo', loadComponent: () => import('./components/xo-game/xo-game.component').then(m => m.XoGameComponent) }
     ]
   }
 ];

@@ -11,6 +11,7 @@ import { WalletService } from '../../core/services/wallet.service';
 import { Transaction } from '../../core/models/wallet.model';
 import { TaskService } from '../../core/services/task.service';
 import { TaskSubmission } from '../../core/models/task.model';
+import { Router } from '@angular/router';
 
 interface UserTaskDisplay {
   id: string;
@@ -40,7 +41,8 @@ export class UserProfileComponent implements OnInit, AfterViewInit {
     private userService: UserService,
     private walletService: WalletService,
     private taskService: TaskService,
-    private el: ElementRef
+    private el: ElementRef,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -166,5 +168,8 @@ export class UserProfileComponent implements OnInit, AfterViewInit {
         }
       }
     });
+  }
+  NavigateToStore(): void {
+    this.router.navigate(['/store']);
   }
 }

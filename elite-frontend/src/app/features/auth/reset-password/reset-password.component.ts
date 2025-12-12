@@ -134,5 +134,29 @@ export class ResetPasswordComponent implements OnInit {
       this.resetPasswordForm.get(key)?.markAsTouched();
     });
   }
+
+  get passwordValue(): string {
+  return this.newPassword?.value || '';
+  }
+
+  get hasUpperCase(): boolean {
+    return /[A-Z]/.test(this.passwordValue);
+  }
+
+  get hasLowerCase(): boolean {
+    return /[a-z]/.test(this.passwordValue);
+  }
+
+  get hasNumber(): boolean {
+    return /[0-9]/.test(this.passwordValue);
+  }
+
+  get isLengthValid(): boolean {
+    return this.passwordValue.length >= 8;
+  }
+
+  navigateToResetPassword(): void {
+    this.router.navigate(['/forgot-password']);
+  }
 }
 

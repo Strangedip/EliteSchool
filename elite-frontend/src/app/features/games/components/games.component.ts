@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 
@@ -17,7 +17,7 @@ interface GameCard {
   templateUrl: './games.component.html',
   styleUrls: ['./games.component.scss'],
   standalone: true,
-  imports: [CommonModule, ButtonModule, CardModule]
+  imports: [CommonModule, ButtonModule, CardModule, RouterModule]
 })
 export class GamesComponent implements OnInit {
   games: GameCard[] = [
@@ -37,11 +37,13 @@ export class GamesComponent implements OnInit {
     }
   ];
 
+  isPlaying: boolean = false;
   constructor(private router: Router) {}
 
   ngOnInit(): void {}
 
   navigateToGame(route: string): void {
+    this.isPlaying = true;
     this.router.navigate([route]);
   }
 } 

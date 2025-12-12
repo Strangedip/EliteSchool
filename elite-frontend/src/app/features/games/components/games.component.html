@@ -3,7 +3,7 @@
     <h1>Games</h1>
     <p class="games-subtitle">Take a break and enjoy these games!</p>
   </div>
-  
+  <router-outlet *ngIf="isPlaying"></router-outlet>
   <div class="games-grid">
     <div *ngFor="let game of games" class="game-card">
       <p-card [styleClass]="'game-card-content'">

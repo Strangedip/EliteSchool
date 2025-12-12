@@ -54,7 +54,7 @@
         <div class="card tasks-card">
             <div class="card-header">
                 <h2>Upcoming Tasks</h2>
-                <a routerLink="/auth/taskboard" class="view-all">View All</a>
+                <a routerLink="/taskboard" class="view-all">View All</a>
             </div>
             <div class="task-list">
                 <div class="task-item">
@@ -88,7 +88,7 @@
         <div class="card wallet-card">
             <div class="card-header">
                 <h2>Wallet Activity</h2>
-                <a routerLink="/auth/wallet" class="view-all">View All</a>
+                <a routerLink="/wallet" class="view-all">View All</a>
             </div>
             <div class="wallet-summary" *ngIf="!loadingRewards">
                 <div class="wallet-stat">
@@ -109,8 +109,8 @@
                 <span>Loading wallet data...</span>
             </div>
             <div class="card-actions">
-                <a routerLink="/auth/wallet" class="btn-primary">View Wallet</a>
-                <a routerLink="/auth/store" class="btn-secondary">Browse Store</a>
+                <a routerLink="/wallet" class="btn-primary">View Wallet</a>
+                <a routerLink="/store" class="btn-secondary">Browse Store</a>
             </div>
         </div>
 

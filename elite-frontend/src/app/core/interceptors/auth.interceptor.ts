@@ -18,9 +18,9 @@ const getToken = (): string | null => {
  */
 export const authInterceptor: HttpInterceptorFn = (request, next) => {
   // Skip authentication for auth endpoints
-  if (request.url.includes('/auth/login') || 
-      request.url.includes('/auth/register') ||
-      request.url.includes('/auth/signup')) {
+  if (request.url.includes('/login') || 
+      request.url.includes('/register') ||
+      request.url.includes('/signup')) {
     return next(request);
   }
   
@@ -49,9 +49,9 @@ export const authInterceptor: HttpInterceptorFn = (request, next) => {
 export class AuthInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     // Skip authentication for auth endpoints
-    if (request.url.includes('/auth/login') || 
-        request.url.includes('/auth/register') ||
-        request.url.includes('/auth/signup')) {
+    if (request.url.includes('/login') || 
+        request.url.includes('/register') ||
+        request.url.includes('/signup')) {
       return next.handle(request);
     }
     

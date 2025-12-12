@@ -162,6 +162,6 @@ public class AuthController {
             .message(isValid ? "Token is valid" : "Token is invalid or expired")
             .build();
         
-        return ResponseUtil.success(response, response.getMessage());
+        return ResponseUtil.success(response.getMessage(), token);
     }
 }
