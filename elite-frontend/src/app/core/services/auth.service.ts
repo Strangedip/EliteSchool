@@ -135,4 +135,35 @@ export class AuthService {
   navigateToDashboard(): void {
     this.router.navigate(['/dashboard']);
   }
+
+  // ==================== PASSWORD RESET METHODS ====================
+
+  /**
+   * Request password reset
+   * Sends email with reset link if email exists
+   */
+  forgotPassword(email: string): Observable<CommonResponseDto<any>> {
+    return this.http.post<CommonResponseDto<any>>(`${this.apiUrl}/forgot-password`, { email });
+  }
+
+  /**
+   * Reset password using token
+   * Validates token and updates password
+   */
+  resetPassword(token: string, newPassword: string): Observable<CommonResponseDto<any>> {
+    return this.http.post<CommonResponseDto<any>>(`${this.apiUrl}/reset-password`, { 
+      token, 
+      newPassword 
+    });
+  }
+
+  /**
+   * Validate reset token
+   * Checks if token is valid and not expired
+   */
+  validateResetToken(token: string): Observable<CommonResponseDto<{ valid: boolean, message: string }>> {
+    return this.http.get<CommonResponseDto<{ valid: boolean, message: string }>>(
+      `${this.apiUrl}/validate-reset-token/${token}`
+    );
+  }
 }

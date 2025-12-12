@@ -1,10 +1,14 @@
 package com.eliteschool.auth_service.controller;
 
+import com.eliteschool.auth_service.dto.request.ForgotPasswordRequest;
 import com.eliteschool.auth_service.dto.request.LoginRequestDTO;
+import com.eliteschool.auth_service.dto.request.ResetPasswordRequest;
 import com.eliteschool.auth_service.dto.request.UserRequestDTO;
+import com.eliteschool.auth_service.dto.response.TokenValidationResponse;
 import com.eliteschool.auth_service.mapper.UserMapper;
 import com.eliteschool.auth_service.model.User;
 import com.eliteschool.auth_service.security.JwtUtil;
+import com.eliteschool.auth_service.service.PasswordResetService;
 import com.eliteschool.auth_service.service.UserService;
 import com.eliteschool.common_utils.util.ResponseUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,6 +32,7 @@ public class AuthController {
     private final UserService userService;
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
+    private final PasswordResetService passwordResetService;
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody UserRequestDTO userDTO) {
@@ -111,5 +116,52 @@ public class AuthController {
     public ResponseEntity<?> logoutUser(HttpServletResponse response) {
         jwtUtil.clearTokenCookie(response);
         return ResponseUtil.success("Logged out successfully", null);
+    }
+
+    // ==================== PASSWORD RESET ENDPOINTS ====================
+
+    /**
+     * Initiate password reset process
+     * Sends email with reset link if email exists
+     * Returns success regardless to prevent email enumeration
+     */
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+        passwordResetService.initiatePasswordReset(request.getEmail());
+        
+        return ResponseUtil.success(
+            "If the email address exists in our system, you will receive password reset instructions shortly.",
+            "Password reset email sent"
+        );
+    }
+
+    /**
+     * Reset password using token
+     * Validates token and updates password
+     */
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+        passwordResetService.resetPassword(request.getToken(), request.getNewPassword());
+        
+        return ResponseUtil.success(
+            "Your password has been reset successfully. You can now login with your new password.",
+            "Password reset successful"
+        );
+    }
+
+    /**
+     * Validate reset token
+     * Checks if token is valid and not expired
+     */
+    @GetMapping("/validate-reset-token/{token}")
+    public ResponseEntity<?> validateResetToken(@PathVariable String token) {
+        boolean isValid = passwordResetService.validateResetToken(token);
+        
+        TokenValidationResponse response = TokenValidationResponse.builder()
+            .valid(isValid)
+            .message(isValid ? "Token is valid" : "Token is invalid or expired")
+            .build();
+        
+        return ResponseUtil.success(response, response.getMessage());
     }
 }

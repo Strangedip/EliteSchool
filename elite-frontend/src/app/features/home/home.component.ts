@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -11,7 +12,16 @@ import { RippleModule } from 'primeng/ripple';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
+  isLoggedIn = false;
+
+  constructor(private authService: AuthService) {}
+
+  ngOnInit(): void {
+    this.authService.isAuthenticated$.subscribe(auth => {
+      this.isLoggedIn = auth;
+    });
+  }
   features = [
     { icon: 'pi pi-star', title: 'Earn Rewards', description: 'Complete tasks and challenges to earn Elite Points that can be redeemed for exciting rewards.' },
     { icon: 'pi pi-check-circle', title: 'Track Progress', description: 'Monitor your achievements, completed tasks, and growth journey in real-time.' },

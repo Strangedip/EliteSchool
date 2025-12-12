@@ -24,6 +24,16 @@ export const routes: Routes = [
     canActivate: [GuestGuard],
     title: 'Register - EliteSchool'
   },
+  {
+    path: 'forgot-password',
+    loadComponent: () => import('./features/auth/forgot-password/forgot-password.component').then(m => m.ForgotPasswordComponent),
+    title: 'Forgot Password - EliteSchool'
+  },
+  {
+    path: 'reset-password',
+    loadComponent: () => import('./features/auth/reset-password/reset-password.component').then(m => m.ResetPasswordComponent),
+    title: 'Reset Password - EliteSchool'
+  },
   
   // Protected routes with layout
   {

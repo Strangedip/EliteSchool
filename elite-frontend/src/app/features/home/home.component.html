@@ -7,8 +7,13 @@
         <span>EliteSchool</span>
       </a>
       <div class="nav-links">
-        <a routerLink="/login" class="nav-link">Sign In</a>
-        <a routerLink="/register" class="nav-btn">Get Started</a>
+        <ng-container *ngIf="!isLoggedIn; else loggedInLinks">
+          <a routerLink="/login" class="nav-link">Sign In</a>
+          <a routerLink="/register" class="nav-btn">Get Started</a>
+        </ng-container>
+        <ng-template #loggedInLinks>
+          <a routerLink="/dashboard" class="nav-btn">Go to Dashboard</a>
+        </ng-template>
       </div>
     </div>
   </nav>
@@ -38,10 +43,18 @@
       </p>
       
       <div class="hero-actions">
-        <button pButton pRipple label="Get Started" icon="pi pi-arrow-right" iconPos="right" 
-                class="p-button-lg hero-btn-primary" routerLink="/register"></button>
-        <button pButton pRipple label="Sign In" icon="pi pi-sign-in" 
-                class="p-button-lg p-button-outlined hero-btn-secondary" routerLink="/login"></button>
+        <ng-container *ngIf="!isLoggedIn; else loggedInActions">
+          <button pButton pRipple label="Get Started" icon="pi pi-arrow-right" iconPos="right" 
+                  class="p-button-lg hero-btn-primary" routerLink="/register"></button>
+          <button pButton pRipple label="Sign In" icon="pi pi-sign-in" 
+                  class="p-button-lg p-button-outlined hero-btn-secondary" routerLink="/login"></button>
+        </ng-container>
+        <ng-template #loggedInActions>
+          <button pButton pRipple label="Go to Dashboard" icon="pi pi-th-large" iconPos="right" 
+                  class="p-button-lg hero-btn-primary" routerLink="/dashboard"></button>
+          <button pButton pRipple label="View Tasks" icon="pi pi-list-check" 
+                  class="p-button-lg p-button-outlined hero-btn-secondary" routerLink="/tasks"></button>
+        </ng-template>
       </div>
       
       <div class="hero-stats">
@@ -143,10 +156,18 @@
   <!-- CTA Section -->
   <section class="cta-section">
     <div class="cta-content">
-      <h2>Ready to Start Your <span class="gradient-text">Elite Journey</span>?</h2>
-      <p>Join thousands of students who are already achieving more with EliteSchool.</p>
-      <button pButton pRipple label="Create Free Account" icon="pi pi-user-plus" 
-              class="p-button-lg cta-btn" routerLink="/register"></button>
+      <ng-container *ngIf="!isLoggedIn; else loggedInCta">
+        <h2>Ready to Start Your <span class="gradient-text">Elite Journey</span>?</h2>
+        <p>Join thousands of students who are already achieving more with EliteSchool.</p>
+        <button pButton pRipple label="Create Free Account" icon="pi pi-user-plus" 
+                class="p-button-lg cta-btn" routerLink="/register"></button>
+      </ng-container>
+      <ng-template #loggedInCta>
+        <h2>Continue Your <span class="gradient-text">Elite Journey</span></h2>
+        <p>Complete tasks, earn points, and redeem amazing rewards!</p>
+        <button pButton pRipple label="View Available Tasks" icon="pi pi-list-check" 
+                class="p-button-lg cta-btn" routerLink="/tasks"></button>
+      </ng-template>
     </div>
   </section>
 
@@ -159,9 +180,18 @@
       </div>
       <p class="footer-tagline">Empowering students through gamified learning</p>
       <div class="footer-links">
-        <a routerLink="/login">Sign In</a>
-        <span class="divider">•</span>
-        <a routerLink="/register">Register</a>
+        <ng-container *ngIf="!isLoggedIn; else loggedInFooter">
+          <a routerLink="/login">Sign In</a>
+          <span class="divider">•</span>
+          <a routerLink="/register">Register</a>
+        </ng-container>
+        <ng-template #loggedInFooter>
+          <a routerLink="/dashboard">Dashboard</a>
+          <span class="divider">•</span>
+          <a routerLink="/tasks">Tasks</a>
+          <span class="divider">•</span>
+          <a routerLink="/store">Store</a>
+        </ng-template>
       </div>
       <p class="footer-copyright">© 2025 EliteSchool. All rights reserved.</p>
     </div>

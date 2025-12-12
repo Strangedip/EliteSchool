@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: auth-service
+  
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:local}
+  
+  cloud:
+    config:
+      # Config server URI
+      uri: ${CONFIG_SERVER_URI:http://localhost:8888}
+      
+      # Fail fast if config server is not available
+      fail-fast: false
+      
+      # Retry settings
+      retry:
+        initial-interval: 1000
+        max-attempts: 6
+        max-interval: 2000
+        multiplier: 1.1
+      
+      # Authentication
+      username: ${CONFIG_SERVER_USER:configuser}
+      password: ${CONFIG_SERVER_PASSWORD:configpass}
+      
+      # Profile to use (local, development, production)
+      profile: ${SPRING_PROFILES_ACTIVE:local}
+
+# If config server is unavailable, use local properties
+# This allows the service to start even without config server
+

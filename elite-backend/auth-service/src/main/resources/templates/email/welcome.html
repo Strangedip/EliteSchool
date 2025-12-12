@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to EliteSchool</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .email-container {
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 40px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo {
+            font-size: 60px;
+            margin-bottom: 10px;
+        }
+        .header h1 {
+            color: #4CAF50;
+            margin: 0;
+            font-size: 32px;
+        }
+        .content {
+            margin: 30px 0;
+        }
+        .content p {
+            margin: 15px 0;
+            color: #555;
+            font-size: 15px;
+        }
+        .greeting {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+        }
+        .features {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 25px 0;
+        }
+        .features h3 {
+            color: #4CAF50;
+            margin-top: 0;
+        }
+        .features ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .features li {
+            margin: 10px 0;
+            color: #555;
+        }
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            text-align: center;
+            font-size: 12px;
+            color: #999;
+        }
+        .footer p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">🎓</div>
+            <h1>Welcome to EliteSchool!</h1>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <p class="greeting">Hello <strong th:text="${name}">User</strong>,</p>
+            
+            <p>Welcome to <strong>EliteSchool</strong>! We're excited to have you join our learning community.</p>
+            
+            <p>Your account has been successfully created, and you're all set to start your educational journey with us.</p>
+        </div>
+
+        <!-- Features -->
+        <div class="features">
+            <h3>🚀 What you can do now:</h3>
+            <ul>
+                <li>✅ Complete tasks and earn points</li>
+                <li>🏪 Visit the store to redeem rewards</li>
+                <li>💰 Manage your points wallet</li>
+                <li>🎮 Play educational games</li>
+                <li>👤 Customize your profile</li>
+            </ul>
+        </div>
+
+        <div class="content">
+            <p>If you have any questions or need assistance, our support team is here to help!</p>
+            <p>Happy learning! 📚</p>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>This is an automated email from <strong>EliteSchool</strong>.</p>
+            <p>Please do not reply to this email.</p>
+            <p>&copy; <span th:text="${currentYear}">2025</span> EliteSchool. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
+

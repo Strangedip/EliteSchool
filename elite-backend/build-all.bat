@@ -134,34 +134,37 @@ echo [INFO] Maven: Ready
 echo.
 
 REM Initialize counters
-set TOTAL_SERVICES=7
+set TOTAL_SERVICES=8
 set BUILT_SERVICES=0
 set "FAILED_SERVICES="
 
 REM Main build sequence
-echo [INFO] Build order: common-utils then services then eureka then gateway
+echo [INFO] Build order: common-utils then config-server then eureka then services then gateway
 echo.
 
 REM 1. Build common-utils
 call :build_service "common-utils" "common-utils" "true"
 if %ERRORLEVEL% neq 0 goto :build_summary
 
-REM 2. Build Eureka Server
+REM 2. Build Config Server
+call :build_service "config-server" "config-server" "false"
+
+REM 3. Build Eureka Server
 call :build_service "eureka-server" "eureka-server" "false"
 
-REM 3. Build Auth Service
+REM 4. Build Auth Service
 call :build_service "auth-service" "auth-service" "false"
 
-REM 4. Build Task Service
+REM 5. Build Task Service
 call :build_service "task-service" "task-service" "false"
 
-REM 5. Build Wallet Service
+REM 6. Build Wallet Service
 call :build_service "wallet-service" "wallet-service" "false"
 
-REM 6. Build Store Service
+REM 7. Build Store Service
 call :build_service "store-service" "store-service" "false"
 
-REM 7. Build API Gateway
+REM 8. Build API Gateway
 call :build_service "api-gateway" "api-gateway" "false"
 
 REM ==============================================================================
