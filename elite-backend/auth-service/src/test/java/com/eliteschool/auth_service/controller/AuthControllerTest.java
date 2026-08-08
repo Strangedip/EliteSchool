@@ -6,14 +6,14 @@ import com.eliteschool.auth_service.model.User;
 import com.eliteschool.auth_service.model.enums.RoleType;
 import com.eliteschool.auth_service.security.JwtUtil;
 import com.eliteschool.auth_service.service.UserService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
@@ -36,15 +36,15 @@ class AuthControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private JsonMapper objectMapper;
 
-    @MockBean
+    @MockitoBean
     private UserService userService;
 
-    @MockBean
+    @MockitoBean
     private JwtUtil jwtUtil;
 
-    @MockBean
+    @MockitoBean
     private PasswordEncoder passwordEncoder;
 
     private User testUser;
@@ -62,6 +62,7 @@ class AuthControllerTest {
         testUser.setActive(true);
 
         userRequestDTO = new UserRequestDTO();
+        userRequestDTO.setName("Test User");
         userRequestDTO.setUsername("testuser");
         userRequestDTO.setEmail("test@example.com");
         userRequestDTO.setPassword("Test1234");
@@ -108,7 +109,7 @@ class AuthControllerTest {
                 .content(objectMapper.writeValueAsString(userRequestDTO)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.errorCode").value("USER_EXISTS"));
+                .andExpect(jsonPath("$.error.errorCode").value("USER_EXISTS"));
 
         verify(userService, never()).createUser(any(User.class));
     }
@@ -126,7 +127,7 @@ class AuthControllerTest {
                 .content(objectMapper.writeValueAsString(userRequestDTO)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.errorCode").value("USER_EXISTS"));
+                .andExpect(jsonPath("$.error.errorCode").value("USER_EXISTS"));
 
         verify(userService, never()).createUser(any(User.class));
     }
@@ -137,7 +138,7 @@ class AuthControllerTest {
         // Arrange
         when(userService.findByUsername(anyString())).thenReturn(Optional.of(testUser));
         when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
-        when(jwtUtil.generateToken(anyString(), any(RoleType.class))).thenReturn("mock.jwt.token");
+        when(jwtUtil.generateToken(anyString(), any(RoleType.class), any())).thenReturn("mock.jwt.token");
 
         // Act & Assert
         mockMvc.perform(post("/api/auth/login")
@@ -152,7 +153,7 @@ class AuthControllerTest {
 
         verify(userService, times(1)).findByUsername(anyString());
         verify(passwordEncoder, times(1)).matches(anyString(), anyString());
-        verify(jwtUtil, times(1)).generateToken(anyString(), any(RoleType.class));
+        verify(jwtUtil, times(1)).generateToken(anyString(), any(RoleType.class), any());
     }
 
     @Test
@@ -167,10 +168,10 @@ class AuthControllerTest {
                 .content(objectMapper.writeValueAsString(loginRequestDTO)))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.errorCode").value("INVALID_CREDENTIALS"));
+                .andExpect(jsonPath("$.error.errorCode").value("INVALID_CREDENTIALS"));
 
         verify(userService, times(1)).findByUsername(anyString());
-        verify(jwtUtil, never()).generateToken(anyString(), any(RoleType.class));
+        verify(jwtUtil, never()).generateToken(anyString(), any(RoleType.class), any());
     }
 
     @Test
@@ -186,10 +187,10 @@ class AuthControllerTest {
                 .content(objectMapper.writeValueAsString(loginRequestDTO)))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.errorCode").value("INVALID_CREDENTIALS"));
+                .andExpect(jsonPath("$.error.errorCode").value("INVALID_CREDENTIALS"));
 
         verify(passwordEncoder, times(1)).matches(anyString(), anyString());
-        verify(jwtUtil, never()).generateToken(anyString(), any(RoleType.class));
+        verify(jwtUtil, never()).generateToken(anyString(), any(RoleType.class), any());
     }
 
     @Test

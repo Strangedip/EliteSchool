@@ -56,69 +56,6 @@ public final class UserMapper {
                 .build();
     }
 
-    public static User toEntity(UserDTO dto) {
-        if (dto == null) {
-            return null;
-        }
-
-        return User.builder()
-                .eliteId(dto.getEliteId())
-                .name(dto.getName())
-                .age(dto.getAge())
-                .gender(dto.getGender())
-                .email(dto.getEmail())
-                .mobileNumber(dto.getMobileNumber())
-                .username(dto.getUsername())
-                .password(dto.getPassword())
-                .role(dto.getRole())
-                .active(dto.isActive())
-                .emailVerified(dto.isEmailVerified())
-                .address(dto.getAddress())
-                .emergencyContact(dto.getEmergencyContact())
-                .build();
-    }
-
-    public static User updateUserFromDTO(UserDTO dto, User existingUser) {
-        if (dto == null || existingUser == null) {
-            return existingUser;
-        }
-
-        if (dto.getName() != null) {
-            existingUser.setName(dto.getName());
-        }
-        if (dto.getAge() != null) {
-            existingUser.setAge(dto.getAge());
-        }
-        if (dto.getGender() != null) {
-            existingUser.setGender(dto.getGender());
-        }
-        if (dto.getEmail() != null) {
-            existingUser.setEmail(dto.getEmail());
-        }
-        if (dto.getMobileNumber() != null) {
-            existingUser.setMobileNumber(dto.getMobileNumber());
-        }
-        if (dto.getUsername() != null) {
-            existingUser.setUsername(dto.getUsername());
-        }
-        if (dto.getPassword() != null) {
-            existingUser.setPassword(dto.getPassword());
-        }
-        if (dto.getRole() != null) {
-            existingUser.setRole(dto.getRole());
-        }
-        existingUser.setActive(dto.isActive());
-        existingUser.setEmailVerified(dto.isEmailVerified());
-        if (dto.getAddress() != null) {
-            existingUser.setAddress(dto.getAddress());
-        }
-        if (dto.getEmergencyContact() != null) {
-            existingUser.setEmergencyContact(dto.getEmergencyContact());
-        }
-
-        return existingUser;
-    }
-
     public static User updateUserFromRequestDTO(UpdateUserRequestDTO dto, User existingUser) {
         if (dto == null || existingUser == null) {
             return existingUser;
@@ -137,7 +74,8 @@ public final class UserMapper {
             existingUser.setEmail(dto.getEmail());
         }
         if (dto.getMobileNumber() != null) {
-            existingUser.setMobileNumber(dto.getMobileNumber());
+            String mobile = dto.getMobileNumber().isBlank() ? null : dto.getMobileNumber();
+            existingUser.setMobileNumber(mobile);
         }
         if (dto.getUsername() != null) {
             existingUser.setUsername(dto.getUsername());
@@ -157,12 +95,17 @@ public final class UserMapper {
             return null;
         }
 
+        String mobile = dto.getMobileNumber();
+        if (mobile != null && mobile.isBlank()) {
+            mobile = null;
+        }
+
         return User.builder()
                 .name(dto.getName())
                 .age(dto.getAge())
                 .gender(dto.getGender())
                 .email(dto.getEmail())
-                .mobileNumber(dto.getMobileNumber())
+                .mobileNumber(mobile)
                 .username(dto.getUsername())
                 .password(dto.getPassword())
                 .role(dto.getRole())

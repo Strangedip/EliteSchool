@@ -9,9 +9,6 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-/**
- * DTO for Transaction entity
- */
 @Data
 @Builder
 @NoArgsConstructor
@@ -20,7 +17,7 @@ public class TransactionDto {
 
     private UUID id;
     private UUID studentId;
-    private TransactionType transactionType; // CREDIT or DEBIT
+    private TransactionType transactionType;
     private int points;
     private String description;
     private LocalDateTime createdAt;

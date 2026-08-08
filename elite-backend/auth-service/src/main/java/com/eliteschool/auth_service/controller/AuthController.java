@@ -1,5 +1,6 @@
 package com.eliteschool.auth_service.controller;
 
+import com.eliteschool.auth_service.dto.request.ChangePasswordRequest;
 import com.eliteschool.auth_service.dto.request.ForgotPasswordRequest;
 import com.eliteschool.auth_service.dto.request.LoginRequestDTO;
 import com.eliteschool.auth_service.dto.request.ResetPasswordRequest;
@@ -36,6 +37,16 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody UserRequestDTO userDTO) {
+        if (userDTO.getRole() != null
+                && userDTO.getRole() != com.eliteschool.auth_service.model.enums.RoleType.STUDENT) {
+            return ResponseUtil.error(HttpStatus.BAD_REQUEST, "INVALID_ROLE",
+                    "Public registration is limited to Student accounts. Contact an administrator for staff access.",
+                    "Registration failed");
+        }
+        if (userDTO.getRole() == null) {
+            userDTO.setRole(com.eliteschool.auth_service.model.enums.RoleType.STUDENT);
+        }
+
         if (userService.existsByEmail(userDTO.getEmail()) || userService.existsByUsername(userDTO.getUsername())) {
             return ResponseUtil.error(HttpStatus.BAD_REQUEST, "USER_EXISTS",
                     "Email or Username already exists", "Registration failed");
@@ -53,8 +64,13 @@ public class AuthController {
         return userService.findByUsername(loginRequest.getUsername())
                 .filter(user -> passwordEncoder.matches(loginRequest.getPassword(), user.getPassword()))
                 .map(user -> {
-                    String token = jwtUtil.generateToken(user.getUsername(), user.getRole());
+                    if (!user.isActive()) {
+                        return ResponseUtil.error(HttpStatus.FORBIDDEN, "ACCOUNT_INACTIVE",
+                                "This account has been deactivated", "Login failed");
+                    }
+                    String token = jwtUtil.generateToken(user.getUsername(), user.getRole(), user.getEliteId());
                     response.setHeader("Authorization", "Bearer " + token);
+                    jwtUtil.setTokenCookie(response, token);
                     return ResponseUtil.success("Login successful", Map.of(
                         "token", token,
                         "user", UserMapper.toResponseDTO(user)
@@ -87,7 +103,6 @@ public class AuthController {
         }
     }
 
-    // Returns user profile using JWT token for identification
     @GetMapping("/profile")
     public ResponseEntity<?> getUserProfile(HttpServletRequest request) {
         String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
@@ -118,13 +133,31 @@ public class AuthController {
         return ResponseUtil.success("Logged out successfully", null);
     }
 
-    // ==================== PASSWORD RESET ENDPOINTS ====================
+    @PostMapping("/change-password")
+    public ResponseEntity<?> changePassword(@Valid @RequestBody ChangePasswordRequest changeRequest, HttpServletRequest httpRequest) {
+        String authHeader = httpRequest.getHeader(HttpHeaders.AUTHORIZATION);
 
-    /**
-     * Initiate password reset process
-     * Sends email with reset link if email exists
-     * Returns success regardless to prevent email enumeration
-     */
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseUtil.error(HttpStatus.UNAUTHORIZED, "FAILED_AUTHORIZATION", "Token missing", null);
+        }
+
+        String token = authHeader.substring(7);
+        String username = jwtUtil.extractUsername(token);
+
+        if (ObjectUtils.isEmpty(username) || !jwtUtil.validateToken(token, username)) {
+            return ResponseUtil.error(HttpStatus.UNAUTHORIZED, "FAILED_AUTHORIZATION", "Invalid Token", null);
+        }
+
+        User user = userService.getUserEntityByUsername(username);
+        if (!passwordEncoder.matches(changeRequest.getCurrentPassword(), user.getPassword())) {
+            return ResponseUtil.error(HttpStatus.BAD_REQUEST, "INVALID_PASSWORD", "Current password is incorrect", null);
+        }
+
+        userService.changePassword(user.getEliteId(), passwordEncoder.encode(changeRequest.getNewPassword()));
+        return ResponseUtil.success("Password changed successfully", null);
+    }
+
+    // Always returns success to prevent email enumeration
     @PostMapping("/forgot-password")
     public ResponseEntity<?> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
         passwordResetService.initiatePasswordReset(request.getEmail());
@@ -135,10 +168,6 @@ public class AuthController {
         );
     }
 
-    /**
-     * Reset password using token
-     * Validates token and updates password
-     */
     @PostMapping("/reset-password")
     public ResponseEntity<?> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
         passwordResetService.resetPassword(request.getToken(), request.getNewPassword());
@@ -149,19 +178,15 @@ public class AuthController {
         );
     }
 
-    /**
-     * Validate reset token
-     * Checks if token is valid and not expired
-     */
     @GetMapping("/validate-reset-token/{token}")
     public ResponseEntity<?> validateResetToken(@PathVariable String token) {
         boolean isValid = passwordResetService.validateResetToken(token);
-        
+
         TokenValidationResponse response = TokenValidationResponse.builder()
             .valid(isValid)
             .message(isValid ? "Token is valid" : "Token is invalid or expired")
             .build();
-        
-        return ResponseUtil.success(response.getMessage(), token);
+
+        return ResponseUtil.success(response.getMessage(), response);
     }
 }

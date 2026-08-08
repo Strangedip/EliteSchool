@@ -3,7 +3,6 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, BehaviorSubject, of, throwError, map } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-import { Router } from '@angular/router';
 import { UserService } from './user.service';
 import { CommonResponseDto } from '../models/common-response.model';
 import { LoginResponseDto, User } from '../models/user.model';
@@ -27,8 +26,7 @@ export class AuthService {
   private TOKEN_KEY = 'Authorization';
   
   constructor(
-    private http: HttpClient, 
-    private router: Router,
+    private http: HttpClient,
     private userService: UserService
   ) {
     this.checkAuthState();
@@ -46,7 +44,7 @@ export class AuthService {
 
   saveToken(token: string): void {
     localStorage.setItem(this.TOKEN_KEY, token);
-    localStorage.setItem('token', token); // Legacy support
+    localStorage.setItem('token', token);
     this.isAuthenticatedSubject.next(true);
   }
 
@@ -74,18 +72,11 @@ export class AuthService {
     );
   }
   
-  signup(userData: UserRegistrationData): Observable<CommonResponseDto<LoginResponseDto>> {
+  signup(userData: UserRegistrationData): Observable<CommonResponseDto<User>> {
     userData.role = userData.role.toUpperCase();
     userData.gender = userData.gender.toUpperCase();
-    
-    return this.http.post<CommonResponseDto<LoginResponseDto>>(`${this.apiUrl}/signup`, userData).pipe(
-      tap((response: CommonResponseDto<LoginResponseDto>) => {
-        if (response.success && response.data) {
-          this.saveToken(response.data.token);
-          if (response.data.user) this.userService.setCurrentUser(response.data.user);
-        }
-      })
-    );
+
+    return this.http.post<CommonResponseDto<User>>(`${this.apiUrl}/signup`, userData);
   }
 
   validateToken(): Observable<CommonResponseDto<User>> {
@@ -128,42 +119,26 @@ export class AuthService {
     return this.isAuthenticatedSubject.value;
   }
 
-  navigateToLogin(): void {
-    this.router.navigate(['/login']);
-  }
-
-  navigateToDashboard(): void {
-    this.router.navigate(['/dashboard']);
-  }
-
-  // ==================== PASSWORD RESET METHODS ====================
-
-  /**
-   * Request password reset
-   * Sends email with reset link if email exists
-   */
   forgotPassword(email: string): Observable<CommonResponseDto<any>> {
     return this.http.post<CommonResponseDto<any>>(`${this.apiUrl}/forgot-password`, { email });
   }
 
-  /**
-   * Reset password using token
-   * Validates token and updates password
-   */
   resetPassword(token: string, newPassword: string): Observable<CommonResponseDto<any>> {
-    return this.http.post<CommonResponseDto<any>>(`${this.apiUrl}/reset-password`, { 
-      token, 
-      newPassword 
+    return this.http.post<CommonResponseDto<any>>(`${this.apiUrl}/reset-password`, {
+      token,
+      newPassword
     });
   }
 
-  /**
-   * Validate reset token
-   * Checks if token is valid and not expired
-   */
   validateResetToken(token: string): Observable<CommonResponseDto<{ valid: boolean, message: string }>> {
     return this.http.get<CommonResponseDto<{ valid: boolean, message: string }>>(
       `${this.apiUrl}/validate-reset-token/${token}`
     );
+  }
+
+  changePassword(currentPassword: string, newPassword: string): Observable<CommonResponseDto<any>> {
+    const headers = this.getAuthHeaders();
+    return this.http.post<CommonResponseDto<any>>(`${this.apiUrl}/change-password`,
+      { currentPassword, newPassword }, { headers });
   }
 }

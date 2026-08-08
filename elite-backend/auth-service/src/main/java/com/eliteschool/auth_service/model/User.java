@@ -61,7 +61,6 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private boolean emailVerified = false;
 
-    // Common fields for all users
     @Column
     private String address;
 
@@ -96,6 +95,6 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return active;
     }
 }

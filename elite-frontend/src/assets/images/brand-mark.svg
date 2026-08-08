@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="EliteSchool">
+  <defs>
+    <linearGradient id="es-mark" x1="6" y1="2" x2="44" y2="46" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#023e8a"/>
+      <stop offset=".5" stop-color="#0077b6"/>
+      <stop offset="1" stop-color="#00b4d8"/>
+    </linearGradient>
+  </defs>
+  <rect width="48" height="48" rx="12" fill="url(#es-mark)"/>
+  <!-- Capital E -->
+  <path fill="#fff" d="M15 13h19v4.4H20.2v3.8H32v4.2H20.2v3.9H34V34H15V13z"/>
+</svg>

@@ -1,19 +1,21 @@
 package com.eliteschool.task_service.controller;
 
+import com.eliteschool.common_utils.security.GatewayHeaders;
 import com.eliteschool.task_service.dto.TaskDto;
 import com.eliteschool.task_service.model.enums.TaskStatus;
 import com.eliteschool.task_service.model.enums.TaskType;
 import com.eliteschool.task_service.service.TaskService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
 import java.util.Arrays;
 import java.util.List;
@@ -35,19 +37,21 @@ class TaskControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private JsonMapper objectMapper;
 
-    @MockBean
+    @MockitoBean
     private TaskService taskService;
 
     private TaskDto testTask;
     private UUID taskId;
     private UUID creatorId;
+    private UUID studentId;
 
     @BeforeEach
     void setUp() {
         taskId = UUID.randomUUID();
         creatorId = UUID.randomUUID();
+        studentId = UUID.randomUUID();
 
         testTask = new TaskDto();
         testTask.setId(taskId);
@@ -60,15 +64,40 @@ class TaskControllerTest {
         testTask.setCreatedBy(creatorId);
     }
 
+    private RequestPostProcessor asAdmin() {
+        return request -> {
+            request.addHeader(GatewayHeaders.USER_ID, UUID.randomUUID().toString());
+            request.addHeader(GatewayHeaders.ROLE, "ADMIN");
+            request.addHeader(GatewayHeaders.USERNAME, "admin");
+            return request;
+        };
+    }
+
+    private RequestPostProcessor asFaculty() {
+        return request -> {
+            request.addHeader(GatewayHeaders.USER_ID, creatorId.toString());
+            request.addHeader(GatewayHeaders.ROLE, "FACULTY");
+            request.addHeader(GatewayHeaders.USERNAME, "faculty");
+            return request;
+        };
+    }
+
+    private RequestPostProcessor asStudent() {
+        return request -> {
+            request.addHeader(GatewayHeaders.USER_ID, studentId.toString());
+            request.addHeader(GatewayHeaders.ROLE, "STUDENT");
+            request.addHeader(GatewayHeaders.USERNAME, "student");
+            return request;
+        };
+    }
+
     @Test
     @DisplayName("Should get all tasks successfully")
     void shouldGetAllTasksSuccessfully() throws Exception {
-        // Arrange
         List<TaskDto> tasks = Arrays.asList(testTask);
         when(taskService.getAllTask()).thenReturn(tasks);
 
-        // Act & Assert
-        mockMvc.perform(get("/api/tasks/all"))
+        mockMvc.perform(get("/api/tasks/all").with(asStudent()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data").isArray())
@@ -80,11 +109,10 @@ class TaskControllerTest {
     @Test
     @DisplayName("Should create task successfully")
     void shouldCreateTaskSuccessfully() throws Exception {
-        // Arrange
         when(taskService.createTask(any(TaskDto.class))).thenReturn(testTask);
 
-        // Act & Assert
         mockMvc.perform(post("/api/tasks/create")
+                .with(asFaculty())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(testTask)))
                 .andExpect(status().isOk())
@@ -99,11 +127,9 @@ class TaskControllerTest {
     @Test
     @DisplayName("Should get task by ID successfully")
     void shouldGetTaskByIdSuccessfully() throws Exception {
-        // Arrange
         when(taskService.getTaskById(taskId)).thenReturn(Optional.of(testTask));
 
-        // Act & Assert
-        mockMvc.perform(get("/api/tasks/{taskId}", taskId))
+        mockMvc.perform(get("/api/tasks/{taskId}", taskId).with(asStudent()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data.id").value(taskId.toString()))
@@ -115,15 +141,13 @@ class TaskControllerTest {
     @Test
     @DisplayName("Should return not found for non-existent task")
     void shouldReturnNotFoundForNonExistentTask() throws Exception {
-        // Arrange
         UUID nonExistentId = UUID.randomUUID();
         when(taskService.getTaskById(nonExistentId)).thenReturn(Optional.empty());
 
-        // Act & Assert
-        mockMvc.perform(get("/api/tasks/{taskId}", nonExistentId))
+        mockMvc.perform(get("/api/tasks/{taskId}", nonExistentId).with(asAdmin()))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.errorCode").value("TASK_NOT_FOUND"));
+                .andExpect(jsonPath("$.error.errorCode").value("TASK_NOT_FOUND"));
 
         verify(taskService, times(1)).getTaskById(nonExistentId);
     }
@@ -131,12 +155,10 @@ class TaskControllerTest {
     @Test
     @DisplayName("Should get tasks by status successfully")
     void shouldGetTasksByStatusSuccessfully() throws Exception {
-        // Arrange
         List<TaskDto> openTasks = Arrays.asList(testTask);
         when(taskService.getTasksByStatus(TaskStatus.OPEN)).thenReturn(openTasks);
 
-        // Act & Assert
-        mockMvc.perform(get("/api/tasks/status/{status}", "OPEN"))
+        mockMvc.perform(get("/api/tasks/status/{status}", "OPEN").with(asStudent()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data").isArray())
@@ -148,12 +170,10 @@ class TaskControllerTest {
     @Test
     @DisplayName("Should get tasks by creator successfully")
     void shouldGetTasksByCreatorSuccessfully() throws Exception {
-        // Arrange
         List<TaskDto> creatorTasks = Arrays.asList(testTask);
         when(taskService.getTasksByCreator(creatorId)).thenReturn(creatorTasks);
 
-        // Act & Assert
-        mockMvc.perform(get("/api/tasks/created-by/{createdBy}", creatorId))
+        mockMvc.perform(get("/api/tasks/created-by/{createdBy}", creatorId).with(asFaculty()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data").isArray())
@@ -163,32 +183,12 @@ class TaskControllerTest {
     }
 
     @Test
-    @DisplayName("Should complete task successfully")
-    void shouldCompleteTaskSuccessfully() throws Exception {
-        // Arrange
-        UUID completedBy = UUID.randomUUID();
-        testTask.setStatus(TaskStatus.COMPLETED);
-        when(taskService.completeTask(taskId, completedBy)).thenReturn(Optional.of(testTask));
-
-        // Act & Assert
-        mockMvc.perform(put("/api/tasks/{taskId}/complete/{completedBy}", taskId, completedBy))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.message").value("Task completed successfully"))
-                .andExpect(jsonPath("$.data.status").value("COMPLETED"));
-
-        verify(taskService, times(1)).completeTask(taskId, completedBy);
-    }
-
-    @Test
     @DisplayName("Should close task successfully")
     void shouldCloseTaskSuccessfully() throws Exception {
-        // Arrange
         testTask.setStatus(TaskStatus.CLOSED);
         when(taskService.closeTask(taskId)).thenReturn(Optional.of(testTask));
 
-        // Act & Assert
-        mockMvc.perform(put("/api/tasks/{taskId}/close", taskId))
+        mockMvc.perform(put("/api/tasks/{taskId}/close", taskId).with(asFaculty()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("Task closed successfully"))
@@ -200,7 +200,6 @@ class TaskControllerTest {
     @Test
     @DisplayName("Should update task successfully")
     void shouldUpdateTaskSuccessfully() throws Exception {
-        // Arrange
         TaskDto updatedTask = new TaskDto();
         updatedTask.setTitle("Updated Task");
         updatedTask.setDescription("Updated Description");
@@ -211,8 +210,8 @@ class TaskControllerTest {
 
         when(taskService.updateTask(eq(taskId), any(TaskDto.class))).thenReturn(Optional.of(updatedTask));
 
-        // Act & Assert
         mockMvc.perform(put("/api/tasks/{taskId}", taskId)
+                .with(asFaculty())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updatedTask)))
                 .andExpect(status().isOk())
@@ -225,11 +224,9 @@ class TaskControllerTest {
     @Test
     @DisplayName("Should delete task successfully")
     void shouldDeleteTaskSuccessfully() throws Exception {
-        // Arrange
         when(taskService.deleteTask(taskId)).thenReturn(true);
 
-        // Act & Assert
-        mockMvc.perform(delete("/api/tasks/{taskId}", taskId))
+        mockMvc.perform(delete("/api/tasks/{taskId}", taskId).with(asAdmin()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("Task deleted successfully"));
@@ -240,15 +237,12 @@ class TaskControllerTest {
     @Test
     @DisplayName("Should fail to create task with invalid data")
     void shouldFailToCreateTaskWithInvalidData() throws Exception {
-        // Arrange
         TaskDto invalidTask = new TaskDto();
-        // Missing required fields
 
-        // Act & Assert
         mockMvc.perform(post("/api/tasks/create")
+                .with(asFaculty())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(invalidTask)))
                 .andExpect(status().isBadRequest());
     }
 }
-

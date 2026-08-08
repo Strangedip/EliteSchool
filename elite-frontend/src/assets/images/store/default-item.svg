@@ -1,10 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
-  <rect width="200" height="200" fill="#f0f0f0"/>
-  <g fill="#ccc">
-    <rect x="70" y="50" width="60" height="60" rx="5"/>
-    <rect x="50" y="120" width="100" height="10" rx="3"/>
-    <rect x="60" y="140" width="80" height="6" rx="2"/>
-    <rect x="70" y="155" width="60" height="6" rx="2"/>
-  </g>
-  <text x="100" y="90" font-family="Arial" font-size="24" fill="#888" text-anchor="middle">Item</text>
-</svg> 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none" role="img" aria-label="Reward item">
+  <defs>
+    <linearGradient id="si-bg" x1="0" y1="0" x2="200" y2="200" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#e0f2fe"/>
+      <stop offset="1" stop-color="#ccfbf1"/>
+    </linearGradient>
+  </defs>
+  <rect width="200" height="200" fill="url(#si-bg)"/>
+  <rect x="52" y="48" width="96" height="72" rx="12" fill="#0369a1" opacity=".85"/>
+  <path d="M72 120h56l12 40H60z" fill="#0e7490" opacity=".75"/>
+  <circle cx="100" cy="78" r="16" fill="#caf0f8"/>
+  <path d="M100 64v28M86 78h28" stroke="#0369a1" stroke-width="4" stroke-linecap="round"/>
+</svg>

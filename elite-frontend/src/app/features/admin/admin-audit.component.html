@@ -1,0 +1,134 @@
+<div class="audit-container page-shell">
+  <header class="page-header audit-header">
+    <div class="page-header-title">
+      <i class="pi pi-chart-bar" aria-hidden="true"></i>
+      <div class="page-header-copy">
+        <h1>School audit</h1>
+        <p class="page-subtitle">Claims, nominations, admin point adjustments, and resolved support cases.</p>
+      </div>
+    </div>
+  </header>
+
+  @if (loading) {
+    <div class="loading-state">
+      <i class="pi pi-spin pi-spinner"></i>
+      <span>Loading audit data...</span>
+    </div>
+  }
+
+  @if (!loading) {
+    @defer (on idle) {
+    <p-tabs value="0">
+      <p-tablist>
+        <p-tab value="0"><i class="pi pi-shopping-bag"></i> Store claims</p-tab>
+        <p-tab value="1"><i class="pi pi-star"></i> Nominations</p-tab>
+        <p-tab value="2"><i class="pi pi-star"></i> Admin point adjustments</p-tab>
+        <p-tab value="3"><i class="pi pi-headphones"></i> Support resolved</p-tab>
+      </p-tablist>
+      <p-tabpanels>
+        <p-tabpanel value="0">
+          <p-table [value]="claims" [paginator]="true" [rows]="10" styleClass="p-datatable-sm" [rowHover]="true">
+            <ng-template #header>
+              <tr>
+                <th>When</th>
+                <th>Student</th>
+                <th>Item</th>
+                <th>Category</th>
+                <th>Acquisition</th>
+              </tr>
+            </ng-template>
+            <ng-template #body let-c>
+              <tr>
+                <td>{{ c.claimedAt | date:'medium' }}</td>
+                <td>{{ c.studentName || c.studentId }}</td>
+                <td>{{ c.itemName }}</td>
+                <td>{{ c.itemCategory || '—' }}</td>
+                <td>{{ c.acquisitionType || '—' }}</td>
+              </tr>
+            </ng-template>
+            <ng-template #emptymessage>
+              <tr><td colspan="5" class="text-center">No store claims yet.</td></tr>
+            </ng-template>
+          </p-table>
+        </p-tabpanel>
+        <p-tabpanel value="1">
+          <p class="hint">Staff nominations reviewed by Admin (credits applied only on approve).</p>
+          <p-table [value]="nominations" [paginator]="true" [rows]="10" styleClass="p-datatable-sm" [rowHover]="true">
+            <ng-template #header>
+              <tr>
+                <th>When</th>
+                <th>Student</th>
+                <th>Points</th>
+                <th>Reason</th>
+                <th>Status</th>
+              </tr>
+            </ng-template>
+            <ng-template #body let-n>
+              <tr>
+                <td>{{ (n.reviewedAt || n.createdAt) | date:'medium' }}</td>
+                <td>{{ studentLabel(n.studentId) }}</td>
+                <td>{{ n.awardedPoints ?? n.suggestedPoints }}</td>
+                <td>{{ n.reason }}</td>
+                <td><p-tag [value]="n.status" [severity]="n.status === 'APPROVED' ? 'success' : 'danger'"></p-tag></td>
+              </tr>
+            </ng-template>
+            <ng-template #emptymessage>
+              <tr><td colspan="5" class="text-center">No reviewed nominations yet.</td></tr>
+            </ng-template>
+          </p-table>
+        </p-tabpanel>
+        <p-tabpanel value="2">
+          <p class="hint">Rare management credits (not student-requested). Verified task awards are separate.</p>
+          <p-table [value]="adminCredits" [paginator]="true" [rows]="10" styleClass="p-datatable-sm" [rowHover]="true">
+            <ng-template #header>
+              <tr>
+                <th>When</th>
+                <th>Student</th>
+                <th>Points</th>
+                <th>Description</th>
+              </tr>
+            </ng-template>
+            <ng-template #body let-r>
+              <tr>
+                <td>{{ r.createdAt | date:'medium' }}</td>
+                <td>{{ r.studentName }}</td>
+                <td>+{{ r.points }}</td>
+                <td>{{ r.description }}</td>
+              </tr>
+            </ng-template>
+            <ng-template #emptymessage>
+              <tr><td colspan="4" class="text-center">No matching admin adjustments found in recent student wallets.</td></tr>
+            </ng-template>
+          </p-table>
+        </p-tabpanel>
+        <p-tabpanel value="3">
+          <p-table [value]="tickets" [paginator]="true" [rows]="10" styleClass="p-datatable-sm" [rowHover]="true">
+            <ng-template #header>
+              <tr>
+                <th>When</th>
+                <th>Subject</th>
+                <th>Category</th>
+                <th>Status</th>
+                <th>Resolution</th>
+              </tr>
+            </ng-template>
+            <ng-template #body let-t>
+              <tr>
+                <td>{{ (t.updatedAt || t.createdAt) | date:'medium' }}</td>
+                <td>{{ t.subject }}</td>
+                <td><p-tag [value]="t.category"></p-tag></td>
+                <td><p-tag [value]="t.status" severity="success"></p-tag></td>
+                <td>{{ t.resolutionNotes || '—' }}</td>
+              </tr>
+            </ng-template>
+            <ng-template #emptymessage>
+              <tr><td colspan="5" class="text-center">No resolved support cases yet.</td></tr>
+            </ng-template>
+          </p-table>
+        </p-tabpanel>
+      </p-tabpanels>
+    </p-tabs>
+    }
+  }
+</div>
+<p-toast></p-toast>

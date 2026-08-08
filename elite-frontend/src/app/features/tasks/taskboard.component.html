@@ -9,22 +9,14 @@
             <div class="wallet-info" *ngIf="currentUserRole === 'STUDENT'">
                 <i class="pi pi-wallet"></i>
                 <span>{{ rewardPoints }}</span>
-                <a href="/wallet" class="view-wallet-link">
+                <a routerLink="/wallet" class="view-wallet-link">
                     <i class="pi pi-chart-bar"></i> View Wallet
                 </a>
             </div>
-            <button pButton 
-                type="button" 
-                icon="pi pi-plus" 
-                label="Add Task" 
-                class="p-button-primary action-button"
-                (click)="addNewTask()"
-                *ngIf="canCreateTasks()">
-            </button>
+            <p-button type="button" icon="pi pi-bookmark" label="Templates" styleClass="p-button-outlined action-button" (click)="openTemplatesDialog()" *ngIf="canCreateTasks()"></p-button>
+            <p-button type="button" icon="pi pi-plus" label="Add Task" styleClass="p-button-primary action-button" (click)="addNewTask()" *ngIf="canCreateTasks()"></p-button>
         </div>
     </div>
-
-    <!-- Loading overlay -->
     <div class="loading-overlay" *ngIf="isLoading">
         <div class="loading-spinner">
             <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
@@ -39,7 +31,8 @@
                 <span class="task-count">{{ openTasks.length }}</span>
             </div>
             <div class="column-content">
-                <div class="task-card" *ngFor="let task of openTasks">
+                <div class="task-card" *ngFor="let task of openTasks"
+                     [class.task-highlight]="highlightTaskId === task.id">
                     <div class="task-status status-open"></div>
                     <div class="task-content">
                         <h4 class="task-title">{{ task.title }}</h4>
@@ -49,25 +42,17 @@
                             <span class="task-type">{{ task.taskType }}</span>
                         </div>
                         <div class="task-actions" *ngIf="currentUserRole === 'STUDENT'">
-                            <button pButton type="button" icon="pi pi-check" label="Start Task" 
-                                class="p-button-sm p-button-primary" 
-                                (click)="startTask(task)">
-                            </button>
+                            <p-button type="button" icon="pi pi-send" label="Submit Work" styleClass="p-button-sm p-button-primary" (click)="openSubmitDialog(task)"></p-button>
                         </div>
-                        <div class="task-actions" *ngIf="isAdmin()">
-                            <button pButton type="button" icon="pi pi-pencil" label="Edit" 
-                                class="p-button-sm p-button-primary" 
-                                (click)="editTask(task)">
-                            </button>
-                            <button pButton type="button" icon="pi pi-trash" label="Delete" 
-                                class="p-button-sm p-button-danger" 
-                                (click)="deleteTask(task)">
-                            </button>
+                        <div class="task-actions" *ngIf="canManageTask(task)">
+                            <p-button type="button" icon="pi pi-pencil" label="Edit" styleClass="p-button-sm p-button-primary" (click)="editTask(task)"></p-button>
+                            <p-button type="button" icon="pi pi-trash" label="Delete" styleClass="p-button-sm p-button-danger" (click)="deleteTask(task)"></p-button>
                         </div>
                     </div>
                 </div>
-                <div class="empty-message" *ngIf="openTasks.length === 0 && !isLoading">
-                    No open tasks available
+                <div class="elite-empty" *ngIf="openTasks.length === 0 && !isLoading">
+                    <div class="elite-empty-icon"><i class="pi pi-check-square"></i></div>
+                    <p>No open tasks yet. Faculty can add contribution work for students.</p>
                 </div>
             </div>
         </div>
@@ -82,29 +67,20 @@
                     <div class="task-status status-submitted"></div>
                     <div class="task-content">
                         <h4 class="task-title">{{ task.title }}</h4>
-                        <p class="task-description">{{ task.description }}</p>
+                        <p class="task-description">{{ task.submissionDetails || task.description }}</p>
                         <div class="task-meta">
                             <span class="task-points"><i class="pi pi-wallet"></i> {{ task.rewardPoints }} Points</span>
                             <span class="task-status-text">Pending Verification</span>
                         </div>
                         <div class="task-actions" *ngIf="canVerifyTasks()">
-                            <button pButton type="button" icon="pi pi-check" label="Approve" 
-                                    class="p-button-success p-button-sm custom-btn-sm" 
-                                    [disabled]="isVerifying"
-                                    (click)="verifyTask(task.id, task.submissionId, true)">
-                                <i class="pi pi-spin pi-spinner" *ngIf="isVerifying"></i>
-                            </button>
-                            <button pButton type="button" icon="pi pi-times" label="Reject" 
-                                    class="p-button-danger p-button-sm custom-btn-sm" 
-                                    [disabled]="isVerifying"
-                                    (click)="verifyTask(task.id, task.submissionId, false)">
-                                <i class="pi pi-spin pi-spinner" *ngIf="isVerifying"></i>
-                            </button>
+                            <p-button type="button" icon="pi pi-check" label="Approve" styleClass="p-button-primary p-button-sm custom-btn-sm" [disabled]="isVerifying" (click)="openVerifyDialog(task, true)"></p-button>
+                            <p-button type="button" icon="pi pi-times" label="Reject" styleClass="p-button-danger p-button-sm custom-btn-sm" [disabled]="isVerifying" (click)="openVerifyDialog(task, false)"></p-button>
                         </div>
                     </div>
                 </div>
-                <div class="empty-message" *ngIf="submittedTasks.length === 0 && !isLoading">
-                    No submitted tasks
+                <div class="elite-empty" *ngIf="submittedTasks.length === 0 && !isLoading">
+                    <div class="elite-empty-icon"><i class="pi pi-inbox"></i></div>
+                    <p>No submissions waiting for verification.</p>
                 </div>
             </div>
         </div>
@@ -124,87 +100,264 @@
                             <span class="task-points"><i class="pi pi-wallet"></i> {{ task.rewardPoints }} Points</span>
                             <span class="task-completed-date" *ngIf="task.completedAt">{{ formatDate(task.completedAt) }}</span>
                         </div>
+                        <p class="task-feedback" *ngIf="task.feedbackNotes">{{ task.feedbackNotes }}</p>
                     </div>
                 </div>
-                <div class="empty-message" *ngIf="completedTasks.length === 0 && !isLoading">
-                    No completed tasks
+                <div class="elite-empty" *ngIf="completedTasks.length === 0 && !isLoading">
+                    <div class="elite-empty-icon"><i class="pi pi-verified"></i></div>
+                    <p>No completed tasks in this board yet.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="task-column">
+            <div class="column-header">
+                <h3>Rejected</h3>
+                <span class="task-count">{{ rejectedTasks.length }}</span>
+            </div>
+            <div class="column-content">
+                <div class="task-card" *ngFor="let task of rejectedTasks">
+                    <div class="task-status status-rejected"></div>
+                    <div class="task-content">
+                        <h4 class="task-title">{{ task.title }}</h4>
+                        <p class="task-description">{{ task.description }}</p>
+                        <p class="task-feedback" *ngIf="task.feedbackNotes">{{ task.feedbackNotes }}</p>
+                        <div class="task-actions" *ngIf="currentUserRole === 'STUDENT'">
+                            <p-button type="button" icon="pi pi-refresh" label="Resubmit" styleClass="p-button-sm p-button-primary" (click)="openSubmitDialog(task)"></p-button>
+                        </div>
+                    </div>
+                </div>
+                <div class="elite-empty" *ngIf="rejectedTasks.length === 0 && !isLoading">
+                    <div class="elite-empty-icon"><i class="pi pi-times-circle"></i></div>
+                    <p>No rejected submissions.</p>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Task Submission Dialog -->
-<p-dialog header="Submit Task" [(visible)]="submissionDialogVisible" [modal]="true" [style]="{width: '500px'}" styleClass="custom-dialog">
+<p-dialog header="Submit Work" [(visible)]="submissionDialogVisible" [modal]="true" [style]="{width: '520px'}" styleClass="custom-dialog">
     <form *ngIf="selectedTask" #submissionForm="ngForm" (ngSubmit)="submitTask()">
+        <p class="text-secondary">
+            Notes must be at least {{ selectedTask.minNotesLength ?? 40 }} characters.
+            <span *ngIf="selectedTask.evidenceRequired !== false"> Evidence is required.</span>
+        </p>
         <div class="field">
             <label for="submissionDetails">Submission Details</label>
-            <textarea id="submissionDetails" pInputTextarea [(ngModel)]="taskSubmission.submissionDetails" 
+            <textarea id="submissionDetails" pInputTextarea [(ngModel)]="taskSubmission.submissionDetails"
                       name="submissionDetails" required rows="5" class="theme-textarea"></textarea>
         </div>
         <div class="field">
-            <label for="evidence">Evidence (Link or description)</label>
-            <input id="evidence" type="text" pInputText [(ngModel)]="taskSubmission.evidence" name="evidence" required class="theme-input">
+            <label for="evidence">Evidence (Link or description)
+                <span *ngIf="selectedTask.evidenceRequired !== false" class="text-danger">*</span>
+            </label>
+            <input id="evidence" type="text" pInputText [(ngModel)]="taskSubmission.evidence" name="evidence"
+                   [required]="selectedTask.evidenceRequired !== false" class="theme-input">
+        </div>
+        <div class="field" *ngIf="selectedTask.rubricChecklist?.length">
+            <label>Verification checklist</label>
+            <div *ngFor="let item of selectedTask.rubricChecklist" class="rubric-row">
+                <label class="theme-checkbox">
+                    <input type="checkbox" [(ngModel)]="rubricChecks[item]" [name]="'rubric_' + item">
+                    {{ item }}
+                </label>
+            </div>
         </div>
         <div class="dialog-footer">
-            <button pButton type="button" label="Cancel" icon="pi pi-times" 
-                    class="p-button-text" 
-                    [disabled]="isSubmitting"
-                    (click)="submissionDialogVisible = false"></button>
-            <button pButton type="submit" label="Submit" icon="pi pi-check" 
-                    class="p-button-primary"
-                    [disabled]="!submissionForm.valid || isSubmitting">
-                <i class="pi pi-spin pi-spinner" *ngIf="isSubmitting"></i>
-                Submit
-            </button>
+            <p-button type="button" label="Cancel" icon="pi pi-times" styleClass="p-button-text" [disabled]="isSubmitting" (click)="submissionDialogVisible = false"></p-button>
+            <p-button type="submit" label="Submit" icon="pi pi-check" styleClass="p-button-primary" [disabled]="!submissionForm.valid || isSubmitting"></p-button>
         </div>
     </form>
 </p-dialog>
 
-<!-- Task Edit Dialog -->
+<p-dialog [header]="verifyApproved ? 'Approve Submission' : 'Reject Submission'"
+          [(visible)]="verifyDialogVisible" [modal]="true" [style]="{width: '520px'}" styleClass="custom-dialog">
+    <div class="field" *ngIf="verifyTarget">
+        <p><strong>{{ verifyTarget.title }}</strong></p>
+        <p class="task-description">{{ verifyTarget.submissionDetails || verifyTarget.description }}</p>
+        <p *ngIf="verifyTarget.evidence"><strong>Evidence:</strong> {{ verifyTarget.evidence }}</p>
+        <ul *ngIf="verifyTarget.rubricChecked?.length">
+            <li *ngFor="let item of verifyTarget.rubricChecked">{{ item }}</li>
+        </ul>
+    </div>
+    <div class="field">
+        <label for="verifyFeedback">Feedback {{ verifyApproved ? '(optional)' : '(required)' }}</label>
+        <textarea id="verifyFeedback" pInputTextarea [(ngModel)]="verifyFeedback"
+                  name="verifyFeedback" rows="4" class="theme-textarea"
+                  [required]="!verifyApproved"></textarea>
+    </div>
+    <div class="dialog-footer">
+        <p-button type="button" label="Cancel" icon="pi pi-times" styleClass="p-button-text" [disabled]="isVerifying" (click)="verifyDialogVisible = false"></p-button>
+        <p-button type="button" [label]="verifyApproved ? 'Approve' : 'Reject'" [icon]="verifyApproved ? 'pi pi-check' : 'pi pi-times'" [class]="verifyApproved ? 'p-button-primary' : 'p-button-danger'" [disabled]="isVerifying" (click)="confirmVerify()"></p-button>
+    </div>
+</p-dialog>
+
 <p-dialog [header]="editMode ? 'Edit Task' : 'Add Task'" [(visible)]="taskDialogVisible" [modal]="true" [style]="{width: '600px'}" styleClass="custom-dialog">
     <form *ngIf="taskToEdit" #taskForm="ngForm" (ngSubmit)="saveTask()">
-        <div class="field">
-            <label for="title">Task Title <span class="text-danger">*</span></label>
-            <input id="title" type="text" pInputText [(ngModel)]="taskToEdit.title" name="title" required class="theme-input" style="width: 100%;">
+        <div class="form-section" *ngIf="!editMode && templateOptions.length > 0">
+            <h4>Template</h4>
+            <div class="field">
+                <label for="fromTemplate">From template</label>
+                <p-select id="fromTemplate"
+                            [options]="templateOptions"
+                            [(ngModel)]="selectedTemplateId"
+                            (onChange)="onTemplateSelected()"
+                            optionLabel="label"
+                            optionValue="value"
+                            name="fromTemplate"
+                            placeholder="Select a template (optional)"
+                            [showClear]="true"
+                            styleClass="w-full theme-dropdown">
+                </p-select>
+            </div>
         </div>
-        <div class="field">
-            <label for="description">Description <span class="text-danger">*</span></label>
-            <textarea id="description" pInputTextarea [(ngModel)]="taskToEdit.description" name="description" required rows="4" class="theme-textarea" style="width: 100%;"></textarea>
-        </div>
-        <div class="form-row" style="display: flex; gap: 20px;">
-            <div class="field" style="flex: 1;">
+
+        <div class="form-section">
+            <h4>Basics</h4>
+            <div class="field">
+                <label for="title">Task Title <span class="text-danger">*</span></label>
+                <input id="title" type="text" pInputText [(ngModel)]="taskToEdit.title" name="title" required class="theme-input">
+            </div>
+            <div class="field">
+                <label for="description">Description <span class="text-danger">*</span></label>
+                <textarea id="description" pInputTextarea [(ngModel)]="taskToEdit.description" name="description" required rows="3" class="theme-textarea"></textarea>
+            </div>
+            <div class="field">
                 <label for="taskType">Task Type <span class="text-danger">*</span></label>
-                <p-dropdown id="taskType" [options]="taskTypeOptions" [(ngModel)]="taskToEdit.taskType" optionLabel="label" optionValue="value" name="taskType" required></p-dropdown>
-            </div>
-            <div class="field" style="flex: 1;">
-                <label for="priority">Priority <span class="text-danger">*</span></label>
-                <p-dropdown id="priority" [options]="priorityOptions" [(ngModel)]="taskToEdit.priority" optionLabel="label" optionValue="value" name="priority" required></p-dropdown>
+                <p-select id="taskType" [options]="taskTypeOptions" [(ngModel)]="taskToEdit.taskType"
+                            optionLabel="label" optionValue="value" name="taskType" required
+                            styleClass="w-full theme-dropdown"></p-select>
             </div>
         </div>
-        <div class="form-row" style="display: flex; gap: 20px;">
-            <div class="field" style="flex: 1;">
-                <label for="rewardPoints">Points <span class="text-danger">*</span></label>
-                <p-inputNumber id="rewardPoints" [(ngModel)]="taskToEdit.rewardPoints" name="rewardPoints" [min]="1" [showButtons]="true" required></p-inputNumber>
-            </div>
-            <div class="field" style="flex: 1;">
-                <label for="minLevel">Minimum Level <span class="text-danger">*</span></label>
-                <p-inputNumber id="minLevel" [(ngModel)]="taskToEdit.minLevel" name="minLevel" [min]="1" [showButtons]="true" required></p-inputNumber>
+
+        <div class="form-section">
+            <h4>Rewards</h4>
+            <div class="form-row">
+                <div class="field">
+                    <label for="rewardPoints">Points <span class="text-danger">*</span></label>
+                    <p-inputnumber id="rewardPoints" [(ngModel)]="taskToEdit.rewardPoints" name="rewardPoints"
+                                   [min]="1" [showButtons]="true" required styleClass="theme-input-number"></p-inputnumber>
+                </div>
+                <div class="field">
+                    <label for="minLevel">Minimum Level <span class="text-danger">*</span></label>
+                    <p-inputnumber id="minLevel" [(ngModel)]="taskToEdit.minLevel" name="minLevel"
+                                   [min]="1" [showButtons]="true" required styleClass="theme-input-number"></p-inputnumber>
+                </div>
             </div>
         </div>
+
+        <div class="form-section">
+            <h4>Verification</h4>
+            <div class="field">
+                <label class="theme-checkbox">
+                    <input type="checkbox" [(ngModel)]="taskToEdit.evidenceRequired" name="evidenceRequired">
+                    Require evidence on submit
+                </label>
+            </div>
+            <button type="button" class="advanced-toggle" (click)="showAdvancedTaskOptions = !showAdvancedTaskOptions">
+                <i class="pi" [class.pi-chevron-down]="!showAdvancedTaskOptions" [class.pi-chevron-up]="showAdvancedTaskOptions"></i>
+                {{ showAdvancedTaskOptions ? 'Hide' : 'Show' }} advanced options
+            </button>
+            <ng-container *ngIf="showAdvancedTaskOptions">
+                <div class="field">
+                    <label for="minNotesLength">Minimum notes length</label>
+                    <p-inputnumber id="minNotesLength" [(ngModel)]="taskToEdit.minNotesLength" name="minNotesLength"
+                                   [min]="0" [showButtons]="true" styleClass="theme-input-number"></p-inputnumber>
+                </div>
+                <div class="field">
+                    <label for="taskRubric">Verification rubric (one item per line)</label>
+                    <textarea id="taskRubric" pInputTextarea [(ngModel)]="taskRubricText" name="taskRubricText"
+                              rows="3" class="theme-textarea"
+                              placeholder="Attached photos of the work&#10;Cited sources&#10;Peer review completed"></textarea>
+                </div>
+            </ng-container>
+        </div>
+
         <div class="dialog-footer">
-            <button pButton type="button" label="Cancel" icon="pi pi-times" 
-                    class="p-button-text" (click)="taskDialogVisible = false"></button>
-            <button pButton type="submit" label="Save" icon="pi pi-check" 
-                    class="p-button-primary" [disabled]="!taskForm.valid"></button>
+            <p-button type="button" label="Cancel" icon="pi pi-times" styleClass="p-button-text" (click)="taskDialogVisible = false"></p-button>
+            <p-button type="submit" label="Save" icon="pi pi-check" styleClass="p-button-primary" [disabled]="!taskForm.valid"></p-button>
         </div>
     </form>
 </p-dialog>
 
-<!-- Confirmation Dialog -->
-<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle" styleClass="custom-dialog">
-    <ng-template pTemplate="footer">
-        <button type="button" pButton icon="pi pi-times" label="No" class="p-button-text"></button>
-        <button type="button" pButton icon="pi pi-check" label="Yes" class="p-button-primary"></button>
-    </ng-template>
-</p-confirmDialog>
+<p-dialog header="Manage Templates" [(visible)]="templatesDialogVisible" [modal]="true" [style]="{width: '640px'}" styleClass="custom-dialog">
+    <div *ngIf="!templateFormVisible">
+        <div class="dialog-footer" style="justify-content: flex-start; margin-bottom: 1rem;">
+            <p-button type="button" icon="pi pi-plus" label="New Template" styleClass="p-button-primary p-button-sm" (click)="addNewTemplate()"></p-button>
+        </div>
+        <div class="template-list" *ngIf="templates.length > 0">
+            <div class="template-item" *ngFor="let template of templates"
+                 style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; padding: 0.75rem 0; border-bottom: 1px solid rgba(0,0,0,0.08);">
+                <div>
+                    <strong>{{ template.title }}</strong>
+                    <p class="task-description" style="margin: 0.25rem 0;">{{ template.description }}</p>
+                    <small>{{ template.taskType }} · {{ template.rewardPoints }} pts · Level {{ template.minLevel }}+</small>
+                </div>
+                <div style="display: flex; gap: 0.5rem; flex-shrink: 0;">
+                    <p-button type="button" icon="pi pi-pencil" styleClass="p-button-sm p-button-text" (click)="editTemplate(template)"></p-button>
+                    <p-button type="button" icon="pi pi-trash" styleClass="p-button-sm p-button-text p-button-danger" (click)="deleteTemplate(template)"></p-button>
+                </div>
+            </div>
+        </div>
+        <div class="empty-message" *ngIf="templates.length === 0">
+            No templates yet. Create one to reuse task setups.
+        </div>
+        <div class="dialog-footer">
+            <p-button type="button" label="Close" icon="pi pi-times" styleClass="p-button-text" (click)="templatesDialogVisible = false"></p-button>
+        </div>
+    </div>
+
+    <form *ngIf="templateFormVisible && templateToEdit" #templateForm="ngForm" (ngSubmit)="saveTemplate()">
+        <div class="field">
+            <label for="templateTitle">Title <span class="text-danger">*</span></label>
+            <input id="templateTitle" type="text" pInputText [(ngModel)]="templateToEdit.title"
+                   name="templateTitle" required class="theme-input" style="width: 100%;">
+        </div>
+        <div class="field">
+            <label for="templateDescription">Description <span class="text-danger">*</span></label>
+            <textarea id="templateDescription" pInputTextarea [(ngModel)]="templateToEdit.description"
+                      name="templateDescription" required rows="4" class="theme-textarea" style="width: 100%;"></textarea>
+        </div>
+        <div class="form-row" style="display: flex; gap: 20px;">
+            <div class="field" style="flex: 1;">
+                <label for="templateTaskType">Task Type <span class="text-danger">*</span></label>
+                <p-select id="templateTaskType" [options]="taskTypeOptions"
+                            [(ngModel)]="templateToEdit.taskType"
+                            optionLabel="label" optionValue="value"
+                            name="templateTaskType" required></p-select>
+            </div>
+            <div class="field" style="flex: 1;">
+                <label for="templateRewardPoints">Points <span class="text-danger">*</span></label>
+                <p-inputnumber id="templateRewardPoints" [(ngModel)]="templateToEdit.rewardPoints"
+                               name="templateRewardPoints" [min]="1" [showButtons]="true" required></p-inputnumber>
+            </div>
+        </div>
+        <div class="field">
+            <label for="templateMinLevel">Minimum Level <span class="text-danger">*</span></label>
+            <p-inputnumber id="templateMinLevel" [(ngModel)]="templateToEdit.minLevel"
+                           name="templateMinLevel" [min]="1" [showButtons]="true" required></p-inputnumber>
+        </div>
+        <div class="field">
+            <label>
+                <input type="checkbox" [(ngModel)]="templateToEdit.evidenceRequired" name="templateEvidenceRequired">
+                Require evidence on submit
+            </label>
+        </div>
+        <div class="field">
+            <label for="templateMinNotes">Minimum notes length</label>
+            <p-inputnumber id="templateMinNotes" [(ngModel)]="templateToEdit.minNotesLength"
+                           name="templateMinNotes" [min]="0" [showButtons]="true"></p-inputnumber>
+        </div>
+        <div class="field">
+            <label for="templateRubric">Verification rubric (one item per line)</label>
+            <textarea id="templateRubric" pInputTextarea [(ngModel)]="templateRubricText"
+                      name="templateRubricText" rows="3" class="theme-textarea"></textarea>
+        </div>
+        <div class="dialog-footer">
+            <p-button type="button" label="Back" icon="pi pi-arrow-left" styleClass="p-button-text" (click)="cancelTemplateForm()"></p-button>
+            <p-button type="submit" label="Save Template" icon="pi pi-check" styleClass="p-button-primary" [disabled]="!templateForm.valid"></p-button>
+        </div>
+    </form>
+</p-dialog>
+
+<p-confirmdialog styleClass="custom-dialog"></p-confirmdialog>

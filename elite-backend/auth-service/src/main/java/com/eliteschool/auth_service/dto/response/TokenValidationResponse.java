@@ -5,9 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * Response DTO for token validation
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,4 +14,3 @@ public class TokenValidationResponse {
     private boolean valid;
     private String message;
 }
-

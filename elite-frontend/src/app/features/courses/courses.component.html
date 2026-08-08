@@ -1,0 +1,91 @@
+<div class="courses-container page-shell">
+  <header class="page-header courses-header">
+    <div class="page-header-title">
+      <i class="pi pi-book" aria-hidden="true"></i>
+      <div class="page-header-copy">
+        <h1>Courses</h1>
+      </div>
+    </div>
+    <div class="header-actions">
+      <div class="search-box">
+        <input pInputText type="text" placeholder="Search courses..." (input)="onSearch($event)" />
+        <i class="pi pi-search"></i>
+      </div>
+      <p-select [options]="subjectOptions" optionLabel="label" optionValue="value" [(ngModel)]="subjectFilter" (onChange)="applyFilters()"
+      placeholder="All Subjects" [showClear]="true" class="filter-dropdown"></p-select>
+      <p-select [options]="gradeOptions" optionLabel="label" optionValue="value" [(ngModel)]="gradeFilter" (onChange)="applyFilters()"
+      placeholder="All Grades" [showClear]="true" class="filter-dropdown"></p-select>
+      @if (isManager()) {
+        <p-button type="button" icon="pi pi-plus" label="Add Course" styleClass="action-button" (click)="addCourse()"></p-button>
+      }
+    </div>
+  </header>
+  @if (filteredCourses.length === 0) {
+    <div class="elite-empty">
+      <div class="elite-empty-icon"><i class="pi pi-book"></i></div>
+      <h3>No courses found</h3>
+      <p>There are currently no courses available or no courses match your search.</p>
+      @if (isManager()) {
+        <p-button type="button" label="Add First Course" icon="pi pi-plus" (click)="addCourse()"></p-button>
+      }
+    </div>
+  }
+  @if (filteredCourses.length > 0) {
+    <div class="courses-grid">
+      @for (course of filteredCourses; track course) {
+        <p-card [header]="course.name" class="course-card">
+          <ng-template #header>
+            <div class="course-code-bar">
+              <span class="course-code">{{ course.courseCode }}</span>
+              <p-tag [severity]="course.active ? 'success' : 'danger'" [value]="course.active ? 'Active' : 'Inactive'"></p-tag>
+            </div>
+          </ng-template>
+          <ng-template #content>
+            <p class="course-description">{{ course.description || 'No description available' }}</p>
+            <div class="course-meta">
+              <span class="meta-chip"><i class="pi pi-tag"></i> {{ course.subject }}</span>
+              <span class="meta-chip"><i class="pi pi-graduation-cap"></i> Grade {{ course.grade }}</span>
+            </div>
+          </ng-template>
+          @if (isManager()) {
+            <ng-template #footer>
+              <div class="course-actions">
+                <p-button type="button" icon="pi pi-pencil" label="Edit" (click)="editCourse(course)" [outlined]="true"></p-button>
+                <p-button type="button" [icon]="course.active ? 'pi pi-eye-slash' : 'pi pi-eye'" [label]="course.active ? 'Deactivate' : 'Activate'" (click)="toggleActive(course)" [outlined]="true" severity="secondary"></p-button>
+                <p-button type="button" icon="pi pi-trash" label="Delete" (click)="deleteCourse(course)" [outlined]="true" severity="danger"></p-button>
+              </div>
+            </ng-template>
+          }
+        </p-card>
+      }
+    </div>
+  }
+</div>
+<p-dialog [header]="editMode ? 'Edit Course' : 'Add Course'" [(visible)]="courseDialogVisible" [modal]="true" [style]="{width: '500px'}" [draggable]="false" [resizable]="false" class="custom-dialog">
+  @if (selectedCourse) {
+    <form #courseForm="ngForm" (ngSubmit)="saveCourse()">
+      <div class="field">
+        <label for="name">Course Name <span class="text-danger">*</span></label>
+        <input id="name" type="text" pInputText [(ngModel)]="selectedCourse.name" name="name" required class="theme-input">
+      </div>
+      <div class="field">
+        <label for="subject">Subject <span class="text-danger">*</span></label>
+        <input id="subject" type="text" pInputText [(ngModel)]="selectedCourse.subject" name="subject" required class="theme-input" placeholder="e.g. Mathematics">
+      </div>
+      <div class="field">
+        <label for="grade">Grade <span class="text-danger">*</span></label>
+        <p-select id="grade" [options]="gradeOptions" optionLabel="label" optionValue="value" [(ngModel)]="selectedCourse.grade" name="grade" required placeholder="Select grade" class="w-full"></p-select>
+      </div>
+      <div class="field">
+        <label for="description">Description</label>
+        <textarea pTextarea [(ngModel)]="selectedCourse.description" name="description" rows="4" class="theme-textarea"></textarea>
+      </div>
+      <div class="dialog-footer">
+        <p-button type="button" label="Cancel" icon="pi pi-times" (click)="courseDialogVisible = false" [text]="true"></p-button>
+        <p-button type="submit" label="Save" icon="pi pi-check" [disabled]="!courseForm.valid"></p-button>
+      </div>
+    </form>
+  }
+</p-dialog>
+<p-confirmdialog header="Confirmation" icon="pi pi-exclamation-triangle" class="custom-dialog"></p-confirmdialog>
+<p-toast position="top-right"></p-toast>

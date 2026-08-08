@@ -1,206 +1,167 @@
 # EliteSchool
 
-A full-stack **gamified learning platform** where students earn reward points by completing tasks, track their achievements, and redeem points for rewards. Built with Angular 18 and Spring Boot microservices.
+Platform for schools to manage **student achievement** through verified contribution. Students build a trusted record of effort; **Elite Points** recognise that work and unlock school **rewards** so every learner can stay equipped and moving forward.
 
-## 🎯 Overview
+**Java 25** · **Spring Boot 4.1** · **Angular 22.1** · **PrimeNG 22** · **PostgreSQL** · **Consul**
 
-EliteSchool transforms the educational experience by incorporating gamification elements:
-
-- **Students** complete tasks assigned by faculty to earn reward points
-- **Faculty** create and verify tasks, approve student submissions  
-- **Admins** manage the system, users, and store inventory
-- **Everyone** can view leaderboards and track progress
-
-## 🏗 Architecture
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    ELITESCHOOL FRONTEND                          │
-│                  Angular 18 + PrimeNG                            │
-│                     (Port 4200)                                  │
-└─────────────────────────────────────────────────────────────────┘
-                                │
-                                ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                      API GATEWAY                                 │
-│                Spring Cloud Gateway                              │
-│                     (Port 8080)                                  │
-└─────────────────────────────────────────────────────────────────┘
-                                │
-    ┌───────────────┬───────────┴───────────┬───────────────┐
-    │               │                       │               │
-    ▼               ▼                       ▼               ▼
-┌────────┐   ┌────────┐              ┌────────┐      ┌────────┐
-│  AUTH  │   │  TASK  │              │ WALLET │      │ STORE  │
-│  8081  │   │  8082  │              │  8083  │      │  8084  │
-└────────┘   └────────┘              └────────┘      └────────┘
-                                │
-                                ▼
-                    ┌─────────────────────┐
-                    │   EUREKA SERVER     │
-                    │       8761          │
-                    └─────────────────────┘
-```
-
-## 📦 Project Structure
-
-```
-EliteSchool/
-├── elite-frontend/          # Angular 18 SPA
-│   ├── src/app/
-│   │   ├── core/           # Services, guards, interceptors
-│   │   ├── features/       # Feature modules (lazy-loaded)
-│   │   ├── layouts/        # Layout components
-│   │   └── shared/         # Reusable components
-│   └── README.md
-│
-├── elite-backend/           # Spring Boot Microservices
-│   ├── eureka-server/      # Service discovery
-│   ├── api-gateway/        # API gateway with JWT validation
-│   ├── auth-service/       # Authentication & user management
-│   ├── task-service/       # Task & submission management
-│   ├── wallet-service/     # Points & transactions
-│   ├── store-service/      # Reward store
-│   ├── common-utils/       # Shared utilities
-│   └── README.md
-│
-└── README.md               # This file
-```
-
-## 🛠 Tech Stack
-
-### Frontend
-- Angular 18 (Standalone Components)
-- PrimeNG + PrimeFlex
-- RxJS
-- SCSS
-
-### Backend
-- Spring Boot 3.x
-- Spring Cloud (Gateway, Eureka, OpenFeign)
-- Spring Security + JWT
-- Spring Data JPA
-- H2 Database (configurable)
-
-## 🚀 Quick Start
-
-### Prerequisites
-- Node.js 18+
-- Java 17+
-- Maven 3.8+
-
-### Backend Setup
-
-**Quick Start (Recommended):**
-
-The startup scripts work on **any platform** and from **any directory**:
-
-```bash
-cd elite-backend
-
-# Windows
-start-all.bat
-
-# macOS / Linux
-chmod +x start-all.sh  # First time only
-./start-all.sh
-```
-
-The script automatically starts all 6 services in the correct order with proper delays.
-
-**To stop all services:**
-```bash
-# Windows
-stop-all.bat
-
-# macOS / Linux
-./stop-all.sh
-```
-
-**Manual Setup (Alternative):**
-```bash
-cd elite-backend
-
-# Start Eureka Server first
-cd eureka-server && mvn spring-boot:run &
-
-# Start microservices
-cd ../auth-service && mvn spring-boot:run &
-cd ../task-service && mvn spring-boot:run &
-cd ../wallet-service && mvn spring-boot:run &
-cd ../store-service && mvn spring-boot:run &
-
-# Start API Gateway last
-cd ../api-gateway && mvn spring-boot:run &
-```
-
-### Frontend Setup
-
-```bash
-cd elite-frontend
-
-# Install dependencies
-npm install
-
-# Start development server
-ng serve
-```
-
-### Access Points
-
-| Component | URL |
-|-----------|-----|
-| Frontend | http://localhost:4200 |
-| API Gateway | http://localhost:8080 |
-| Eureka Dashboard | http://localhost:8761 |
-
-## 👥 User Roles
-
-| Role | Capabilities |
-|------|-------------|
-| **ADMIN** | Full system access, user management, store management |
-| **FACULTY** | Create tasks, verify submissions, view student progress |
-| **STUDENT** | Complete tasks, earn points, redeem rewards |
-| **GUEST** | Limited read-only access |
-
-## 🎮 Key Features
-
-### For Students
-- View and accept available tasks
-- Submit completed work with evidence
-- Track earned reward points
-- Redeem points in the store
-- View transaction history
-- Play mini-games
-
-### For Faculty
-- Create and manage tasks
-- Set reward points for tasks
-- Review and verify submissions
-- Approve/reject student work
-
-### For Admins
-- Manage all users
-- Add/edit store items
-- View system analytics
-- Full CRUD on all entities
-
-## 📖 Documentation
-
-- [Frontend Documentation](./elite-frontend/README.md)
-- [Backend Documentation](./elite-backend/README.md)
-
-## 🔐 Authentication
-
-- JWT-based authentication
-- Tokens expire after 24 hours
-- Secure password hashing with BCrypt
-- Role-based access control on all endpoints
-
-## 📄 License
-
-This project is proprietary software.
+| Doc | For |
+|-----|-----|
+| [USAGE_GUIDE.md](./USAGE_GUIDE.md) | Schools, teachers, client demos |
+| [elite-backend/README.md](./elite-backend/README.md) | Backend developers |
+| [elite-frontend/README.md](./elite-frontend/README.md) | Frontend developers |
+| [.env.example](./.env.example) | Environment variables |
 
 ---
 
-**EliteSchool** - Empowering students through gamified learning
+## Mission
+
+| Principle | Meaning |
+|-----------|---------|
+| Achievement first | Tasks and verification build a clear record of student contribution |
+| Elite Points | School measure of verified effort — not a payment system |
+| Rewards that include everyone | Store materials & opportunities help students who need support stay equipped |
+| Staff-initiated credits | Wallet adjustment or Admin-approved nomination — never via Support |
+| Recreation separate | Games do not earn points |
+
+---
+
+## Who uses it
+
+| Role | Responsibility |
+|------|----------------|
+| **Student** | Tasks, wallet, store, support (concerns), contribution profile |
+| **Faculty** | Tasks/templates, verify work, nominate contributions |
+| **Admin / Management** | Users, store, courses, audit, point adjustments; **Admin only** approves nomination credits |
+| **Visitors** | Home, Docs, Games (no login) |
+
+Public signup = **students only**. Fresh database seeds demo Admin: username **`admin`** / password **`Admin@123`** (change after first login).
+
+---
+
+## Architecture
+
+```
+Angular (:4200) → API Gateway (:8080)
+                    ├── Auth (:8081)
+                    ├── Task (:8082)
+                    ├── Wallet (:8083)
+                    └── Store (:8084)
+Consul (:8500) · PostgreSQL (:5432 native / :5433 host port in Docker)
+```
+
+- **Native `ng serve`:** browser → `http://localhost:8080/api`
+- **Docker frontend:** same-origin `/api` (nginx → gateway)
+
+---
+
+## Prerequisites
+
+| Tool | Notes |
+|------|--------|
+| **JDK 25** | Scripts prefer `C:\Program Files\Java\jdk-25.0.4` when present |
+| **Maven** | Or use each service’s `mvnw.cmd` |
+| **Node.js** | `^22.22.3` (or 24 / 26) |
+| **PostgreSQL** | Database named `EliteSchool` (not started by backend scripts) |
+| **Consul** | On `PATH` for native runs — [download](https://developer.hashicorp.com/consul/downloads) |
+
+Copy [.env.example](./.env.example) to `.env` at the repo root if you need custom DB/JWT/SMTP values. Defaults work for local demos.
+
+---
+
+## Quick start (native — recommended on 16GB hosts)
+
+Prefer native so Docker Desktop does not compete with the OS, browser, and IDE for RAM.
+
+```bat
+demo-native.bat
+```
+
+Or manually:
+
+```bat
+cd elite-backend
+build-all.bat
+start-all.bat
+
+cd ..\elite-frontend
+npm install
+npm start
+```
+
+| | URL / credentials |
+|--|--|
+| App | http://localhost:4200 |
+| API | http://localhost:8080 |
+| Consul UI | http://localhost:8500 |
+| Demo login | **`admin`** / **`Admin@123`** (username, not email) |
+
+`start-all.bat` starts Consul → seeds KV → services → gateway. It does **not** start PostgreSQL.
+
+---
+
+## Docker Compose (optional)
+
+Cap Docker Desktop memory to about **4–6GB**. From the repo root:
+
+```bash
+cp .env.example .env   # optional
+docker compose up --build
+```
+
+Then open http://localhost:4200.
+
+| | |
+|--|--|
+| App | http://localhost:4200 |
+| API | http://localhost:8080 |
+| Consul | http://localhost:8500 |
+| Postgres (host tools) | **localhost:5433** → container `5432` |
+
+Compose maps Postgres to host **5433** so it does not clash with a local PostgreSQL on **5432**. Services inside Compose still use `postgres:5432`.
+
+For LAN access, set `FRONTEND_URL` and `CORS_ORIGINS` in `.env`.
+
+---
+
+## Roles & access
+
+| Capability | Student | Faculty | Admin / Management |
+|------------|:-------:|:-------:|:------------------:|
+| Dashboard, tasks, courses, leaderboard, profile | ✓ | ✓ | ✓ |
+| Submit / resubmit work | ✓ | — | — |
+| Create & verify tasks | — | ✓ | ✓ |
+| Wallet / store purchases | ✓ | — | — |
+| Store catalog CRUD | — | — | ✓ |
+| Support | ✓ | ✓ | ✓ |
+| Nominations (create) | — | ✓ | ✓ |
+| Nominations (approve credit) | — | — | **Admin only** |
+| Audit / manage users / adjust points | — | — | ✓ |
+
+---
+
+## Core flow
+
+1. Faculty or Admin creates a task (optional template + verification standards).
+2. Student submits notes / evidence / rubric as required.
+3. Staff approve or reject → approval credits the wallet.
+4. Student claims Materials / Opportunities while the window is open and stock remains.
+5. Optional: nomination → Admin approve → credit.
+6. Leaderboard reflects Elite Point balances.
+
+Client-facing product walkthrough: [USAGE_GUIDE.md](./USAGE_GUIDE.md).
+
+---
+
+## Security (overview)
+
+JWT at the gateway · role checks via trusted identity headers · BCrypt · student-only public signup · demo Admin when no Admin exists.
+
+Rotate demo credentials and SMTP secrets before any shared or production use. Skip **Forgot password** in demos unless real `EMAIL_*` is configured.
+
+---
+
+## License
+
+Proprietary — all rights reserved unless otherwise agreed.
+
+**EliteSchool** — achievement management for schools; rewards that keep every student moving forward.

@@ -1,0 +1,4 @@
+jwt:
+  secret: ${JWT_SECRET:wJjY8fXo+G6Vkhd4yLh3JOp6tH8l29PY5zR0DboYdxM=}
+app:
+  frontend-url: ${FRONTEND_URL:http://localhost:4200}

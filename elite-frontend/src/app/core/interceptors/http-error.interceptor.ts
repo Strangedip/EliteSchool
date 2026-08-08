@@ -1,142 +1,58 @@
-import { Injectable, inject } from '@angular/core';
-import {
-  HttpRequest,
-  HttpHandler,
-  HttpEvent,
-  HttpInterceptor,
-  HttpErrorResponse,
-  HttpInterceptorFn
-} from '@angular/common/http';
-import { Observable, catchError, throwError } from 'rxjs';
+import { inject } from '@angular/core';
+import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { catchError, throwError } from 'rxjs';
 import { ToastService } from '../services/toast.service';
+import { AuthService } from '../services/auth.service';
+import { UserService } from '../services/user.service';
 import { CommonResponseDto } from '../models/common-response.model';
 
-/**
- * HTTP Error Interceptor function for Angular 18's withInterceptors
- * Handles all HTTP errors and displays appropriate toast notifications
- */
 export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
   const toastService = inject(ToastService);
-  
+  const authService = inject(AuthService);
+  const userService = inject(UserService);
+  const router = inject(Router);
+
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
       let errorMessage = 'An unexpected error occurred';
-      
-      // Check if the error response contains our CommonResponseDto format
+
       if (error.error && error.error.success === false) {
         const response = error.error as CommonResponseDto<any>;
-        
-        if (response.error) {
-          errorMessage = `${response.error.errorCode}: ${response.error.errorDescription}`;
-        } else if (response.message) {
+        // Prefer friendly top-level message; never surface raw error codes in the UI
+        if (response.message) {
           errorMessage = response.message;
+        } else if (response.error?.errorDescription) {
+          errorMessage = response.error.errorDescription;
         }
-        
         toastService.showError(errorMessage);
-      } 
-      // Handle network errors or other HTTP errors
-      else if (error.status === 0) {
-        errorMessage = 'Network error. Please check your connection.';
-        toastService.showError(errorMessage);
+      } else if (error.status === 0) {
+        toastService.showError('Network error. Please check your connection.');
       } else if (error.status === 401) {
-        errorMessage = 'Unauthorized. Please log in again.';
-        toastService.showError(errorMessage);
+        authService.clearToken();
+        userService.clearCurrentUser();
+        toastService.showError('Session expired. Please log in again.');
+        router.navigate(['/login']);
       } else if (error.status === 403) {
-        errorMessage = 'Access forbidden. You don\'t have permission to access this resource.';
-        toastService.showError(errorMessage);
+        toastService.showError('You don\'t have permission to do that.');
       } else if (error.status === 404) {
-        errorMessage = 'Resource not found.';
-        toastService.showError(errorMessage);
+        toastService.showError('Resource not found.');
       } else if (error.status === 500) {
-        errorMessage = 'Server error. Please try again later.';
-        toastService.showError(errorMessage);
+        toastService.showError('Server error. Please try again later.');
       } else {
-        // For other types of errors, try to extract message from response
         if (error.error && typeof error.error === 'object') {
-          // Try to extract error message from different formats
           if (error.error.message) {
             errorMessage = error.error.message;
-          } else if (error.error.error && error.error.error.message) {
-            errorMessage = error.error.error.message;
+          } else if (error.error.error?.errorDescription) {
+            errorMessage = error.error.error.errorDescription;
           } else if (error.message) {
             errorMessage = error.message;
           }
         }
-        
         toastService.showError(errorMessage);
       }
-      
-      // Log error for debugging
-      console.error('API Error:', error);
-      
-      // Return the error for further processing if needed
+
       return throwError(() => error);
     })
   );
-}
-
-/**
- * Class-based HTTP Error Interceptor for backward compatibility
- */
-@Injectable()
-export class HttpErrorInterceptor implements HttpInterceptor {
-  constructor(private toastService: ToastService) {}
-  
-  intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    return next.handle(request).pipe(
-      catchError((error: HttpErrorResponse) => {
-        let errorMessage = 'An unexpected error occurred';
-        
-        // Check if the error response contains our CommonResponseDto format
-        if (error.error && error.error.success === false) {
-          const response = error.error as CommonResponseDto<any>;
-          
-          if (response.error) {
-            errorMessage = `${response.error.errorCode}: ${response.error.errorDescription}`;
-          } else if (response.message) {
-            errorMessage = response.message;
-          }
-          
-          this.toastService.showError(errorMessage);
-        } 
-        // Handle network errors or other HTTP errors
-        else if (error.status === 0) {
-          errorMessage = 'Network error. Please check your connection.';
-          this.toastService.showError(errorMessage);
-        } else if (error.status === 401) {
-          errorMessage = 'Unauthorized. Please log in again.';
-          this.toastService.showError(errorMessage);
-        } else if (error.status === 403) {
-          errorMessage = 'Access forbidden. You don\'t have permission to access this resource.';
-          this.toastService.showError(errorMessage);
-        } else if (error.status === 404) {
-          errorMessage = 'Resource not found.';
-          this.toastService.showError(errorMessage);
-        } else if (error.status === 500) {
-          errorMessage = 'Server error. Please try again later.';
-          this.toastService.showError(errorMessage);
-        } else {
-          // For other types of errors, try to extract message from response
-          if (error.error && typeof error.error === 'object') {
-            // Try to extract error message from different formats
-            if (error.error.message) {
-              errorMessage = error.error.message;
-            } else if (error.error.error && error.error.error.message) {
-              errorMessage = error.error.error.message;
-            } else if (error.message) {
-              errorMessage = error.message;
-            }
-          }
-          
-          this.toastService.showError(errorMessage);
-        }
-        
-        // Log error for debugging
-        console.error('API Error:', error);
-        
-        // Return the error for further processing if needed
-        return throwError(() => error);
-      })
-    );
-  }
-} 
+};

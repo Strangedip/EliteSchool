@@ -1,0 +1,179 @@
+<div class="support-container page-shell">
+  <header class="page-header support-header">
+    <div class="page-header-title">
+      <i class="pi pi-headphones" aria-hidden="true"></i>
+      <div class="page-header-copy">
+        <h1>Support</h1>
+        <p class="page-subtitle">
+          Use Support for concerns, issues, and misalignments only.
+          Do not use this to request Elite Points or wallet adjustments.
+        </p>
+      </div>
+    </div>
+    <div class="header-actions">
+      @if (isStaff()) {
+        <p-select
+          [options]="statusOptions"
+          optionLabel="label"
+          optionValue="value"
+          [(ngModel)]="statusFilter"
+          (onChange)="loadTickets()"
+          placeholder="All Statuses"
+          [showClear]="true"
+          class="filter-dropdown">
+        </p-select>
+      }
+      @if (isStudent()) {
+        <p-button type="button" icon="pi pi-plus" label="New Ticket" styleClass="action-button" (click)="openCreateDialog()"></p-button>
+      }
+    </div>
+  </header>
+
+  <div class="tickets-table-wrapper">
+    <p-table [value]="tickets" [loading]="loading" styleClass="p-datatable-sm" [paginator]="true" [rows]="10"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} tickets">
+      <ng-template #header>
+        <tr>
+          <th>Subject</th>
+          <th>Category</th>
+          <th>Status</th>
+          @if (isStaff()) {
+            <th>Student</th>
+          }
+          <th>Created</th>
+          <th style="width: 8rem;">Actions</th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-ticket>
+        <tr>
+          <td>{{ ticket.subject }}</td>
+          <td>{{ categoryLabel(ticket.category) }}</td>
+          <td>
+            <p-tag [severity]="statusSeverity(ticket.status)" [value]="statusLabel(ticket.status)"></p-tag>
+          </td>
+          @if (isStaff()) {
+            <td>{{ studentLabel(ticket) }}</td>
+          }
+          <td>{{ ticket.createdAt | date:'medium' }}</td>
+          <td>
+            <p-button type="button" icon="pi pi-eye" label="Open" (click)="openTicket(ticket)" [outlined]="true" size="small"></p-button>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template #emptymessage>
+        <tr>
+          <td [attr.colspan]="isStaff() ? 6 : 5">
+            <div class="elite-empty">
+              <div class="elite-empty-icon"><i class="pi pi-inbox"></i></div>
+              <p>No support tickets yet.</p>
+              @if (isStudent()) {
+                <p-button type="button" label="Create a ticket" icon="pi pi-plus" (click)="openCreateDialog()"></p-button>
+              }
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
+<!-- Create ticket (student) -->
+<p-dialog header="New Support Ticket" [(visible)]="createDialogVisible" [modal]="true"
+  [style]="{width: '560px'}" [draggable]="false" [resizable]="false" class="custom-dialog">
+  <p class="dialog-hint">
+    Share a concern, issue, or misalignment. This channel is not for requesting Elite Points.
+  </p>
+  <form #createForm="ngForm" (ngSubmit)="createTicket()">
+    <div class="field">
+      <label for="subject">Subject <span class="text-danger">*</span></label>
+      <input id="subject" type="text" pInputText [(ngModel)]="newTicket.subject" name="subject"
+        required maxlength="200" class="theme-input" placeholder="Brief summary">
+      </div>
+      <div class="field">
+        <label for="category">Category <span class="text-danger">*</span></label>
+        <p-select id="category" [options]="categoryOptions" optionLabel="label" optionValue="value"
+          [(ngModel)]="newTicket.category" name="category" required class="w-full"
+        placeholder="Select category"></p-select>
+      </div>
+      <div class="field">
+        <label for="body">Details <span class="text-danger">*</span></label>
+        <textarea id="body" pTextarea [(ngModel)]="newTicket.body" name="body" required rows="5"
+        class="theme-textarea" placeholder="Describe the concern, issue, or misalignment"></textarea>
+      </div>
+      <div class="dialog-footer">
+        <p-button type="button" label="Cancel" icon="pi pi-times" (click)="createDialogVisible = false" [text]="true"></p-button>
+        <p-button type="submit" label="Submit" icon="pi pi-check" [disabled]="!createForm.valid || saving"></p-button>
+      </div>
+    </form>
+  </p-dialog>
+
+  <!-- Ticket detail / thread -->
+  <p-dialog [(visible)]="detailDialogVisible" [modal]="true" [style]="{width: '720px'}"
+    [draggable]="false" [resizable]="false" class="custom-dialog" [header]="selectedTicket?.subject || 'Ticket'">
+    @if (selectedTicket) {
+      <div class="ticket-detail">
+        <div class="ticket-meta">
+          <p-tag [severity]="statusSeverity(selectedTicket.status)" [value]="statusLabel(selectedTicket.status)"></p-tag>
+          <span class="meta-chip">{{ categoryLabel(selectedTicket.category) }}</span>
+          @if (isStaff()) {
+            <span class="meta-chip">{{ studentLabel(selectedTicket) }}</span>
+          }
+          @if (selectedTicket.createdAt) {
+            <span class="meta-chip">{{ selectedTicket.createdAt | date:'medium' }}</span>
+          }
+        </div>
+        <div class="thread-message initial">
+          <div class="message-header">
+            <strong>Student</strong>
+            @if (selectedTicket.createdAt) {
+              <span class="message-time">{{ selectedTicket.createdAt | date:'short' }}</span>
+            }
+          </div>
+          <p class="message-body">{{ selectedTicket.body }}</p>
+        </div>
+        @for (msg of selectedTicket.messages || []; track msg) {
+          <div class="thread-message">
+            <div class="message-header">
+              <strong>{{ msg.authorRole || 'User' }}</strong>
+              @if (msg.createdAt) {
+                <span class="message-time">{{ msg.createdAt | date:'short' }}</span>
+              }
+            </div>
+            <p class="message-body">{{ msg.body }}</p>
+          </div>
+        }
+        @if (selectedTicket.resolutionNotes) {
+          <div class="resolution-block">
+            <h4>Resolution notes</h4>
+            <p>{{ selectedTicket.resolutionNotes }}</p>
+          </div>
+        }
+        @if (canStudentReply() || isStaff()) {
+          <div class="reply-section">
+            <label for="reply">Reply</label>
+            <textarea id="reply" pTextarea [(ngModel)]="replyBody" rows="3"
+            class="theme-textarea" placeholder="Write a reply..."></textarea>
+            <p-button type="button" label="Send Reply" icon="pi pi-send" styleClass="mt-2" [disabled]="!replyBody.trim() || saving" (click)="sendReply()"></p-button>
+          </div>
+        }
+        @if (isStaff()) {
+          <div class="staff-actions">
+            <h4>Update status</h4>
+            <div class="field">
+              <p-select [options]="staffStatusOptions" optionLabel="label" optionValue="value"
+              [(ngModel)]="statusUpdate" class="w-full"></p-select>
+            </div>
+            <div class="field">
+              <label for="resolutionNotes">Resolution notes (optional)</label>
+              <textarea id="resolutionNotes" pTextarea [(ngModel)]="resolutionNotes" rows="3"
+              class="theme-textarea" placeholder="Optional notes when resolving or closing"></textarea>
+            </div>
+            <p-button type="button" label="Update Status" icon="pi pi-check" [disabled]="saving" (click)="updateStatus()" [outlined]="true"></p-button>
+          </div>
+        }
+      </div>
+    }
+  </p-dialog>
+
+  <p-toast position="top-right"></p-toast>

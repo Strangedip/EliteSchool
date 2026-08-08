@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 300" fill="none" role="img" aria-label="Sequence Span">
+  <defs>
+    <linearGradient id="ss-bg" x1="0" y1="0" x2="480" y2="300" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#023e8a"/>
+      <stop offset="1" stop-color="#0077b6"/>
+    </linearGradient>
+  </defs>
+  <rect width="480" height="300" fill="url(#ss-bg)"/>
+  <circle cx="60" cy="50" r="80" fill="#48cae4" opacity=".12"/>
+  <circle cx="430" cy="250" r="100" fill="#00b4d8" opacity=".16"/>
+
+  <!-- flowing digit beads -->
+  <g transform="translate(56,98)">
+    <circle cx="36" cy="52" r="36" fill="#48cae4"/>
+    <path d="M28 40v24M36 36v32M44 40v24" stroke="#023e8a" stroke-width="4" stroke-linecap="round" opacity=".55"/>
+
+    <path d="M80 52h28" stroke="#90e0ef" stroke-width="5" stroke-linecap="round"/>
+
+    <circle cx="152" cy="52" r="36" fill="#00b4d8"/>
+    <path d="M140 40c8-10 24-10 32 0M140 64c8 10 24 10 32 0" stroke="#023e8a" stroke-width="4" stroke-linecap="round" fill="none" opacity=".55"/>
+
+    <path d="M196 52h28" stroke="#90e0ef" stroke-width="5" stroke-linecap="round"/>
+
+    <circle cx="268" cy="52" r="36" fill="#90e0ef"/>
+    <path d="M256 36v32M280 36v32M256 52h24" stroke="#023e8a" stroke-width="4" stroke-linecap="round" opacity=".5"/>
+
+    <path d="M312 52h28" stroke="#90e0ef" stroke-width="5" stroke-linecap="round" stroke-dasharray="6 8"/>
+
+    <circle cx="384" cy="52" r="36" fill="none" stroke="#caf0f8" stroke-width="4" stroke-dasharray="8 7"/>
+    <circle cx="384" cy="52" r="6" fill="#caf0f8"/>
+  </g>
+</svg>

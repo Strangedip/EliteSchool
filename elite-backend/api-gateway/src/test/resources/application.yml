@@ -1,0 +1,25 @@
+spring:
+  cloud:
+    consul:
+      enabled: false
+      config:
+        enabled: false
+      discovery:
+        enabled: false
+        register: false
+    gateway:
+      server:
+        webflux:
+          discovery:
+            locator:
+              enabled: false
+  config:
+    import: "optional:consul:"
+
+jwt:
+  secret: wJjY8fXo+G6Vkhd4yLh3JOp6tH8l29PY5zR0DboYdxM=
+  expiration: 3600000
+  cookie-name: AUTH_TOKEN
+
+CORS_ORIGINS: http://localhost:4200
+FRONTEND_URL: http://localhost:4200

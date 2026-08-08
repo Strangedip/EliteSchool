@@ -1,6 +1,6 @@
 <div class="store-container">
     <div class="store-header">
-        <h2><i class="pi pi-shopping-bag mr-2"></i> Elite School Store</h2>
+        <h2><i class="pi pi-shopping-bag mr-2"></i> School Store</h2>
         <div class="header-actions">
             <div class="search-box">
                 <input pInputText type="text" placeholder="Search items..." (input)="onSearch($event)" />
@@ -8,27 +8,13 @@
             </div>
             <div class="wallet-info" *ngIf="currentUserRole === 'STUDENT'">
                 <i class="pi pi-wallet"></i>
-                <span>{{ rewardPoints }}</span>
-                <a href="/wallet" class="view-wallet-link">
+                <span>{{ rewardPoints() }}</span>
+                <a routerLink="/wallet" class="view-wallet-link">
                     <i class="pi pi-chart-bar"></i> Wallet
                 </a>
             </div>
-            <button pButton 
-                type="button" 
-                icon="pi pi-plus" 
-                label="Add Item" 
-                class="p-button-primary action-button"
-                (click)="addItem()"
-                *ngIf="isAdmin()">
-            </button>
-            <button pButton
-                type="button"
-                icon="pi pi-history"
-                label="Purchase History"
-                class="p-button-secondary action-button"
-                (click)="showPurchaseHistory()"
-                *ngIf="currentUserRole === 'STUDENT'">
-            </button>
+            <p-button type="button" icon="pi pi-plus" label="Add Item" styleClass="p-button-primary action-button" (click)="addItem()" *ngIf="isAdmin()"></p-button>
+            <p-button type="button" icon="pi pi-history" label="Claim history" styleClass="p-button-secondary action-button" (click)="showPurchaseHistory()" *ngIf="currentUserRole === 'STUDENT'"></p-button>
         </div>
     </div>
 
@@ -40,23 +26,26 @@
             </div>
         </ng-template>
         <div class="panel-content">
-            <p><i class="pi pi-wallet"></i> Use your points to redeem items from our store.</p>
-            <p><i class="pi pi-map-marker"></i> Items will be available for collection from the school office.</p>
-            <p><i class="pi pi-clock"></i> Please allow 1-2 business days for processing.</p>
+            <p><i class="pi pi-wallet"></i> Materials use Elite Points; Opportunities may unlock via tasks, points, or both.</p>
+            <p><i class="pi pi-bolt"></i> First come, first served — stock and claim windows apply. No waitlist.</p>
+            <p><i class="pi pi-map-marker"></i> Collect from the school office as directed.</p>
         </div>
     </p-panel>
 
-    <!-- Empty state message -->
-    <p-card *ngIf="filteredItems.length === 0" styleClass="text-center p-4">
-        <ng-template pTemplate="content">
-            <i class="pi pi-shopping-cart text-6xl text-primary mb-3" style="display: block;"></i>
-            <h3>No items available</h3>
-            <p class="text-secondary">There are currently no items in the store or no items match your search.</p>
-            <button *ngIf="isAdmin()" pButton type="button" label="Add First Item" icon="pi pi-plus" (click)="addItem()" class="p-button-primary"></button>
-        </ng-template>
-    </p-card>
-
-    <!-- Items grid -->
+    <div class="category-filter mb-3">
+        <p-selectbutton
+            [options]="categoryFilterOptions"
+            [(ngModel)]="categoryFilter"
+            optionLabel="label"
+            optionValue="value"
+            (onChange)="onCategoryFilterChange()">
+        </p-selectbutton>
+    </div>
+    <div class="elite-empty" *ngIf="filteredItems.length === 0">
+        <div class="elite-empty-icon"><i class="pi pi-shopping-cart"></i></div>
+        <p>No items match your filters. Admins can add materials and opportunities to the school store.</p>
+        <p-button *ngIf="isAdmin()" type="button" label="Add First Item" icon="pi pi-plus" (click)="addItem()" styleClass="p-button-primary"></p-button>
+    </div>
     <div class="store-items" *ngIf="filteredItems.length > 0">
         <p-card *ngFor="let item of filteredItems" [header]="item.name" styleClass="item-card">
             <ng-template pTemplate="header">
@@ -64,138 +53,245 @@
                     <img [src]="item.imageUrl || 'assets/images/store/default-item.svg'" [alt]="item.name">
                 </div>
             </ng-template>
-            
+
             <ng-template pTemplate="content">
                 <p class="item-description">{{ item.description || 'No description available' }}</p>
-                <div class="item-meta">
-                    <span class="item-price"><i class="pi pi-wallet"></i> {{ item.price }} Points</span>
-                    <p-tag [severity]="item.stock > 0 ? 'success' : 'danger'" [value]="item.stock > 0 ? item.stock + ' in stock' : 'Out of stock'"></p-tag>
+                <div class="opportunity-brief" *ngIf="item.itemCategory === 'OPPORTUNITY' && item.opportunityBrief">
+                    <strong>Why this exists</strong>
+                    <p>{{ item.opportunityBrief }}</p>
+                    <p class="text-secondary" *ngIf="item.intendedAudience"><em>For:</em> {{ item.intendedAudience }}</p>
                 </div>
+                <ul class="eligibility-checklist" *ngIf="item.itemCategory === 'OPPORTUNITY' && item.eligibilityChecklist?.length">
+                    <li *ngFor="let step of item.eligibilityChecklist">
+                        <i class="pi pi-circle"></i> {{ step }}
+                    </li>
+                </ul>
+                <div class="item-meta">
+                    <span class="item-price" *ngIf="usesPoints(item)">
+                        <i class="pi pi-wallet"></i> {{ item.price }} Points
+                    </span>
+                    <span class="item-price" *ngIf="!usesPoints(item)">
+                        <i class="pi pi-verified"></i> Task unlock
+                    </span>
+                    <p-tag [severity]="statusBadge(item).severity" [value]="statusBadge(item).label"></p-tag>
+                    <div class="item-tags-secondary">
+                        <p-tag [severity]="item.itemCategory === 'OPPORTUNITY' ? 'info' : 'secondary'"
+                               [value]="item.itemCategory === 'OPPORTUNITY' ? 'Opportunity' : 'Material'"></p-tag>
+                        <p-tag [severity]="acquisitionSeverity(item)" [value]="acquisitionLabel(item)"></p-tag>
+                    </div>
+                </div>
+
+                <div class="required-tasks" *ngIf="usesTasks(item) && (item.requiredTasks?.length || item.requiredTaskIds?.length)">
+                    <div class="required-tasks-title">
+                        Required tasks
+                        <span *ngIf="item.requiredTasks?.length">
+                            ({{ tasksDoneCount(item) }} of {{ tasksTotalCount(item) }} done)
+                        </span>
+                    </div>
+                    <ul *ngIf="item.requiredTasks?.length; else adminTaskIds">
+                        <li *ngFor="let t of item.requiredTasks" [class.done]="t.completed">
+                            <i class="pi" [ngClass]="t.completed ? 'pi-check-circle' : 'pi-circle'"></i>
+                            <a [routerLink]="taskLink(t.taskId)" [queryParams]="taskQuery(t.taskId)">{{ t.title }}</a>
+                        </li>
+                    </ul>
+                    <ng-template #adminTaskIds>
+                        <p class="text-secondary" *ngIf="isAdmin()">
+                            Linked to {{ item.requiredTaskIds?.length || 0 }} task(s). Students see progress here.
+                        </p>
+                    </ng-template>
+                </div>
+
+                <p class="text-secondary claim-roster" *ngIf="(item.claims?.length || 0) > 0">
+                    Claimed by: {{ claimedByLabel(item) }}
+                </p>
             </ng-template>
-            
+
             <ng-template pTemplate="footer">
                 <div class="item-actions">
-                    <button pButton 
-                        type="button" 
-                        icon="pi pi-shopping-cart" 
-                        label="Redeem" 
-                        class="p-button-success"
-                        [disabled]="!canRedeem(item)"
-                        (click)="redeemItem(item)"
-                        *ngIf="currentUserRole === 'STUDENT'">
-                    </button>
-                    
+                    <div class="claim-cta" *ngIf="currentUserRole === 'STUDENT'">
+                        <p-button type="button" icon="pi pi-shopping-cart" [label]="ctaLabel(item)" styleClass="p-button-primary" [disabled]="!canGetItem(item)" [title]="claimBlockReason(item)" (click)="redeemItem(item)"></p-button>
+                        <small class="claim-hint" *ngIf="!canGetItem(item)">{{ claimBlockReason(item) }}</small>
+                    </div>
+
                     <ng-container *ngIf="isAdmin()">
-                        <button pButton 
-                            type="button" 
-                            icon="pi pi-pencil" 
-                            label="Edit" 
-                            class="p-button-primary p-button-outlined"
-                            (click)="editItem(item)">
-                        </button>
-                        <button pButton 
-                            type="button" 
-                            icon="pi pi-trash" 
-                            label="Delete" 
-                            class="p-button-outlined p-button-danger"
-                            (click)="deleteItem(item)">
-                        </button>
+                        <p-button type="button" icon="pi pi-pencil" label="Edit" styleClass="p-button-primary p-button-outlined" (click)="editItem(item)"></p-button>
+                        <p-button type="button" icon="pi pi-trash" label="Delete" styleClass="p-button-outlined p-button-danger" (click)="deleteItem(item)"></p-button>
                     </ng-container>
                 </div>
             </ng-template>
         </p-card>
     </div>
 </div>
-
-<!-- Item Form Dialog -->
-<p-dialog [header]="editMode ? 'Edit Item' : 'Add Item'" [(visible)]="itemDialogVisible" [modal]="true" [style]="{width: '500px'}" [draggable]="false" [resizable]="false" styleClass="custom-dialog">
+<p-dialog [header]="editMode ? 'Edit Item' : 'Add Item'" [(visible)]="itemDialogVisible" [modal]="true" [style]="{width: '560px'}" [draggable]="false" [resizable]="false" styleClass="custom-dialog">
     <form *ngIf="selectedItem" #itemForm="ngForm" (ngSubmit)="saveItem()">
-        <div class="field">
-            <label for="name">Item Name <span class="text-danger">*</span></label>
-            <input id="name" type="text" pInputText [(ngModel)]="selectedItem.name" name="name" required class="theme-input">
-        </div>
-        <div class="field">
-            <label for="description">Description</label>
-            <textarea pInputTextarea [(ngModel)]="selectedItem.description" name="description" rows="5" class="theme-textarea"></textarea>
-        </div>
-        <div class="field">
-            <label for="price">Price (Points) <span class="text-danger">*</span></label>
-            <p-inputNumber id="price" [(ngModel)]="selectedItem.price" name="price" [min]="1" [showButtons]="true" required styleClass="theme-input-number"></p-inputNumber>
-        </div>
-        <div class="field">
-            <label for="stock">Stock Available <span class="text-danger">*</span></label>
-            <p-inputNumber id="stock" [(ngModel)]="selectedItem.stock" name="stock" [min]="0" [showButtons]="true" required styleClass="theme-input-number"></p-inputNumber>
-        </div>
-        <div class="field">
-            <label for="imageUrl">Image URL</label>
-            <div class="p-inputgroup">
-                <input id="imageUrl" type="text" pInputText [(ngModel)]="selectedItem.imageUrl" name="imageUrl" placeholder="https://example.com/image.jpg" class="theme-input">
-                <button pButton type="button" icon="pi pi-eye" class="p-button-outlined" *ngIf="selectedItem.imageUrl" (click)="previewImage(selectedItem.imageUrl)"></button>
+        <div class="form-section">
+            <h4>Basics</h4>
+            <div class="field">
+                <label for="name">Item Name <span class="text-danger">*</span></label>
+                <input id="name" type="text" pInputText [(ngModel)]="selectedItem.name" name="name" required class="theme-input">
             </div>
-            <small class="text-secondary">Leave empty to use default image</small>
+            <div class="field">
+                <label for="description">Description</label>
+                <textarea pInputTextarea [(ngModel)]="selectedItem.description" name="description" rows="3" class="theme-textarea"></textarea>
+            </div>
+            <div class="field">
+                <label for="itemCategory">Catalog type <span class="text-danger">*</span></label>
+                <p-select
+                    inputId="itemCategory"
+                    [options]="categoryOptions"
+                    [(ngModel)]="selectedItem.itemCategory"
+                    name="itemCategory"
+                    optionLabel="label"
+                    optionValue="value"
+                    styleClass="w-full theme-dropdown">
+                </p-select>
+                <small class="text-secondary">Materials vs Opportunities (for browsing).</small>
+            </div>
         </div>
+
+        <div class="form-section">
+            <h4>Access &amp; price</h4>
+            <div class="field">
+                <label for="acquisitionType">How students get this <span class="text-danger">*</span></label>
+                <p-select
+                    inputId="acquisitionType"
+                    [options]="acquisitionOptions"
+                    [(ngModel)]="selectedItem.acquisitionType"
+                    name="acquisitionType"
+                    optionLabel="label"
+                    optionValue="value"
+                    (onChange)="onAcquisitionChange()"
+                    styleClass="w-full theme-dropdown">
+                </p-select>
+                <small class="text-secondary">Points, linked tasks, or both.</small>
+            </div>
+            <div class="field" *ngIf="selectedItem.acquisitionType === 'TASKS' || selectedItem.acquisitionType === 'POINTS_AND_TASKS'">
+                <label for="requiredTasks">Required tasks <span class="text-danger">*</span></label>
+                <p-multiselect
+                    inputId="requiredTasks"
+                    [options]="availableTasks"
+                    [(ngModel)]="selectedItem.requiredTaskIds"
+                    name="requiredTaskIds"
+                    optionLabel="label"
+                    optionValue="value"
+                    placeholder="Select tasks students must complete"
+                    [filter]="true"
+                    display="chip"
+                    styleClass="w-full">
+                </p-multiselect>
+                <small class="text-secondary">All selected tasks must be verified complete (AND).</small>
+            </div>
+            <div class="field" *ngIf="selectedItem.acquisitionType !== 'TASKS'">
+                <label for="price">Price (Elite Points) <span class="text-danger">*</span></label>
+                <p-inputnumber id="price" [(ngModel)]="selectedItem.price" name="price" [min]="1" [showButtons]="true" required styleClass="theme-input-number"></p-inputnumber>
+            </div>
+            <div class="field" *ngIf="selectedItem.acquisitionType === 'TASKS'">
+                <label>Price</label>
+                <p class="text-secondary mb-0">No Elite Points — unlock by completing the linked tasks only.</p>
+            </div>
+            <div class="field">
+                <label for="stock">Stock Available <span class="text-danger">*</span></label>
+                <p-inputnumber id="stock" [(ngModel)]="selectedItem.stock" name="stock" [min]="0" [showButtons]="true" required styleClass="theme-input-number"></p-inputnumber>
+                <small class="text-secondary">Stock is the scarcity limit (e.g. set 1 for a single trip seat).</small>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h4>Details</h4>
+            <button type="button" class="advanced-toggle" (click)="showAdvancedStoreOptions = !showAdvancedStoreOptions">
+                <i class="pi" [class.pi-chevron-down]="!showAdvancedStoreOptions" [class.pi-chevron-up]="showAdvancedStoreOptions"></i>
+                {{ showAdvancedStoreOptions ? 'Hide' : 'Show' }} claim window, opportunity brief &amp; image
+            </button>
+            <ng-container *ngIf="showAdvancedStoreOptions">
+                <ng-container *ngIf="selectedItem.itemCategory === 'OPPORTUNITY'">
+                    <div class="field">
+                        <label for="opportunityBrief">Opportunity brief <span class="text-danger">*</span></label>
+                        <textarea id="opportunityBrief" pInputTextarea [(ngModel)]="selectedItem.opportunityBrief"
+                                  name="opportunityBrief" rows="3" class="theme-textarea"
+                                  placeholder="Why this opportunity exists"></textarea>
+                    </div>
+                    <div class="field">
+                        <label for="intendedAudience">Who it's for</label>
+                        <input id="intendedAudience" type="text" pInputText [(ngModel)]="selectedItem.intendedAudience"
+                               name="intendedAudience" class="theme-input"
+                               placeholder="e.g. Grade 10–12 science club">
+                    </div>
+                    <div class="field">
+                        <label for="eligibilityChecklist">Eligibility checklist (one per line)</label>
+                        <textarea id="eligibilityChecklist" pInputTextarea [(ngModel)]="eligibilityChecklistText"
+                                  name="eligibilityChecklistText" rows="3" class="theme-textarea"
+                                  placeholder="Complete linked tasks&#10;Claim while window is open&#10;Stock available"></textarea>
+                        <small class="text-secondary">Shown to students as readiness steps. Hard gates remain tasks/points/window/stock.</small>
+                    </div>
+                </ng-container>
+                <div class="field">
+                    <label for="claimOpens">Claim opens (optional)</label>
+                    <input id="claimOpens" type="datetime-local" class="theme-input w-full"
+                           [(ngModel)]="claimOpensLocal" name="claimOpensLocal">
+                </div>
+                <div class="field">
+                    <label for="claimCloses">Claim closes (optional)</label>
+                    <input id="claimCloses" type="datetime-local" class="theme-input w-full"
+                           [(ngModel)]="claimClosesLocal" name="claimClosesLocal">
+                    <small class="text-secondary">After close, item shows as Expired. Delete it when you no longer want it listed. FCFS via stock.</small>
+                </div>
+                <div class="field">
+                    <label for="imageUrl">Image URL</label>
+                    <div class="p-inputgroup">
+                        <input id="imageUrl" type="text" pInputText [(ngModel)]="selectedItem.imageUrl" name="imageUrl" placeholder="https://example.com/image.jpg" class="theme-input">
+                        <p-button type="button" icon="pi pi-eye" styleClass="p-button-outlined" *ngIf="selectedItem.imageUrl" (click)="previewImage(selectedItem.imageUrl)"></p-button>
+                    </div>
+                    <small class="text-secondary">Leave empty to use default image</small>
+                </div>
+            </ng-container>
+        </div>
+
         <div class="dialog-footer">
-            <button pButton type="button" label="Cancel" icon="pi pi-times" 
-                    class="p-button-text" (click)="itemDialogVisible = false"></button>
-            <button pButton type="submit" label="Save" icon="pi pi-check" 
-                    class="p-button-primary" [disabled]="!itemForm.valid"></button>
+            <p-button type="button" label="Cancel" icon="pi pi-times" styleClass="p-button-text" (click)="itemDialogVisible = false"></p-button>
+            <p-button type="submit" label="Save" icon="pi pi-check" styleClass="p-button-primary" [disabled]="!formValid()"></p-button>
         </div>
     </form>
 </p-dialog>
-
-<!-- Image Preview Dialog -->
 <p-dialog header="Image Preview" [(visible)]="imagePreviewVisible" [modal]="true" [style]="{width: '400px'}" [draggable]="false" [resizable]="false" styleClass="custom-dialog">
     <div class="text-center">
         <img [src]="previewImageUrl" style="max-width: 100%; max-height: 300px;" alt="Image Preview">
     </div>
 </p-dialog>
-
-<!-- Purchase History Dialog -->
-<p-dialog header="Purchase History" [(visible)]="historyDialogVisible" [modal]="true" [style]="{width: '700px'}" [draggable]="false" [resizable]="false" styleClass="custom-dialog">
-    <p-table [value]="transactionHistory" [loading]="loadingHistory" styleClass="p-datatable-sm" [paginator]="true" [rows]="5" [showCurrentPageReport]="true" 
-             currentPageReportTemplate="Showing {first} to {last} of {totalRecords} transactions">
+<p-dialog header="Claim history" [(visible)]="historyDialogVisible" [modal]="true" [style]="{width: '700px'}" [draggable]="false" [resizable]="false" styleClass="custom-dialog">
+    <p-table [value]="claimHistory" [loading]="loadingHistory" styleClass="p-datatable-sm" [paginator]="true" [rows]="5" [showCurrentPageReport]="true"
+             currentPageReportTemplate="Showing {first} to {last} of {totalRecords} claims">
         <ng-template pTemplate="header">
             <tr>
                 <th>Date</th>
-                <th>Type</th>
-                <th>Points</th>
-                <th>Description</th>
+                <th>Item</th>
+                <th>Category</th>
+                <th>How claimed</th>
             </tr>
         </ng-template>
-        <ng-template pTemplate="body" let-transaction>
+        <ng-template pTemplate="body" let-claim>
             <tr>
-                <td>{{ transaction.createdAt | date:'medium' }}</td>
-                <td>
-                    <p-tag 
-                        [severity]="transaction.transactionType === 'DEBIT' ? 'danger' : 'success'" 
-                        [value]="transaction.transactionType === 'DEBIT' ? 'Debit' : 'Credit'">
-                    </p-tag>
-                </td>
-                <td>{{ transaction.points }}</td>
-                <td>{{ transaction.description }}</td>
+                <td>{{ claim.claimedAt | date:'medium' }}</td>
+                <td>{{ claim.itemName }}</td>
+                <td>{{ claim.itemCategory === 'OPPORTUNITY' ? 'Opportunity' : 'Material' }}</td>
+                <td>{{ claimAcquisitionLabel(claim.acquisitionType) }}</td>
             </tr>
         </ng-template>
         <ng-template pTemplate="emptymessage">
             <tr>
                 <td colspan="4" class="text-center">
-                    <p>No transaction history found.</p>
+                    <p>No claims yet.</p>
                 </td>
             </tr>
         </ng-template>
     </p-table>
     <div class="dialog-footer">
-        <button pButton type="button" label="Close" icon="pi pi-times" 
-                class="p-button-text" (click)="historyDialogVisible = false"></button>
+        <p-button type="button" label="Close" icon="pi pi-times" styleClass="p-button-text" (click)="historyDialogVisible = false"></p-button>
     </div>
 </p-dialog>
-
-<!-- Confirmation Dialog -->
-<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle" styleClass="custom-dialog">
+<p-confirmdialog header="Confirmation" icon="pi pi-exclamation-triangle" styleClass="custom-dialog">
     <ng-template pTemplate="footer">
-        <button type="button" pButton icon="pi pi-times" label="No" class="p-button-text"></button>
-        <button type="button" pButton icon="pi pi-check" label="Yes" class="p-button-primary"></button>
+        <p-button type="button" icon="pi pi-times" label="No" styleClass="p-button-text"></p-button>
+        <p-button type="button" icon="pi pi-check" label="Yes" styleClass="p-button-primary"></p-button>
     </ng-template>
-</p-confirmDialog>
-
-<!-- Toast Messages -->
+</p-confirmdialog>
 <p-toast position="top-right"></p-toast>

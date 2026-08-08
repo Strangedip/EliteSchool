@@ -18,7 +18,7 @@ public class UpdateUserRequestDTO {
     @Email(message = "Invalid email format")
     private String email;
 
-    @Pattern(regexp = "^\\+?[1-9]\\d{1,14}$", message = "Invalid mobile number format")
+    @Pattern(regexp = "^$|^[+]?[0-9]{7,15}$", message = "Invalid mobile number format")
     private String mobileNumber;
 
     @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters")

@@ -1,0 +1,121 @@
+<div class="admin-users-container page-shell">
+    <header class="page-header admin-header">
+        <div class="page-header-title">
+            <i class="pi pi-shield" aria-hidden="true"></i>
+            <div class="page-header-copy">
+                <h1>Manage Users</h1>
+            </div>
+        </div>
+        <div class="header-actions">
+            <div class="search-box">
+                <input pInputText type="text" placeholder="Search users..." (input)="onSearch($event)" />
+                <i class="pi pi-search"></i>
+            </div>
+            <p-select [options]="roleOptions" optionLabel="label" optionValue="value" [(ngModel)]="roleFilter"
+                (onChange)="applyFilters()" placeholder="All Roles" [showClear]="true" class="filter-dropdown"></p-select>
+            <p-button type="button" icon="pi pi-user-plus" label="Add User" styleClass="action-button" (click)="openAddUserDialog()"></p-button>
+        </div>
+    </header>
+
+    <div class="users-table-wrapper">
+        <p-table [value]="filteredUsers" [loading]="loading" styleClass="p-datatable-sm" [paginator]="true" [rows]="10"
+                 [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} users">
+            <ng-template #header>
+                <tr>
+                    <th>Name</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Joined</th>
+                    <th style="width: 12rem;">Actions</th>
+                </tr>
+            </ng-template>
+            <ng-template #body let-user>
+                <tr>
+                    <td>{{ user.name }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                        <p-select [options]="roleOptions" optionLabel="label" optionValue="value" [ngModel]="user.role"
+                            (onChange)="changeRole(user, $event.value)" [disabled]="user.eliteId === currentUserId"
+                            class="role-dropdown"></p-select>
+                    </td>
+                    <td>
+                        <p-tag [severity]="user.active ? 'success' : 'danger'" [value]="user.active ? 'Active' : 'Inactive'"></p-tag>
+                    </td>
+                    <td>{{ user.createdAt | date:'mediumDate' }}</td>
+                    <td>
+                        <div class="row-actions">
+                            <p-button type="button" [icon]="user.active ? 'pi pi-eye-slash' : 'pi pi-eye'" [pTooltip]="user.active ? 'Deactivate' : 'Activate'" [disabled]="user.eliteId === currentUserId" (click)="toggleActive(user)" [outlined]="true" severity="secondary" size="small"></p-button>
+                            <p-button type="button" icon="pi pi-trash" pTooltip="Delete" [disabled]="user.eliteId === currentUserId" (click)="deleteUser(user)" [outlined]="true" severity="danger" size="small"></p-button>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template #emptymessage>
+                <tr>
+                    <td colspan="7">
+                        <div class="elite-empty">
+                            <div class="elite-empty-icon"><i class="pi pi-users"></i></div>
+                            <p>No users found.</p>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+<p-dialog header="Add Staff or Student" [(visible)]="addUserDialogVisible" [modal]="true" [style]="{width: '520px'}" [draggable]="false" [resizable]="false" class="custom-dialog">
+    <p class="dialog-hint">Create faculty, management, admin, or student accounts. Public signup only creates students.</p>
+    <form #userForm="ngForm" (ngSubmit)="createUser()">
+        <div class="field">
+            <label for="name">Full Name <span class="text-danger">*</span></label>
+            <input id="name" type="text" pInputText [(ngModel)]="newUser.name" name="name" required class="theme-input">
+        </div>
+        <div class="field-row">
+            <div class="field">
+                <label for="username">Username <span class="text-danger">*</span></label>
+                <input id="username" type="text" pInputText [(ngModel)]="newUser.username" name="username"
+                  required pattern="^[a-zA-Z0-9_]{3,30}$" class="theme-input" #adminUsername="ngModel">
+                @if (adminUsername.errors?.['pattern'] && adminUsername.touched) {
+                  <small class="p-error">3–30 characters: letters, numbers, underscore</small>
+                }
+            </div>
+            <div class="field">
+                <label for="email">Email <span class="text-danger">*</span></label>
+                <input id="email" type="email" pInputText [(ngModel)]="newUser.email" name="email" required class="theme-input">
+            </div>
+        </div>
+        <div class="field">
+            <label for="password">Password <span class="text-danger">*</span></label>
+            <p-password id="password" [(ngModel)]="newUser.password" name="password" [toggleMask]="true" [feedback]="false" required class="w-full" inputStyleClass="w-full theme-input"></p-password>
+        </div>
+        <div class="field-row">
+            <div class="field">
+                <label for="role">Role <span class="text-danger">*</span></label>
+                <p-select id="role" [options]="roleOptions" optionLabel="label" optionValue="value" [(ngModel)]="newUser.role" name="role" required class="w-full"></p-select>
+            </div>
+            <div class="field">
+                <label for="gender">Gender</label>
+                <p-select id="gender" [options]="genderOptions" optionLabel="label" optionValue="value" [(ngModel)]="newUser.gender" name="gender" class="w-full"></p-select>
+            </div>
+        </div>
+        <div class="field-row">
+            <div class="field">
+                <label for="age">Age</label>
+                <input id="age" type="number" pInputText [(ngModel)]="newUser.age" name="age" class="theme-input">
+            </div>
+            <div class="field">
+                <label for="mobileNumber">Mobile Number</label>
+                <input id="mobileNumber" type="text" pInputText [(ngModel)]="newUser.mobileNumber" name="mobileNumber" class="theme-input" placeholder="+1234567890">
+            </div>
+        </div>
+        <div class="dialog-footer">
+            <p-button type="button" label="Cancel" icon="pi pi-times" (click)="addUserDialogVisible = false" [text]="true"></p-button>
+            <p-button type="submit" label="Create User" icon="pi pi-check" [disabled]="!userForm.valid || saving" [loading]="saving"></p-button>
+        </div>
+    </form>
+</p-dialog>
+<p-confirmdialog class="custom-dialog"></p-confirmdialog>
+<p-toast position="top-right"></p-toast>

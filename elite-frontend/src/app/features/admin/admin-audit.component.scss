@@ -1,0 +1,23 @@
+@use '../../../styles/mixins' as *;
+
+.audit-container {
+  max-width: 1100px;
+}
+
+.loading-state {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 2rem 0;
+  color: var(--text-color-secondary);
+}
+
+.hint {
+  color: var(--text-color-secondary);
+  margin: 0 0 1rem;
+  font-size: 0.9rem;
+}
+
+.text-center {
+  text-align: center;
+}

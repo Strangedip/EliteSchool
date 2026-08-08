@@ -57,6 +57,30 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
+    public User setActiveStatus(UUID id, boolean active) {
+        User user = getUserById(id);
+        user.setActive(active);
+        return userRepository.save(user);
+    }
+
+    @Override
+    @Transactional
+    public User updateRole(UUID id, RoleType role) {
+        User user = getUserById(id);
+        user.setRole(role);
+        return userRepository.save(user);
+    }
+
+    @Override
+    @Transactional
+    public User changePassword(UUID id, String encodedNewPassword) {
+        User user = getUserById(id);
+        user.setPassword(encodedNewPassword);
+        return userRepository.save(user);
+    }
+
+    @Override
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
     }

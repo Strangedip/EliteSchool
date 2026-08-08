@@ -6,9 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * Request DTO for forgot password endpoint
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,4 +15,3 @@ public class ForgotPasswordRequest {
     @Email(message = "Invalid email format")
     private String email;
 }
-

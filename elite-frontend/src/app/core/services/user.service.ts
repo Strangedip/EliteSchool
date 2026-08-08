@@ -56,24 +56,20 @@ export class UserService {
   }
 
   isAdmin(): boolean {
-    return this.getCurrentUser()?.role === Role.ADMIN;
+    const role = this.getCurrentUser()?.role?.toUpperCase();
+    return role === Role.ADMIN || role === Role.MANAGEMENT;
   }
 
   hasRole(role: Role | string): boolean {
-    return this.getCurrentUser()?.role === role;
+    return this.getCurrentUser()?.role?.toUpperCase() === String(role).toUpperCase();
   }
 
   getUserProfile(): Observable<CommonResponseDto<User>> {
-    const currentUser = this.getCurrentUser();
-    if (currentUser) {
-      return of({ success: true, message: 'User loaded', data: currentUser });
-    }
-    
     const headers = this.getAuthHeaders();
     if (!headers.has('Authorization')) {
       return of({ success: false, message: 'No token available' });
     }
-    
+
     return this.http.get<CommonResponseDto<User>>(`${this.authUrl}/profile`, { headers }).pipe(
       tap(response => {
         if (response.success && response.data) {
@@ -81,7 +77,6 @@ export class UserService {
         }
       }),
       catchError(() => {
-        // Fallback to token validation
         return this.http.get<CommonResponseDto<User>>(`${this.authUrl}/validate-token`, { headers }).pipe(
           tap(response => {
             if (response.success && response.data) {
@@ -94,14 +89,22 @@ export class UserService {
     );
   }
 
-  updateUserProfile(userData: Partial<User>): Observable<CommonResponseDto<User>> {
-    return this.http.put<CommonResponseDto<User>>(`${this.apiUrl}/${userData.eliteId}`, userData).pipe(
+  updateUserProfile(userId: string, userData: Partial<User>): Observable<CommonResponseDto<User>> {
+    return this.http.put<CommonResponseDto<User>>(`${this.apiUrl}/${userId}`, userData).pipe(
       tap(response => {
         if (response.success && response.data) {
-          this.setCurrentUser(response.data);
+          this.setCurrentUser(response.data as User);
         }
       })
     );
+  }
+
+  getAllUsers(): Observable<CommonResponseDto<User[]>> {
+    return this.http.get<CommonResponseDto<User[]>>(this.apiUrl);
+  }
+
+  getAllStudents(): Observable<CommonResponseDto<User[]>> {
+    return this.http.get<CommonResponseDto<User[]>>(`${this.apiUrl}/students`);
   }
 
   createUser(userData: any): Observable<CommonResponseDto<User>> {
@@ -111,8 +114,24 @@ export class UserService {
   updateUser(userId: string, userData: Partial<User>): Observable<CommonResponseDto<User>> {
     return this.http.put<CommonResponseDto<User>>(`${this.apiUrl}/${userId}`, userData);
   }
-  
+
   getUserById(userId: string): Observable<CommonResponseDto<User>> {
     return this.http.get<CommonResponseDto<User>>(`${this.apiUrl}/${userId}`);
+  }
+
+  setUserRole(userId: string, role: string): Observable<CommonResponseDto<User>> {
+    return this.http.put<CommonResponseDto<User>>(`${this.apiUrl}/${userId}/role`, null, {
+      params: { role }
+    });
+  }
+
+  setUserActive(userId: string, active: boolean): Observable<CommonResponseDto<User>> {
+    return this.http.put<CommonResponseDto<User>>(`${this.apiUrl}/${userId}/status`, null, {
+      params: { active: String(active) }
+    });
+  }
+
+  deleteUser(userId: string): Observable<CommonResponseDto<void>> {
+    return this.http.delete<CommonResponseDto<void>>(`${this.apiUrl}/${userId}`);
   }
 }

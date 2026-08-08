@@ -3,9 +3,6 @@ package com.eliteschool.wallet_service.exception;
 import com.eliteschool.common_utils.exception.AppException;
 import org.springframework.http.HttpStatus;
 
-/**
- * Exception thrown when a student doesn't have enough points for a redemption.
- */
 public class InsufficientPointsException extends AppException {
     
     public InsufficientPointsException(String message) {
@@ -20,4 +17,4 @@ public class InsufficientPointsException extends AppException {
             HttpStatus.CONFLICT
         );
     }
-} 
+}

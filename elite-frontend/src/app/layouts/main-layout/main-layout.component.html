@@ -1,12 +1,12 @@
 <div class="app-layout">
   <div class="mobile-overlay" [class.active]="isMobileMenuOpen" (click)="toggleMobileMenu()"></div>
-  
+
   <aside class="sidebar" [class.mobile-open]="isMobileMenuOpen">
-    <a routerLink="/home" class="brand">
-      <div class="logo"><span>E</span></div>
-      <h1 class="brand-name">Elite School</h1>
+    <a routerLink="/dashboard" class="brand">
+      <div class="logo" aria-hidden="true"><i class="pi pi-bolt"></i></div>
+      <h1 class="brand-name">EliteSchool</h1>
     </a>
-    
+
     <nav class="nav-menu">
       <ul class="nav-list">
         @for (item of navItems; track item.route; let i = $index) {
@@ -15,16 +15,13 @@
           </li>
         }
       </ul>
-      
-      <div class="nav-footer">
-        <a routerLink="/home" class="nav-link">
-          <i class="pi pi-home"></i><span>Home</span>
-        </a>
-        <button class="logout-btn" (click)="logout()">
-          <i class="pi pi-sign-out"></i><span>Logout</span>
-        </button>
-      </div>
     </nav>
+
+    <div class="nav-footer">
+      <button class="logout-btn" (click)="logout()">
+        <i class="pi pi-sign-out"></i><span>Logout</span>
+      </button>
+    </div>
   </aside>
 
   <main class="main-content">
@@ -35,16 +32,26 @@
         </button>
         <h2 class="page-title">{{ pageTitle }}</h2>
       </div>
-      
+
       <div class="header-right">
-        <a routerLink="/home" class="icon-btn" title="Home"><i class="pi pi-home"></i></a>
-        <button class="icon-btn logout" (click)="logout()" title="Logout"><i class="pi pi-sign-out"></i></button>
+        <button class="icon-btn theme-toggle" (click)="toggleTheme()" [title]="themeService.isDark() ? 'Switch to light mode' : 'Switch to dark mode'">
+          <i class="pi" [class.pi-sun]="themeService.isDark()" [class.pi-moon]="!themeService.isDark()"></i>
+        </button>
+        <div class="user-context" *ngIf="currentUserName">
+          <a routerLink="/profile" class="user-chip" title="Profile">
+            <span class="user-name">{{ currentUserName }}</span>
+            <span class="user-role">{{ roleLabel }}</span>
+          </a>
+          <a *ngIf="isStudent" routerLink="/wallet" class="points-chip" title="Elite Points wallet">
+            <i class="pi pi-wallet"></i>
+            <span class="points-value">{{ walletBalance ?? '—' }}</span>
+          </a>
+        </div>
       </div>
     </header>
-    
+
     <div class="content">
       <router-outlet></router-outlet>
     </div>
   </main>
 </div>
-

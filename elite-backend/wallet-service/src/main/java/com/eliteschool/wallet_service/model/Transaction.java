@@ -31,7 +31,11 @@ public class Transaction {
     private int points; // Points added or deducted
 
     @Column(nullable = false)
-    private String description; // Description (e.g., "Task Completed" or "Purchased Item")
+    private String description;
+
+    /** Optional unique key for idempotent credits (e.g. task submission id). */
+    @Column(unique = true)
+    private String referenceId;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;

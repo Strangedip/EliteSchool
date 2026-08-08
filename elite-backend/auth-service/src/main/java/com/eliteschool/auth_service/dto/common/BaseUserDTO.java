@@ -25,7 +25,7 @@ public class BaseUserDTO {
     @Email(message = "Invalid email format")
     private String email;
     
-    @Pattern(regexp = "^\\+?[1-9]\\d{1,14}$", message = "Invalid mobile number format")
+    @Pattern(regexp = "^$|^\\+?[1-9]\\d{1,14}$", message = "Invalid mobile number format")
     private String mobileNumber;
 
     private RoleType role;

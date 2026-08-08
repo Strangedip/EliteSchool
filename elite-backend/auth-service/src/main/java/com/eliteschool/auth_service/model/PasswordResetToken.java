@@ -7,10 +7,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-/**
- * Entity to store password reset tokens separately from User table
- * This provides better separation of concerns and easier token management
- */
 @Entity
 @Table(name = "password_reset_tokens", indexes = {
     @Index(name = "idx_token", columnList = "token"),
@@ -52,26 +48,16 @@ public class PasswordResetToken {
     @Column(name = "ip_address", length = 45)
     private String ipAddress;
 
-    /**
-     * Check if token is expired
-     */
     public boolean isExpired() {
         return LocalDateTime.now().isAfter(this.expiryDate);
     }
 
-    /**
-     * Check if token is valid (not used and not expired)
-     */
     public boolean isValid() {
         return !this.used && !isExpired();
     }
 
-    /**
-     * Mark token as used
-     */
     public void markAsUsed() {
         this.used = true;
         this.usedAt = LocalDateTime.now();
     }
 }
-

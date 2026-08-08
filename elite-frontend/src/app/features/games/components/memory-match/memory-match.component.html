@@ -1,0 +1,44 @@
+<div class="brain-game">
+  <div class="brain-top">
+    <button type="button" class="back-btn" (click)="backToGames()" aria-label="Back to games">
+      <i class="pi pi-arrow-left"></i>
+    </button>
+    <div class="titles">
+      <h1>Memory Match</h1>
+      <p>Flip cards and find every pair. Trains visual working memory and focus.</p>
+    </div>
+  </div>
+
+  <div class="brain-stats">
+    <div class="stat"><span class="label">Moves</span><span class="value">{{ moves }}</span></div>
+    <div class="stat"><span class="label">Pairs</span><span class="value">{{ matches }}/8</span></div>
+    <div class="stat"><span class="label">Time</span><span class="value">{{ elapsedSec }}s</span></div>
+  </div>
+
+  <div class="brain-panel">
+    @if (completed) {
+      <p class="brain-status">Cleared in {{ moves }} moves · {{ elapsedSec }}s — sharp recall.</p>
+    } @else {
+      <p class="brain-status">{{ started ? 'Find the matching pairs.' : 'Tap any card to begin.' }}</p>
+    }
+
+    <div class="memory-grid" [class.locked]="locked">
+      @for (card of cards; track card.id) {
+        <button
+          type="button"
+          class="memory-card"
+          [class.flipped]="card.flipped || card.matched"
+          [class.matched]="card.matched"
+          (click)="flip(card)"
+          [disabled]="locked || card.matched">
+          <span class="face front">?</span>
+          <span class="face back" [attr.data-shape]="card.symbol" aria-hidden="true"></span>
+        </button>
+      }
+    </div>
+
+    <div class="brain-actions">
+      <button type="button" class="brain-btn ghost" (click)="newGame()">New round</button>
+    </div>
+  </div>
+</div>

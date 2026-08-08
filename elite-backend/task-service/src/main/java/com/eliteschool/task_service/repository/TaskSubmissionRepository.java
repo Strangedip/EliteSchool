@@ -21,4 +21,6 @@ public interface TaskSubmissionRepository extends JpaRepository<TaskSubmission, 
     Optional<TaskSubmission> findByTaskIdAndStudentId(UUID taskId, UUID studentId);
     
     List<TaskSubmission> findByStudentIdAndStatus(UUID studentId, TaskStatus status);
+
+    boolean existsByTaskIdAndStudentIdAndStatus(UUID taskId, UUID studentId, TaskStatus status);
 } 

@@ -16,20 +16,10 @@ import org.yaml.snakeyaml.constructor.DuplicateKeyException;
 
 import java.nio.file.AccessDeniedException;
 
-/**
- * Global Exception Handler for all EliteSchool microservices.
- * Provides consistent error responses across the application.
- * 
- * Usage: Include common-utils as dependency - this handler will be auto-configured.
- * For custom exceptions, extend AppException class.
- */
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
 
-    /**
-     * Handle validation exceptions from @Valid annotations
-     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<CommonResponseDto<Object>> handleValidationException(MethodArgumentNotValidException ex) {
         log.warn("Validation error: {}", ex.getMessage());
@@ -40,27 +30,18 @@ public class GlobalExceptionHandler {
         return ResponseUtil.error(HttpStatus.BAD_REQUEST, "VALIDATION_ERROR", errorMessage, "Invalid request data");
     }
 
-    /**
-     * Handle constraint violations (e.g., @NotNull, @Size violations)
-     */
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<CommonResponseDto<Object>> handleConstraintViolation(ConstraintViolationException ex) {
         log.warn("Constraint violation: {}", ex.getMessage());
         return ResponseUtil.error(HttpStatus.BAD_REQUEST, "CONSTRAINT_VIOLATION", ex.getMessage(), "Data constraints violated");
     }
 
-    /**
-     * Handle duplicate key exceptions
-     */
     @ExceptionHandler(DuplicateKeyException.class)
     public ResponseEntity<CommonResponseDto<Object>> handleDuplicateKeyException(DuplicateKeyException ex) {
         log.warn("Duplicate key: {}", ex.getMessage());
         return ResponseUtil.error(HttpStatus.CONFLICT, "DUPLICATE_KEY", ex.getMessage(), "Duplicate entry");
     }
 
-    /**
-     * Handle database integrity violations (duplicate entries, foreign key constraints)
-     */
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<CommonResponseDto<Object>> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
         log.error("Data integrity violation: {}", ex.getMessage());
@@ -75,59 +56,44 @@ public class GlobalExceptionHandler {
                 "Data integrity violated", "Invalid data provided");
     }
 
-    /**
-     * Handle entity not found exceptions
-     */
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<CommonResponseDto<Object>> handleEntityNotFound(EntityNotFoundException ex) {
         log.warn("Entity not found: {}", ex.getMessage());
         return ResponseUtil.error(HttpStatus.NOT_FOUND, "ENTITY_NOT_FOUND", ex.getMessage(), "Requested resource not found");
     }
 
-    /**
-     * Handle access denied exceptions
-     */
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<CommonResponseDto<Object>> handleAccessDeniedException(AccessDeniedException ex) {
         log.warn("Access denied: {}", ex.getMessage());
         return ResponseUtil.error(HttpStatus.FORBIDDEN, "ACCESS_DENIED", ex.getMessage(), "Access is denied");
     }
 
-    /**
-     * Handle HTTP method not supported exceptions
-     */
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<CommonResponseDto<Object>> handleMethodNotAllowed(HttpRequestMethodNotSupportedException ex) {
         log.warn("Method not allowed: {}", ex.getMessage());
         return ResponseUtil.error(HttpStatus.METHOD_NOT_ALLOWED, "METHOD_NOT_ALLOWED", ex.getMessage(), "HTTP method not allowed");
     }
 
-    /**
-     * Handle IllegalArgumentException
-     */
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<CommonResponseDto<Object>> handleIllegalArgument(IllegalArgumentException ex) {
         log.warn("Illegal argument: {}", ex.getMessage());
         return ResponseUtil.error(HttpStatus.BAD_REQUEST, "INVALID_ARGUMENT", ex.getMessage(), "Invalid request parameters");
     }
 
-    /**
-     * Handle custom AppException - all service-specific exceptions should extend this
-     */
     @ExceptionHandler(AppException.class)
     public ResponseEntity<CommonResponseDto<Object>> handleAppException(AppException ex) {
         log.warn("Application exception [{}]: {}", ex.getErrorCode(), ex.getMessage());
+        String friendly = ex.getFriendlyMessage() != null && !ex.getFriendlyMessage().isBlank()
+                ? ex.getFriendlyMessage()
+                : ex.getMessage();
         return ResponseUtil.error(
                 ex.getStatus(),
                 ex.getErrorCode(),
                 ex.getMessage(),
-                ex.getFriendlyMessage()
+                friendly
         );
     }
 
-    /**
-     * Catch-all handler for any unhandled exceptions
-     */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<CommonResponseDto<Object>> handleGenericException(Exception ex) {
         log.error("Unhandled exception occurred", ex);

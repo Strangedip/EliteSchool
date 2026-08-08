@@ -1,1 +1,30 @@
-// All styles now handled by global styles.scss
+.field-hint {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.8rem;
+  color: var(--text-color-secondary, #6b7280);
+}
+
+.forgot-password-link.muted {
+  margin-top: 1rem;
+  text-align: center;
+
+  a {
+    color: var(--text-color-secondary, #6b7280);
+    font-size: 0.85rem;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+      color: var(--primary-color);
+    }
+  }
+
+  small {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.75rem;
+    color: var(--text-color-secondary, #9ca3af);
+  }
+}
+

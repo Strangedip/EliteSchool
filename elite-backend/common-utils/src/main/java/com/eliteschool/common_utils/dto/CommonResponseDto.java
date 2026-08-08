@@ -27,7 +27,6 @@ public class CommonResponseDto<T> {
         return new CommonResponseDto<>(false, message, null, error);
     }
 
-    // Getters and Setters
     public boolean isSuccess() {
         return success;
     }

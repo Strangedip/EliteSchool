@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
-import { Task, TaskSubmission } from '../models/task.model';
+import { Task, TaskSubmission, TaskTemplate } from '../models/task.model';
 import { environment } from '../../../environments/environment';
 import { CommonResponseDto } from '../models/common-response.model';
 
@@ -9,14 +9,12 @@ import { CommonResponseDto } from '../models/common-response.model';
   providedIn: 'root'
 })
 export class TaskService {
-  // API Gateway will route requests to the appropriate microservice
-  private apiUrl = `${environment.apiUrl}`;
   private tasksUrl = `${environment.apiUrl}/tasks`;
   private submissionsUrl = `${environment.apiUrl}/task-submissions`;
+  private templatesUrl = `${environment.apiUrl}/task-templates`;
 
   constructor(private http: HttpClient) { }
 
-  // Task endpoints
   getTasks(): Observable<Task[]> {
     return this.http.get<CommonResponseDto<Task[]>>(`${this.tasksUrl}/all`)
       .pipe(map(response => response.data ?? []));
@@ -37,13 +35,13 @@ export class TaskService {
       .pipe(map(response => response.data as Task));
   }
 
-  updateTask(taskId: string, task: Partial<Task>): Observable<Task> {
-    return this.http.put<CommonResponseDto<Task>>(`${this.tasksUrl}/${taskId}`, task)
+  createTaskFromTemplate(templateId: string): Observable<Task> {
+    return this.http.post<CommonResponseDto<Task>>(`${this.tasksUrl}/from-template/${templateId}`, null)
       .pipe(map(response => response.data as Task));
   }
 
-  closeTask(taskId: string): Observable<Task> {
-    return this.http.put<CommonResponseDto<Task>>(`${this.tasksUrl}/${taskId}/close`, {})
+  updateTask(taskId: string, task: Partial<Task>): Observable<Task> {
+    return this.http.put<CommonResponseDto<Task>>(`${this.tasksUrl}/${taskId}`, task)
       .pipe(map(response => response.data as Task));
   }
 
@@ -52,15 +50,34 @@ export class TaskService {
       .pipe(map(response => response.data));
   }
 
-  // Task submission endpoints
+  getTaskTemplates(): Observable<TaskTemplate[]> {
+    return this.http.get<CommonResponseDto<TaskTemplate[]>>(this.templatesUrl)
+      .pipe(map(response => response.data ?? []));
+  }
+
+  getTaskTemplateById(templateId: string): Observable<TaskTemplate> {
+    return this.http.get<CommonResponseDto<TaskTemplate>>(`${this.templatesUrl}/${templateId}`)
+      .pipe(map(response => response.data as TaskTemplate));
+  }
+
+  createTaskTemplate(template: Partial<TaskTemplate>): Observable<TaskTemplate> {
+    return this.http.post<CommonResponseDto<TaskTemplate>>(this.templatesUrl, template)
+      .pipe(map(response => response.data as TaskTemplate));
+  }
+
+  updateTaskTemplate(templateId: string, template: Partial<TaskTemplate>): Observable<TaskTemplate> {
+    return this.http.put<CommonResponseDto<TaskTemplate>>(`${this.templatesUrl}/${templateId}`, template)
+      .pipe(map(response => response.data as TaskTemplate));
+  }
+
+  deleteTaskTemplate(templateId: string): Observable<any> {
+    return this.http.delete<CommonResponseDto<void>>(`${this.templatesUrl}/${templateId}`)
+      .pipe(map(response => response.data));
+  }
+
   submitTask(submission: TaskSubmission): Observable<TaskSubmission> {
     return this.http.post<CommonResponseDto<TaskSubmission>>(`${this.submissionsUrl}`, submission)
       .pipe(map(response => response.data as TaskSubmission));
-  }
-
-  getSubmissionsByTask(taskId: string): Observable<TaskSubmission[]> {
-    return this.http.get<CommonResponseDto<TaskSubmission[]>>(`${this.submissionsUrl}/task/${taskId}`)
-      .pipe(map(response => response.data ?? []));
   }
 
   getSubmissionsByStudent(studentId: string): Observable<TaskSubmission[]> {
@@ -73,17 +90,16 @@ export class TaskService {
       .pipe(map(response => response.data ?? []));
   }
 
-  verifyTask(submissionId: string, verifierId: string, approved: boolean, feedback: string): Observable<TaskSubmission> {
+  verifyTask(submissionId: string, approved: boolean, feedback: string): Observable<TaskSubmission> {
     const params = {
-      verifierId,
       approved: approved.toString(),
       feedback: feedback || ''
     };
-    
+
     return this.http.put<CommonResponseDto<TaskSubmission>>(
       `${this.submissionsUrl}/${submissionId}/verify`,
       null,
       { params }
     ).pipe(map(response => response.data as TaskSubmission));
   }
-} 
+}

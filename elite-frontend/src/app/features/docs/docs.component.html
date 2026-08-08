@@ -1,0 +1,195 @@
+<div class="docs-page">
+  <nav class="docs-nav">
+    <div class="docs-nav-inner">
+      <a routerLink="/home" class="brand-link">
+        <img src="assets/images/brand-mark.svg" width="36" height="36" alt="" />
+        <span>EliteSchool</span>
+      </a>
+      <div class="docs-nav-links">
+        <button
+          type="button"
+          class="theme-toggle-btn"
+          (click)="toggleTheme()"
+          [title]="themeService.isDark() ? 'Switch to light mode' : 'Switch to dark mode'">
+          <i class="pi" [class.pi-sun]="themeService.isDark()" [class.pi-moon]="!themeService.isDark()"></i>
+        </button>
+        <a routerLink="/home">Home</a>
+        <a routerLink="/games">Games</a>
+        @if (isLoggedIn) {
+          <a routerLink="/dashboard" class="nav-cta">Dashboard</a>
+        } @else {
+          <a routerLink="/login">Sign In</a>
+          <a routerLink="/register" class="nav-cta">Get Started</a>
+        }
+      </div>
+    </div>
+  </nav>
+
+  <header class="docs-hero">
+    <p class="eyebrow">Product documentation</p>
+    <h1>EliteSchool</h1>
+    <p class="lede">
+      A student achievement platform for schools: verified contribution, Elite Points that recognise effort,
+      and rewards that help every learner stay equipped.
+    </p>
+    <div class="hero-actions">
+      <button type="button" class="docs-btn" (click)="scrollTo('how-it-works')">See how it works</button>
+      @if (!isLoggedIn) {
+        <a routerLink="/register" class="docs-btn ghost">Join as Student</a>
+      } @else {
+        <a routerLink="/dashboard" class="docs-btn ghost">Open Dashboard</a>
+      }
+    </div>
+  </header>
+
+  <div class="docs-layout">
+    <aside class="docs-toc" aria-label="On this page">
+      <p class="toc-label">On this page</p>
+      <nav>
+        @for (section of sections; track section.id) {
+          <button type="button" (click)="scrollTo(section.id)">{{ section.label }}</button>
+        }
+      </nav>
+    </aside>
+
+    <div class="docs-main">
+      <section id="overview" class="docs-section">
+        <p class="section-kicker">Overview</p>
+        <h2>What this product is</h2>
+        <p>
+          EliteSchool helps schools manage student achievement through verified school work.
+          Students build a trusted record of contribution. Faculty verify effort. Elite Points measure that progress.
+          The rewards catalog turns points into materials and opportunities so students who need support are not left behind.
+        </p>
+        <p class="emphasis">
+          Achievement first. Rewards are a support layer — not the core story.
+        </p>
+      </section>
+
+      <section id="how-it-works" class="docs-section">
+        <p class="section-kicker">How it works</p>
+        <h2>One clear loop schools can trust</h2>
+        <ol class="flow-list">
+          @for (step of flow; track step.title; let i = $index) {
+            <li>
+              <span class="step-num">0{{ i + 1 }}</span>
+              <div>
+                <h3>{{ step.title }}</h3>
+                <p>{{ step.text }}</p>
+              </div>
+            </li>
+          }
+        </ol>
+      </section>
+
+      <section id="roles" class="docs-section">
+        <p class="section-kicker">Who uses it</p>
+        <h2>Built for the whole school</h2>
+        <div class="role-list">
+          @for (role of roles; track role.title) {
+            <article>
+              <h3>{{ role.title }}</h3>
+              <p>{{ role.text }}</p>
+            </article>
+          }
+        </div>
+        <p class="aside-note">
+          Visitors can explore Home, this guide, Games, Sign In, and student registration without an account.
+        </p>
+      </section>
+
+      <section id="modules" class="docs-section">
+        <p class="section-kicker">What you get</p>
+        <h2>Capabilities that ship together</h2>
+        <div class="module-list">
+          @for (mod of modules; track mod.title) {
+            <article>
+              <h3>{{ mod.title }}</h3>
+              <p>{{ mod.text }}</p>
+            </article>
+          }
+        </div>
+      </section>
+
+      <section id="access" class="docs-section">
+        <p class="section-kicker">Access by role</p>
+        <h2>Who can do what</h2>
+        <div class="access-table-wrap" role="region" aria-label="Capability matrix" tabindex="0">
+          <table class="access-table">
+            <thead>
+              <tr>
+                <th scope="col">Capability</th>
+                <th scope="col">Student</th>
+                <th scope="col">Faculty</th>
+                <th scope="col">Admin</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of capabilities; track row.name) {
+                <tr>
+                  <th scope="row">
+                    {{ row.name }}
+                    @if (row.note) {
+                      <span class="row-note">{{ row.note }}</span>
+                    }
+                  </th>
+                  <td [attr.data-yes]="row.student">{{ row.student ? 'Yes' : '—' }}</td>
+                  <td [attr.data-yes]="row.faculty">{{ row.faculty ? 'Yes' : '—' }}</td>
+                  <td [attr.data-yes]="row.admin">{{ row.admin ? 'Yes' : '—' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="rules" class="docs-section">
+        <p class="section-kicker">Trust rules</p>
+        <h2>Boundaries that keep recognition honest</h2>
+        <ul class="rules-list">
+          @for (rule of rules; track rule) {
+            <li>{{ rule }}</li>
+          }
+        </ul>
+      </section>
+
+      <section id="start" class="docs-section docs-cta">
+        <p class="section-kicker">Get started</p>
+        <h2>Ready to see it live?</h2>
+        <p>
+          Create a student account to begin contributing, or sign in if your school already added you.
+          School staff accounts are provisioned by Admin.
+        </p>
+        <div class="hero-actions">
+          @if (!isLoggedIn) {
+            <a routerLink="/register" class="docs-btn">Create Student Account</a>
+            <a routerLink="/login" class="docs-btn ghost">Sign In</a>
+          } @else {
+            <a routerLink="/dashboard" class="docs-btn">Go to Dashboard</a>
+            <a routerLink="/tasks" class="docs-btn ghost">View Tasks</a>
+          }
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <footer class="docs-footer">
+    <div class="footer-inner">
+      <a routerLink="/home" class="brand-link">
+        <img src="assets/images/brand-mark.svg" width="32" height="32" alt="" />
+        <span>EliteSchool</span>
+      </a>
+      <p>Achievement management for schools — rewards that keep every student moving forward.</p>
+      <div class="footer-links">
+        <a routerLink="/home">Home</a>
+        <a routerLink="/games">Games</a>
+        @if (!isLoggedIn) {
+          <a routerLink="/login">Sign In</a>
+        } @else {
+          <a routerLink="/dashboard">Dashboard</a>
+        }
+      </div>
+      <p class="copy">© {{ currentYear }} EliteSchool</p>
+    </div>
+  </footer>
+</div>

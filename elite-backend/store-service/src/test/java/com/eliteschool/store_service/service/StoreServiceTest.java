@@ -1,8 +1,11 @@
 package com.eliteschool.store_service.service;
 
+import com.eliteschool.store_service.client.TaskServiceClient;
 import com.eliteschool.store_service.dto.StoreItemDto;
 import com.eliteschool.store_service.model.StoreItem;
+import com.eliteschool.store_service.model.enums.AcquisitionType;
 import com.eliteschool.store_service.repository.StoreItemRepository;
+import com.eliteschool.store_service.repository.StorePurchaseRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,6 +29,10 @@ class StoreServiceTest {
 
     @Mock
     private StoreItemRepository storeItemRepository;
+    @Mock
+    private StorePurchaseRepository storePurchaseRepository;
+    @Mock
+    private TaskServiceClient taskServiceClient;
 
     @InjectMocks
     private StoreService storeService;
@@ -33,10 +40,12 @@ class StoreServiceTest {
     private StoreItem testItem;
     private StoreItemDto testItemDto;
     private UUID itemId;
+    private UUID studentId;
 
     @BeforeEach
     void setUp() {
         itemId = UUID.randomUUID();
+        studentId = UUID.randomUUID();
 
         testItem = new StoreItem();
         testItem.setId(itemId);
@@ -45,6 +54,7 @@ class StoreServiceTest {
         testItem.setPrice(100);
         testItem.setStock(10);
         testItem.setImageUrl("http://example.com/image.jpg");
+        testItem.setAcquisitionType(AcquisitionType.POINTS);
 
         testItemDto = new StoreItemDto();
         testItemDto.setId(itemId);
@@ -53,19 +63,17 @@ class StoreServiceTest {
         testItemDto.setPrice(100);
         testItemDto.setStock(10);
         testItemDto.setImageUrl("http://example.com/image.jpg");
+        testItemDto.setAcquisitionType(AcquisitionType.POINTS);
     }
 
     @Test
     @DisplayName("Should get all items successfully")
     void shouldGetAllItemsSuccessfully() {
-        // Arrange
         List<StoreItem> items = Arrays.asList(testItem);
         when(storeItemRepository.findAll()).thenReturn(items);
 
-        // Act
         List<StoreItemDto> allItems = storeService.getAllItems();
 
-        // Assert
         assertThat(allItems).hasSize(1);
         assertThat(allItems.get(0).getName()).isEqualTo("Test Item");
         verify(storeItemRepository, times(1)).findAll();
@@ -74,13 +82,10 @@ class StoreServiceTest {
     @Test
     @DisplayName("Should get item by ID successfully")
     void shouldGetItemByIdSuccessfully() {
-        // Arrange
         when(storeItemRepository.findById(itemId)).thenReturn(Optional.of(testItem));
 
-        // Act
         Optional<StoreItemDto> foundItem = storeService.getItemById(itemId);
 
-        // Assert
         assertThat(foundItem).isPresent();
         assertThat(foundItem.get().getId()).isEqualTo(itemId);
         assertThat(foundItem.get().getName()).isEqualTo("Test Item");
@@ -90,14 +95,11 @@ class StoreServiceTest {
     @Test
     @DisplayName("Should return empty when item not found")
     void shouldReturnEmptyWhenItemNotFound() {
-        // Arrange
         UUID nonExistentId = UUID.randomUUID();
         when(storeItemRepository.findById(nonExistentId)).thenReturn(Optional.empty());
 
-        // Act
         Optional<StoreItemDto> foundItem = storeService.getItemById(nonExistentId);
 
-        // Assert
         assertThat(foundItem).isEmpty();
         verify(storeItemRepository, times(1)).findById(nonExistentId);
     }
@@ -105,13 +107,10 @@ class StoreServiceTest {
     @Test
     @DisplayName("Should add item successfully")
     void shouldAddItemSuccessfully() {
-        // Arrange
         when(storeItemRepository.save(any(StoreItem.class))).thenReturn(testItem);
 
-        // Act
         StoreItemDto addedItem = storeService.addItem(testItemDto);
 
-        // Assert
         assertThat(addedItem).isNotNull();
         assertThat(addedItem.getName()).isEqualTo("Test Item");
         assertThat(addedItem.getPrice()).isEqualTo(100);
@@ -121,21 +120,19 @@ class StoreServiceTest {
     @Test
     @DisplayName("Should update item successfully")
     void shouldUpdateItemSuccessfully() {
-        // Arrange
         StoreItemDto updatedDto = new StoreItemDto();
         updatedDto.setName("Updated Item");
         updatedDto.setDescription("Updated Description");
         updatedDto.setPrice(150);
         updatedDto.setStock(20);
         updatedDto.setImageUrl("http://example.com/new-image.jpg");
+        updatedDto.setAcquisitionType(AcquisitionType.POINTS);
 
         when(storeItemRepository.findById(itemId)).thenReturn(Optional.of(testItem));
         when(storeItemRepository.save(any(StoreItem.class))).thenReturn(testItem);
 
-        // Act
         Optional<StoreItemDto> updatedItem = storeService.updateItem(itemId, updatedDto);
 
-        // Assert
         assertThat(updatedItem).isPresent();
         verify(storeItemRepository, times(1)).findById(itemId);
         verify(storeItemRepository, times(1)).save(any(StoreItem.class));
@@ -144,14 +141,11 @@ class StoreServiceTest {
     @Test
     @DisplayName("Should return empty when updating non-existent item")
     void shouldReturnEmptyWhenUpdatingNonExistentItem() {
-        // Arrange
         UUID nonExistentId = UUID.randomUUID();
         when(storeItemRepository.findById(nonExistentId)).thenReturn(Optional.empty());
 
-        // Act
         Optional<StoreItemDto> updatedItem = storeService.updateItem(nonExistentId, testItemDto);
 
-        // Assert
         assertThat(updatedItem).isEmpty();
         verify(storeItemRepository, times(1)).findById(nonExistentId);
         verify(storeItemRepository, never()).save(any(StoreItem.class));
@@ -160,62 +154,51 @@ class StoreServiceTest {
     @Test
     @DisplayName("Should delete item successfully")
     void shouldDeleteItemSuccessfully() {
-        // Arrange
         doNothing().when(storeItemRepository).deleteById(itemId);
 
-        // Act
         storeService.deleteItem(itemId);
 
-        // Assert
         verify(storeItemRepository, times(1)).deleteById(itemId);
     }
 
     @Test
-    @DisplayName("Should decrement stock successfully")
-    void shouldDecrementStockSuccessfully() {
-        // Arrange
+    @DisplayName("Should purchase and decrement stock successfully")
+    void shouldPurchaseSuccessfully() {
         when(storeItemRepository.findById(itemId)).thenReturn(Optional.of(testItem));
         when(storeItemRepository.save(any(StoreItem.class))).thenReturn(testItem);
+        when(storePurchaseRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
-        // Act
-        Optional<StoreItemDto> updatedItem = storeService.decrementStock(itemId);
+        Optional<StoreItemDto> updatedItem = storeService.purchaseItem(itemId, studentId, "Student");
 
-        // Assert
         assertThat(updatedItem).isPresent();
         verify(storeItemRepository, times(1)).findById(itemId);
         verify(storeItemRepository, times(1)).save(any(StoreItem.class));
+        verify(storePurchaseRepository, times(1)).save(any());
     }
 
     @Test
-    @DisplayName("Should return empty when decrementing stock of out-of-stock item")
-    void shouldReturnEmptyWhenDecrementingStockOfOutOfStockItem() {
-        // Arrange
+    @DisplayName("Should return empty when purchasing out-of-stock item")
+    void shouldReturnEmptyWhenPurchasingOutOfStockItem() {
         testItem.setStock(0);
         when(storeItemRepository.findById(itemId)).thenReturn(Optional.of(testItem));
 
-        // Act
-        Optional<StoreItemDto> updatedItem = storeService.decrementStock(itemId);
+        Optional<StoreItemDto> updatedItem = storeService.purchaseItem(itemId, studentId, "Student");
 
-        // Assert
         assertThat(updatedItem).isEmpty();
         verify(storeItemRepository, times(1)).findById(itemId);
         verify(storeItemRepository, never()).save(any(StoreItem.class));
     }
 
     @Test
-    @DisplayName("Should return empty when decrementing stock of non-existent item")
-    void shouldReturnEmptyWhenDecrementingStockOfNonExistentItem() {
-        // Arrange
+    @DisplayName("Should return empty when purchasing non-existent item")
+    void shouldReturnEmptyWhenPurchasingNonExistentItem() {
         UUID nonExistentId = UUID.randomUUID();
         when(storeItemRepository.findById(nonExistentId)).thenReturn(Optional.empty());
 
-        // Act
-        Optional<StoreItemDto> updatedItem = storeService.decrementStock(nonExistentId);
+        Optional<StoreItemDto> updatedItem = storeService.purchaseItem(nonExistentId, studentId, "Student");
 
-        // Assert
         assertThat(updatedItem).isEmpty();
         verify(storeItemRepository, times(1)).findById(nonExistentId);
         verify(storeItemRepository, never()).save(any(StoreItem.class));
     }
 }
-

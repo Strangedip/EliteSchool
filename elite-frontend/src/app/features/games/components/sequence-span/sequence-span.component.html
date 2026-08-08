@@ -1,0 +1,46 @@
+<div class="brain-game">
+  <div class="brain-top">
+    <button type="button" class="back-btn" (click)="backToGames()" aria-label="Back to games">
+      <i class="pi pi-arrow-left"></i>
+    </button>
+    <div class="titles">
+      <h1>Sequence Span</h1>
+      <p>Hold a growing digit sequence in mind, then replay it. Classic working-memory training.</p>
+    </div>
+  </div>
+
+  <div class="brain-stats">
+    <div class="stat"><span class="label">Level</span><span class="value">{{ level }}</span></div>
+    <div class="stat"><span class="label">Span</span><span class="value">{{ sequence.length || '—' }}</span></div>
+    <div class="stat"><span class="label">Best</span><span class="value">{{ best }}</span></div>
+  </div>
+
+  <div class="brain-panel">
+    <p class="brain-status">{{ status }}</p>
+
+    <div class="flash-stage" [class.lit]="activeFlash !== null">
+      <span class="flash-digit">{{ activeFlash ?? (phase === 'input' ? '…' : '•') }}</span>
+    </div>
+
+    <div class="digit-pad">
+      @for (n of digits; track n) {
+        <button
+          type="button"
+          class="digit-key"
+          [class.flash]="activeFlash === n"
+          [disabled]="phase !== 'input'"
+          (click)="press(n)">
+          {{ n }}
+        </button>
+      }
+    </div>
+
+    <div class="brain-actions">
+      @if (phase === 'idle' || phase === 'fail' || phase === 'success') {
+        <button type="button" class="brain-btn" (click)="startRound()">
+          {{ phase === 'idle' ? 'Start' : 'Next sequence' }}
+        </button>
+      }
+    </div>
+  </div>
+</div>

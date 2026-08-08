@@ -8,6 +8,7 @@ import java.util.UUID;
 
 public interface TransactionRepository extends JpaRepository<Transaction, UUID> {
 
-    // Find all transactions by student ID (ordered by latest first)
     List<Transaction> findByStudentIdOrderByCreatedAtDesc(UUID studentId);
+
+    boolean existsByReferenceId(String referenceId);
 }

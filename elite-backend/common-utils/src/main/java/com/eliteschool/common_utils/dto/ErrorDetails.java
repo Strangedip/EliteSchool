@@ -15,7 +15,6 @@ public class ErrorDetails {
         this.timestamp = timestamp;
     }
 
-    // Getters and Setters
     public String getErrorCode() {
         return errorCode;
     }

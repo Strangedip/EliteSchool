@@ -26,6 +26,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -40,6 +41,12 @@ class WalletServiceTest {
 
     @Mock
     private StoreServiceClient storeServiceClient;
+
+    @Mock
+    private com.eliteschool.wallet_service.client.TaskServiceClient taskServiceClient;
+
+    @Mock
+    private com.eliteschool.wallet_service.client.AuthServiceClient authServiceClient;
 
     @InjectMocks
     private WalletService walletService;
@@ -174,28 +181,34 @@ class WalletServiceTest {
     @Test
     @DisplayName("Should purchase item successfully")
     void shouldPurchaseItemSuccessfully() {
-        // Arrange
-        CommonResponseDto<Object> priceResponse = new CommonResponseDto<>();
-        priceResponse.setSuccess(true);
-        priceResponse.setData(50);
-        
+        StoreServiceClient.StoreItemView item = StoreServiceClient.StoreItemView.builder()
+                .id(itemId)
+                .name("Notebook")
+                .price(50)
+                .stock(3)
+                .acquisitionType("POINTS")
+                .windowStatus("OPEN")
+                .withinClaimWindow(true)
+                .requiredTaskIds(java.util.List.of())
+                .build();
+
         CommonResponseDto<Object> purchaseResponse = new CommonResponseDto<>();
         purchaseResponse.setSuccess(true);
         purchaseResponse.setData("Purchase successful");
 
+        when(storeServiceClient.getItem(itemId))
+                .thenReturn(ResponseEntity.ok(CommonResponseDto.success("ok", item)));
         when(walletRepository.findByStudentId(studentId)).thenReturn(Optional.of(testWallet));
-        when(storeServiceClient.getItemPrice(itemId)).thenReturn(ResponseEntity.ok(priceResponse));
-        when(storeServiceClient.purchaseItem(itemId)).thenReturn(ResponseEntity.ok(purchaseResponse));
+        when(storeServiceClient.purchaseItem(eq(itemId), eq(studentId), any()))
+                .thenReturn(ResponseEntity.ok(purchaseResponse));
         when(walletRepository.save(any(Wallet.class))).thenReturn(testWallet);
         when(transactionRepository.save(any(Transaction.class))).thenReturn(new Transaction());
 
-        // Act
         boolean result = walletService.purchaseItem(studentId, itemId);
 
-        // Assert
         assertThat(result).isTrue();
-        verify(storeServiceClient, times(1)).getItemPrice(itemId);
-        verify(storeServiceClient, times(1)).purchaseItem(itemId);
+        verify(storeServiceClient, times(1)).getItem(itemId);
+        verify(storeServiceClient, times(1)).purchaseItem(eq(itemId), eq(studentId), any());
         verify(walletRepository, times(1)).save(any(Wallet.class));
         verify(transactionRepository, times(1)).save(any(Transaction.class));
     }
@@ -203,18 +216,17 @@ class WalletServiceTest {
     @Test
     @DisplayName("Should throw exception when item not found during purchase")
     void shouldThrowExceptionWhenItemNotFoundDuringPurchase() {
-        // Arrange
-        CommonResponseDto<Object> errorResponse = new CommonResponseDto<>();
+        CommonResponseDto<StoreServiceClient.StoreItemView> errorResponse = new CommonResponseDto<>();
         errorResponse.setSuccess(false);
 
-        when(storeServiceClient.getItemPrice(itemId)).thenReturn(ResponseEntity.ok(errorResponse));
+        when(storeServiceClient.getItem(itemId)).thenReturn(ResponseEntity.ok(errorResponse));
 
-        // Act & Assert
         assertThatThrownBy(() -> walletService.purchaseItem(studentId, itemId))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining("Item not found");
 
-        verify(storeServiceClient, times(1)).getItemPrice(itemId);
+        verify(storeServiceClient, times(1)).getItem(itemId);
+        verify(storeServiceClient, never()).purchaseItem(any(), any(), any());
         verify(walletRepository, never()).save(any(Wallet.class));
     }
 

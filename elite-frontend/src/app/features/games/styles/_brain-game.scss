@@ -1,0 +1,132 @@
+@use '../../../../styles/mixins' as *;
+
+.brain-game {
+  max-width: 640px;
+  margin: 0 auto;
+  animation: pageEnter 0.35s ease-out;
+}
+
+.brain-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+
+  .back-btn {
+    flex-shrink: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--surface-border);
+    background: var(--surface-hover);
+    color: var(--text-color);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .titles {
+    min-width: 0;
+
+    h1 {
+      margin: 0 0 0.25rem;
+      font-family: var(--font-display);
+      font-size: 1.65rem;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+
+    p {
+      margin: 0;
+      font-size: 0.9rem;
+      color: var(--text-color-secondary);
+      line-height: 1.45;
+    }
+  }
+}
+
+.brain-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-bottom: 1.25rem;
+
+  .stat {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 5.5rem;
+    padding: 0.65rem 0.85rem;
+    border-radius: var(--radius-md);
+    background: var(--surface-card-strong);
+    border: 1px solid var(--surface-border);
+
+    .label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-color-muted);
+    }
+
+    .value {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+  }
+}
+
+.brain-panel {
+  padding: 1.25rem;
+  border-radius: var(--radius-lg);
+  background: var(--surface-card-strong);
+  border: 1px solid var(--surface-border);
+  box-shadow: var(--shadow-sm);
+}
+
+.brain-status {
+  text-align: center;
+  margin: 0 0 1rem;
+  font-family: var(--font-secondary);
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-color);
+  min-height: 1.5rem;
+}
+
+.brain-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  justify-content: center;
+  margin-top: 1.25rem;
+}
+
+.brain-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-height: 2.6rem;
+  padding: 0.55rem 1.15rem;
+  border-radius: var(--radius-md);
+  border: none;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--gradient-brand);
+  color: #fff;
+
+  &.ghost {
+    background: var(--surface-hover);
+    color: var(--text-color);
+    border: 1px solid var(--surface-border);
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+}

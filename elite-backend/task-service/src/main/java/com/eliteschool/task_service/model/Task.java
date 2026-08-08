@@ -5,6 +5,8 @@ import com.eliteschool.task_service.model.enums.TaskStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.time.LocalDateTime;
 
@@ -29,24 +31,39 @@ public class Task {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private TaskType taskType; // SINGLE or MULTIPLE
+    private TaskType taskType;
 
     @Column(nullable = false)
-    private int minLevel; // Minimum level required to take the task
+    private int minLevel;
 
     @Column(nullable = false)
-    private int rewardPoints; // Points awarded on completion
+    private int rewardPoints;
 
     @Column(nullable = false)
-    private UUID createdBy; // Faculty/Management who created the task
+    private UUID createdBy;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private TaskStatus status; // OPEN, COMPLETED, CLOSED
+    private TaskStatus status;
 
-    private UUID completedBy; // Only used if taskType = SINGLE
+    private UUID completedBy;
 
-    private LocalDateTime completedAt; // When task was completed (Nullable)
+    private LocalDateTime completedAt;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private boolean evidenceRequired = true;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private int minNotesLength = 40;
+
+    @ElementCollection
+    @CollectionTable(name = "task_rubric_checklist", joinColumns = @JoinColumn(name = "task_id"))
+    @Column(name = "rubric_item", length = 500)
+    @OrderColumn(name = "item_order")
+    @Builder.Default
+    private List<String> rubricChecklist = new ArrayList<>();
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;

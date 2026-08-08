@@ -1,0 +1,100 @@
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <div>
+      <h1 class="dashboard-title">Welcome back, {{ currentUserName }}</h1>
+      <p class="dashboard-subtitle">Contribute through tasks, earn Elite Points after verification, and use the school store.</p>
+    </div>
+    <span class="role-badge"><i class="pi pi-user"></i> {{ roleLabel }}</span>
+  </div>
+
+  <div class="loading-state" *ngIf="loading">
+    <i class="pi pi-spin pi-spinner"></i>
+    <span>Loading your progress...</span>
+  </div>
+
+  <ng-container *ngIf="!loading">
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-icon icon-success"><i class="pi pi-wallet"></i></div>
+        <div class="stat-body">
+          <div class="stat-value stat-value-kpi">{{ walletBalance }}</div>
+          <div class="stat-label">Elite Points</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"><i class="pi pi-trophy"></i></div>
+        <div class="stat-body">
+          <div class="stat-value">{{ leaderboardRank ? '#' + leaderboardRank : '—' }}</div>
+          <div class="stat-label">Leaderboard Rank{{ leaderboardTotal ? ' of ' + leaderboardTotal : '' }}</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon icon-warning"><i class="pi pi-list-check"></i></div>
+        <div class="stat-body">
+          <div class="stat-value">{{ openTaskCount }}</div>
+          <div class="stat-label">Open Tasks</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"><i class="pi pi-book"></i></div>
+        <div class="stat-body">
+          <div class="stat-value">{{ activeCourseCount }}</div>
+          <div class="stat-label">Active Courses</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dashboard-columns">
+      <div class="panel-card">
+        <div class="panel-header">
+          <h2>Available Tasks</h2>
+          <a routerLink="/tasks" class="view-all">View All</a>
+        </div>
+        <div class="list-row" *ngFor="let t of openTasks">
+          <div class="list-icon"><i class="pi pi-bookmark"></i></div>
+          <div class="list-content">
+            <h4>{{ t.title }}</h4>
+            <p>{{ t.description }}</p>
+          </div>
+          <div class="list-meta">+{{ t.rewardPoints }} pts</div>
+        </div>
+        <div class="empty-state" *ngIf="!openTasks.length">
+          <i class="pi pi-check-circle"></i>
+          <p>No open tasks right now — check back soon!</p>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <div class="panel-header">
+          <h2>Quick Actions</h2>
+        </div>
+        <div class="quick-links">
+          <a routerLink="/tasks" class="quick-link"><i class="pi pi-check-square"></i> Tasks</a>
+          <a routerLink="/courses" class="quick-link"><i class="pi pi-book"></i> Courses</a>
+          <a routerLink="/store" class="quick-link"><i class="pi pi-shopping-cart"></i> Store</a>
+          <a routerLink="/wallet" class="quick-link"><i class="pi pi-wallet"></i> Wallet</a>
+          <a routerLink="/leaderboard" class="quick-link"><i class="pi pi-trophy"></i> Leaderboard</a>
+          <a routerLink="/games" class="quick-link"><i class="pi pi-play"></i> Games</a>
+        </div>
+
+        <div class="panel-header" style="margin-top: 1.5rem;">
+          <h2>Recent Transactions</h2>
+        </div>
+        <div class="list-row" *ngFor="let tx of recentTransactions">
+          <div class="list-icon"><i class="pi" [class.pi-arrow-down]="tx.transactionType === 'CREDIT'" [class.pi-arrow-up]="tx.transactionType === 'DEBIT'"></i></div>
+          <div class="list-content">
+            <h4>{{ tx.description }}</h4>
+            <p>{{ tx.createdAt | date:'medium' }}</p>
+          </div>
+          <div class="list-meta" [style.color]="tx.transactionType === 'CREDIT' ? 'var(--success-color)' : 'var(--danger-color)'">
+            {{ tx.transactionType === 'CREDIT' ? '+' : '-' }}{{ tx.points }}
+          </div>
+        </div>
+        <div class="empty-state" *ngIf="!recentTransactions.length">
+          <i class="pi pi-wallet"></i>
+          <p>No wallet activity yet</p>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>

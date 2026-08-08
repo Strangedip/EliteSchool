@@ -4,21 +4,21 @@ import { Observable, map } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Transaction } from '../models/wallet.model';
 import { CommonResponseDto } from '../models/common-response.model';
+import { ContributionNomination, NominationStatus } from '../models/nomination.model';
 
-/**
- * Response from the purchase endpoint
- */
 export interface PurchaseResponse {
   success: boolean;
   message: string;
   remainingBalance: number;
 }
 
-@Injectable({
-  providedIn: 'root'
-})
+export interface WalletBalanceEntry {
+  studentId: string;
+  balance: number;
+}
+
+@Injectable({ providedIn: 'root' })
 export class WalletService {
-  // API Gateway will route requests to the wallet-service
   private apiUrl = `${environment.apiUrl}/wallet`;
 
   constructor(private http: HttpClient) { }
@@ -45,14 +45,51 @@ export class WalletService {
     }).pipe(map(response => response.data ?? 0));
   }
 
-  /**
-   * Purchase an item from the store
-   * @param studentId The student's ID
-   * @param itemId The item ID to purchase
-   * @returns Observable with detailed purchase response
-   */
   purchaseItem(studentId: string, itemId: string): Observable<PurchaseResponse> {
     return this.http.post<CommonResponseDto<PurchaseResponse>>(`${this.apiUrl}/${studentId}/purchase/${itemId}`, null)
       .pipe(map(response => response.data ?? { success: false, message: 'No data returned', remainingBalance: 0 }));
   }
-} 
+
+  getLeaderboard(limit: number = 10): Observable<WalletBalanceEntry[]> {
+    return this.http.get<CommonResponseDto<WalletBalanceEntry[]>>(`${this.apiUrl}/leaderboard`, { params: { limit } })
+      .pipe(map(response => response.data ?? []));
+  }
+
+  createNomination(body: ContributionNomination): Observable<ContributionNomination> {
+    return this.http.post<CommonResponseDto<ContributionNomination>>(`${this.apiUrl}/nominations`, body)
+      .pipe(map(r => r.data!));
+  }
+
+  listNominations(status?: NominationStatus | null): Observable<ContributionNomination[]> {
+    const options = status ? { params: { status } } : {};
+    return this.http.get<CommonResponseDto<ContributionNomination[]>>(`${this.apiUrl}/nominations`, options)
+      .pipe(map(r => r.data ?? []));
+  }
+
+  approveNomination(id: string, points?: number, reviewNotes?: string): Observable<ContributionNomination> {
+    const params: Record<string, string> = {};
+    if (points != null) {
+      params['points'] = String(points);
+    }
+    if (reviewNotes) {
+      params['reviewNotes'] = reviewNotes;
+    }
+    return this.http.put<CommonResponseDto<ContributionNomination>>(
+      `${this.apiUrl}/nominations/${id}/approve`,
+      null,
+      { params }
+    ).pipe(map(r => r.data!));
+  }
+
+  rejectNomination(id: string, reviewNotes?: string): Observable<ContributionNomination> {
+    const params: Record<string, string> = {};
+    if (reviewNotes) {
+      params['reviewNotes'] = reviewNotes;
+    }
+    return this.http.put<CommonResponseDto<ContributionNomination>>(
+      `${this.apiUrl}/nominations/${id}/reject`,
+      null,
+      { params }
+    ).pipe(map(r => r.data!));
+  }
+}

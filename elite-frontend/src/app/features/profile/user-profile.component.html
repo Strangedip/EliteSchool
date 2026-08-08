@@ -1,220 +1,309 @@
-<div class="profile-container" *ngIf="user">
-    <!-- Modern Profile Header -->
+@if (user) {
+  <div class="profile-container">
     <div class="profile-header">
-        <div class="header-content">
-            <div class="user-avatar">
-                <i class="pi pi-user"></i>
-            </div>
-            <div class="user-info">
-                <h2>{{ user.name }}</h2>
-                <div class="user-meta">
-                    <span class="user-role">
-                        <i class="pi pi-id-card"></i>
-                        {{ user.role }}
-                    </span>
-                    <span class="user-email">
-                        <i class="pi pi-envelope"></i>
-                        {{ user.email }}
-                    </span>
-                    <span class="user-joined" *ngIf="user.createdAt">
-                        <i class="pi pi-calendar"></i>
-                        Joined {{ formatDate(user.createdAt) }}
-                    </span>
-                </div>
-            </div>
-            <div class="elite-points-card" *ngIf="user.role === 'STUDENT'">
-                <div class="points-header">Elite Points</div>
-                <div class="points-value">
-                    <i class="pi pi-wallet"></i>
-                    <span>{{ rewardPoints }}</span>
-                </div>
-                <a (click)="NavigateToStore()" class="points-action">
-                    <i class="pi pi-shopping-bag"></i>
-                    Go to Store
-                </a>
-            </div>
+      <div class="header-content">
+        <div class="user-avatar">
+          <i class="pi pi-user"></i>
         </div>
+        <div class="user-info">
+          <h2>{{ user.name }}</h2>
+          <div class="user-meta">
+            <span class="user-role">
+              <i class="pi pi-id-card"></i>
+              {{ user.role }}
+            </span>
+            <span class="user-email">
+              <i class="pi pi-envelope"></i>
+              {{ user.email }}
+            </span>
+            @if (user.createdAt) {
+              <span class="user-joined">
+                <i class="pi pi-calendar"></i>
+                Joined {{ formatDate(user.createdAt) }}
+              </span>
+            }
+          </div>
+        </div>
+        @if (user.role === 'STUDENT') {
+          <div class="elite-points-card">
+            <div class="points-header">Elite Points</div>
+            <div class="points-value">
+              <i class="pi pi-star-fill"></i>
+              <span>{{ rewardPoints }}</span>
+            </div>
+            <a (click)="navigateToStore()" class="points-action">
+              <i class="pi pi-gift"></i>
+              Browse rewards
+            </a>
+          </div>
+        }
+      </div>
     </div>
-
-    <!-- Modern Tabbed Content -->
     <div class="profile-content">
-        <p-tabView styleClass="profile-tabs custom-tabs modern-tabs" [style]="{'background-color': 'transparent !important', 'color': '#f1f5f9 !important'}" (onLoad)="stylingTabView()">
-            <p-tabPanel header="Personal Information" leftIcon="pi pi-user">
-                <div class="profile-grid">
-                    <div class="profile-card user-details-card">
-                        <div class="card-header">
-                            <i class="pi pi-user"></i>
-                            <span>Personal Details</span>
-                        </div>
-                        <div class="card-content">
-                            <div class="info-row">
-                                <span class="info-label">Name</span>
-                                <span class="info-value">{{ user.name }}</span>
-                            </div>
-                            <div class="info-row">
-                                <span class="info-label">Email</span>
-                                <span class="info-value">{{ user.email }}</span>
-                            </div>
-                            <div class="info-row">
-                                <span class="info-label">Username</span>
-                                <span class="info-value">{{ user.username }}</span>
-                            </div>
-                            <div class="info-row">
-                                <span class="info-label">Role</span>
-                                <span class="info-value">{{ user.role }}</span>
-                            </div>
-                            <div class="info-row" *ngIf="user.eliteId">
-                                <span class="info-label">Elite ID</span>
-                                <span class="info-value">{{ user.eliteId }}</span>
-                            </div>
-                            <div class="info-row" *ngIf="user.mobileNumber">
-                                <span class="info-label">Mobile</span>
-                                <span class="info-value">{{ user.mobileNumber }}</span>
-                            </div>
-                        </div>
+      <p-tabs value="0" class="profile-tabs">
+        <p-tablist>
+          <p-tab value="0"><i class="pi pi-user"></i> Personal Information</p-tab>
+          @if (user.role === 'STUDENT') {
+            <p-tab value="1"><i class="pi pi-star"></i> Points history</p-tab>
+            <p-tab value="2"><i class="pi pi-bolt"></i> Contribution</p-tab>
+            <p-tab value="3"><i class="pi pi-check-square"></i> Tasks</p-tab>
+          }
+        </p-tablist>
+        <p-tabpanels>
+          <p-tabpanel value="0">
+            <div class="profile-grid">
+              <div class="profile-card user-details-card">
+                <div class="card-header">
+                  <i class="pi pi-user"></i>
+                  <span>Personal Details</span>
+                  @if (!editing) {
+                    <p-button type="button" label="Edit" icon="pi pi-pencil" (click)="startEdit()" [text]="true" size="small"></p-button>
+                  }
+                </div>
+                @if (!editing) {
+                  <div class="card-content">
+                    <div class="info-row">
+                      <span class="info-label">Name</span>
+                      <span class="info-value">{{ user.name }}</span>
                     </div>
-
-                    <div class="profile-card additional-details-card" *ngIf="user.gender || user.age">
-                        <div class="card-header">
-                            <i class="pi pi-info-circle"></i>
-                            <span>Additional Information</span>
-                        </div>
-                        <div class="card-content">
-                            <div class="info-row" *ngIf="user.gender">
-                                <span class="info-label">Gender</span>
-                                <span class="info-value">{{ user.gender }}</span>
-                            </div>
-                            <div class="info-row" *ngIf="user.age">
-                                <span class="info-label">Age</span>
-                                <span class="info-value">{{ user.age }}</span>
-                            </div>
-                        </div>
+                    <div class="info-row">
+                      <span class="info-label">Email</span>
+                      <span class="info-value">{{ user.email }}</span>
                     </div>
-
-                    <div class="profile-card student-card" *ngIf="user.role === 'STUDENT'">
-                        <div class="card-header">
-                            <i class="pi pi-book"></i>
-                            <span>Student Information</span>
-                        </div>
-                        <div class="card-content empty-content">
+                    <div class="info-row">
+                      <span class="info-label">Username</span>
+                      <span class="info-value">{{ user.username }}</span>
+                    </div>
+                    <div class="info-row">
+                      <span class="info-label">Role</span>
+                      <span class="info-value">{{ user.role }}</span>
+                    </div>
+                    @if (user.eliteId) {
+                      <div class="info-row">
+                        <span class="info-label">Elite ID</span>
+                        <span class="info-value">{{ user.eliteId }}</span>
+                      </div>
+                    }
+                    @if (user.mobileNumber) {
+                      <div class="info-row">
+                        <span class="info-label">Mobile</span>
+                        <span class="info-value">{{ user.mobileNumber }}</span>
+                      </div>
+                    }
+                    @if (user.gender) {
+                      <div class="info-row">
+                        <span class="info-label">Gender</span>
+                        <span class="info-value">{{ user.gender }}</span>
+                      </div>
+                    }
+                    @if (user.age) {
+                      <div class="info-row">
+                        <span class="info-label">Age</span>
+                        <span class="info-value">{{ user.age }}</span>
+                      </div>
+                    }
+                    @if (user.address) {
+                      <div class="info-row">
+                        <span class="info-label">Address</span>
+                        <span class="info-value">{{ user.address }}</span>
+                      </div>
+                    }
+                    @if (user.emergencyContact) {
+                      <div class="info-row">
+                        <span class="info-label">Emergency Contact</span>
+                        <span class="info-value">{{ user.emergencyContact }}</span>
+                      </div>
+                    }
+                  </div>
+                }
+                @if (editing) {
+                  <div class="card-content">
+                    <div class="field">
+                      <label>Name</label>
+                      <input pInputText [(ngModel)]="editForm.name" class="w-full theme-input" />
+                    </div>
+                    <div class="field">
+                      <label>Email</label>
+                      <input pInputText type="email" [(ngModel)]="editForm.email" class="w-full theme-input" />
+                    </div>
+                    <div class="field">
+                      <label>Mobile</label>
+                      <input pInputText [(ngModel)]="editForm.mobileNumber" class="w-full theme-input" />
+                    </div>
+                    <div class="field">
+                      <label>Age</label>
+                      <p-inputnumber [(ngModel)]="editForm.age" [min]="1" [showButtons]="true"></p-inputnumber>
+                    </div>
+                    <div class="field">
+                      <label>Gender</label>
+                      <p-select [options]="genderOptions" [(ngModel)]="editForm.gender"
+                        optionLabel="label" optionValue="value" placeholder="Select gender"
+                      class="w-full"></p-select>
+                    </div>
+                    <div class="field">
+                      <label>Address</label>
+                      <input pInputText [(ngModel)]="editForm.address" class="w-full theme-input" />
+                    </div>
+                    <div class="field">
+                      <label>Emergency Contact</label>
+                      <input pInputText [(ngModel)]="editForm.emergencyContact" class="w-full theme-input" />
+                    </div>
+                    <div class="dialog-footer" style="display:flex; gap:0.75rem; justify-content:flex-end; margin-top:1rem;">
+                      <p-button type="button" label="Cancel" (click)="cancelEdit()" [disabled]="saving" [text]="true"></p-button>
+                      <p-button type="button" label="Save Changes" icon="pi pi-check" (click)="saveProfile()" [loading]="saving"></p-button>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          </p-tabpanel>
+          @if (user.role === 'STUDENT') {
+            <p-tabpanel value="1">
+              <div class="profile-card wallet-history-card">
+                <div class="card-header">
+                  <i class="pi pi-history"></i>
+                  <span>Points activity</span>
+                </div>
+                <div class="card-content">
+                  <p-table [value]="transactions" [paginator]="true" [rows]="8" styleClass="profile-table" [rowHover]="true">
+                    <ng-template #header>
+                      <tr>
+                        <th>Date</th>
+                        <th>Description</th>
+                        <th>Activity</th>
+                        <th>Points</th>
+                      </tr>
+                    </ng-template>
+                    <ng-template #body let-transaction>
+                      <tr>
+                        <td>{{ formatDate(transaction.createdAt) }}</td>
+                        <td>{{ transaction.description }}</td>
+                        <td>
+                          <span class="transaction-badge" [ngClass]="transaction.transactionType === 'CREDIT' ? 'credit' : 'debit'">
+                            {{ transaction.transactionType === 'CREDIT' ? 'Earned' : 'Used' }}
+                          </span>
+                        </td>
+                        <td>
+                          <span [ngClass]="{'positive': transaction.transactionType === 'CREDIT', 'negative': transaction.transactionType === 'DEBIT'}">
+                            {{ transaction.transactionType === 'CREDIT' ? '+' : '-' }} {{ transaction.points }}
+                          </span>
+                        </td>
+                      </tr>
+                    </ng-template>
+                    <ng-template #emptymessage>
+                      <tr>
+                        <td colspan="4">
+                          <div class="empty-table-message">
                             <i class="pi pi-inbox"></i>
-                            <span>No additional student information available</span>
-                        </div>
-                    </div>
-
-                    <div class="profile-card faculty-card" *ngIf="user.role === 'FACULTY'">
-                        <div class="card-header">
-                            <i class="pi pi-briefcase"></i>
-                            <span>Faculty Information</span>
-                        </div>
-                        <div class="card-content empty-content">
+                            <span>No transactions found</span>
+                          </div>
+                        </td>
+                      </tr>
+                    </ng-template>
+                  </p-table>
+                </div>
+              </div>
+            </p-tabpanel>
+            <p-tabpanel value="2">
+              <div class="profile-card tasks-card">
+                <div class="card-header">
+                  <i class="pi pi-bolt"></i>
+                  <span>Contribution portfolio</span>
+                </div>
+                <div class="card-content">
+                  <p class="text-secondary" style="margin-bottom: 1rem;">
+                    Verified tasks, store claims, and wallet activity. Points come from achievement — not support requests.
+                  </p>
+                  <p-table [value]="contributionTimeline" [paginator]="true" [rows]="10" styleClass="profile-table" [rowHover]="true">
+                    <ng-template #header>
+                      <tr>
+                        <th>When</th>
+                        <th>Type</th>
+                        <th>What</th>
+                        <th>Detail</th>
+                      </tr>
+                    </ng-template>
+                    <ng-template #body let-ev>
+                      <tr>
+                        <td>{{ formatDate(ev.date) }}</td>
+                        <td>{{ ev.kind }}</td>
+                        <td>{{ ev.title }}</td>
+                        <td>{{ ev.detail }}</td>
+                      </tr>
+                    </ng-template>
+                    <ng-template #emptymessage>
+                      <tr>
+                        <td colspan="4">
+                          <div class="empty-table-message">
                             <i class="pi pi-inbox"></i>
-                            <span>No additional faculty information available</span>
-                        </div>
-                    </div>
+                            <span>No contribution activity yet</span>
+                          </div>
+                        </td>
+                      </tr>
+                    </ng-template>
+                  </p-table>
                 </div>
-            </p-tabPanel>
-
-            <p-tabPanel header="Wallet History" leftIcon="pi pi-wallet" *ngIf="user.role === 'STUDENT'">
-                <div class="profile-card wallet-history-card">
-                    <div class="card-header">
-                        <i class="pi pi-history"></i>
-                        <span>Transaction History</span>
-                    </div>
-                    <div class="card-content">
-                        <p-table [value]="transactions" [paginator]="true" [rows]="8" styleClass="profile-table" [rowHover]="true">
-                            <ng-template pTemplate="header">
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Description</th>
-                                    <th>Type</th>
-                                    <th>Points</th>
-                                </tr>
-                            </ng-template>
-                            <ng-template pTemplate="body" let-transaction>
-                                <tr>
-                                    <td>{{ formatDate(transaction.createdAt) }}</td>
-                                    <td>{{ transaction.description }}</td>
-                                    <td>
-                                        <span class="transaction-badge" [ngClass]="transaction.transactionType === 'CREDIT' ? 'credit' : 'debit'">
-                                            {{ transaction.transactionType }}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <span [ngClass]="{'positive': transaction.transactionType === 'CREDIT', 'negative': transaction.transactionType === 'DEBIT'}">
-                                            {{ transaction.transactionType === 'CREDIT' ? '+' : '-' }} {{ transaction.points }}
-                                        </span>
-                                    </td>
-                                </tr>
-                            </ng-template>
-                            <ng-template pTemplate="emptymessage">
-                                <tr>
-                                    <td colspan="4">
-                                        <div class="empty-table-message">
-                                            <i class="pi pi-inbox"></i>
-                                            <span>No transactions found</span>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </ng-template>
-                        </p-table>
-                    </div>
+              </div>
+            </p-tabpanel>
+            <p-tabpanel value="3">
+              <div class="profile-card tasks-card">
+                <div class="card-header">
+                  <i class="pi pi-check-square"></i>
+                  <span>Your Tasks</span>
                 </div>
-            </p-tabPanel>
-
-            <p-tabPanel header="Tasks" leftIcon="pi pi-check-square" *ngIf="user.role === 'STUDENT'">
-                <div class="profile-card tasks-card">
-                    <div class="card-header">
-                        <i class="pi pi-check-square"></i>
-                        <span>Your Tasks</span>
-                    </div>
-                    <div class="card-content">
-                        <p-table [value]="userTasks" [paginator]="true" [rows]="8" styleClass="profile-table" [rowHover]="true">
-                            <ng-template pTemplate="header">
-                                <tr>
-                                    <th>Title</th>
-                                    <th>Status</th>
-                                    <th>Submitted On</th>
-                                    <th>Points</th>
-                                </tr>
-                            </ng-template>
-                            <ng-template pTemplate="body" let-task>
-                                <tr>
-                                    <td>{{ task.title }}</td>
-                                    <td>
-                                        <span class="task-status-badge" [ngClass]="task.status.toLowerCase()">
-                                            {{ task.status }}
-                                        </span>
-                                    </td>
-                                    <td>{{ formatDate(task.submittedAt || '') }}</td>
-                                    <td>
-                                        <span class="task-points">
-                                            <i class="pi pi-wallet"></i>
-                                            {{ task.rewardPoints }}
-                                        </span>
-                                    </td>
-                                </tr>
-                            </ng-template>
-                            <ng-template pTemplate="emptymessage">
-                                <tr>
-                                    <td colspan="4">
-                                        <div class="empty-table-message">
-                                            <i class="pi pi-inbox"></i>
-                                            <span>No tasks found</span>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </ng-template>
-                        </p-table>
-                    </div>
+                <div class="card-content">
+                  <p-table [value]="userTasks" [paginator]="true" [rows]="8" styleClass="profile-table" [rowHover]="true">
+                    <ng-template #header>
+                      <tr>
+                        <th>Title</th>
+                        <th>Status</th>
+                        <th>Submitted On</th>
+                        <th>Points</th>
+                      </tr>
+                    </ng-template>
+                    <ng-template #body let-task>
+                      <tr>
+                        <td>{{ task.title }}</td>
+                        <td>
+                          <span class="task-status-badge" [ngClass]="task.status.toLowerCase()">
+                            {{ task.status }}
+                          </span>
+                        </td>
+                        <td>{{ formatDate(task.submittedAt || '') }}</td>
+                        <td>
+                          <span class="task-points">
+                            <i class="pi pi-star-fill"></i>
+                            {{ task.rewardPoints }}
+                          </span>
+                        </td>
+                      </tr>
+                    </ng-template>
+                    <ng-template #emptymessage>
+                      <tr>
+                        <td colspan="4">
+                          <div class="empty-table-message">
+                            <i class="pi pi-inbox"></i>
+                            <span>No tasks found</span>
+                          </div>
+                        </td>
+                      </tr>
+                    </ng-template>
+                  </p-table>
                 </div>
-            </p-tabPanel>
-        </p-tabView>
+              </div>
+            </p-tabpanel>
+          }
+        </p-tabpanels>
+      </p-tabs>
     </div>
-</div>
+  </div>
+}
 
-<!-- Loading State -->
-<div class="profile-loading" *ngIf="!user">
+@if (!user) {
+  <div class="profile-loading">
     <i class="pi pi-spin pi-spinner"></i>
     <span>Loading profile...</span>
-</div>
+  </div>
+}
+
+<p-toast position="top-right"></p-toast>

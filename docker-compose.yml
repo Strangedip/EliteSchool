@@ -1,0 +1,209 @@
+# Tuned for ~16GB hosts: containers ≈ 4GB total so Windows + browser + IDE stay usable.
+# Override heaps via JAVA_OPTS / AUTH_JAVA_OPTS / GATEWAY_JAVA_OPTS in .env if needed.
+x-java-service: &java-service
+  mem_limit: 512m
+  cpus: 0.75
+  environment: &java-env
+    JAVA_OPTS: ${JAVA_OPTS:--Xms64m -Xmx320m -XX:+UseG1GC -XX:+UseCompactObjectHeaders -XX:MaxGCPauseMillis=50 -XX:+ExitOnOutOfMemoryError}
+
+services:
+  consul:
+    image: hashicorp/consul:1.19
+    command: agent -dev -client=0.0.0.0 -ui -bootstrap-expect=1
+    ports:
+      - "8500:8500"
+    mem_limit: 256m
+    cpus: 0.35
+    healthcheck:
+      # Official Consul image ships curl (not wget)
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8500/v1/status/leader"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  postgres:
+    image: postgres:16-alpine
+    command:
+      - postgres
+      - -c
+      - shared_buffers=128MB
+      - -c
+      - effective_cache_size=256MB
+      - -c
+      - work_mem=4MB
+      - -c
+      - maintenance_work_mem=64MB
+      - -c
+      - max_connections=60
+    environment:
+      POSTGRES_DB: ${DB_NAME:-EliteSchool}
+      POSTGRES_USER: ${DB_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-root}
+    # Host 5433 avoids clashing with a local PostgreSQL on 5432 (common on native-dev PCs).
+    # In-compose services still use hostname "postgres:5432".
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    mem_limit: 640m
+    cpus: 0.75
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-postgres}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  consul-seed:
+    image: hashicorp/consul:1.19
+    depends_on:
+      consul:
+        condition: service_healthy
+    volumes:
+      - ./elite-backend/consul:/consul-seed
+    environment:
+      CONSUL_HTTP_ADDR: http://consul:8500
+    entrypoint: ["sh", "/consul-seed/seed-kv.sh"]
+    restart: "no"
+    mem_limit: 96m
+    cpus: 0.15
+
+  auth-service:
+    <<: *java-service
+    mem_limit: 640m
+    cpus: 0.85
+    build:
+      context: ./elite-backend
+      dockerfile: auth-service/Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+      consul-seed:
+        condition: service_completed_successfully
+    environment:
+      <<: *java-env
+      JAVA_OPTS: ${AUTH_JAVA_OPTS:--Xms64m -Xmx384m -XX:+UseG1GC -XX:+UseCompactObjectHeaders -XX:MaxGCPauseMillis=50 -XX:+ExitOnOutOfMemoryError}
+      CONSUL_HOST: consul
+      SERVICE_HOSTNAME: auth-service
+      DB_HOST: postgres
+      DB_NAME: ${DB_NAME:-EliteSchool}
+      DB_USERNAME: ${DB_USERNAME:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-root}
+      JWT_SECRET: ${JWT_SECRET:-wJjY8fXo+G6Vkhd4yLh3JOp6tH8l29PY5zR0DboYdxM=}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:4200}
+      EMAIL_HOST: ${EMAIL_HOST:-smtp.gmail.com}
+      EMAIL_PORT: ${EMAIL_PORT:-587}
+      EMAIL_USERNAME: ${EMAIL_USERNAME:-your-email@gmail.com}
+      EMAIL_PASSWORD: ${EMAIL_PASSWORD:-your-app-password}
+      EMAIL_FROM_NAME: ${EMAIL_FROM_NAME:-EliteSchool Support}
+      EMAIL_FROM: ${EMAIL_FROM:-}
+    ports:
+      - "8081:8081"
+
+  task-service:
+    <<: *java-service
+    build:
+      context: ./elite-backend
+      dockerfile: task-service/Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+      consul-seed:
+        condition: service_completed_successfully
+    environment:
+      <<: *java-env
+      CONSUL_HOST: consul
+      SERVICE_HOSTNAME: task-service
+      DB_HOST: postgres
+      DB_NAME: ${DB_NAME:-EliteSchool}
+      DB_USERNAME: ${DB_USERNAME:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-root}
+      JWT_SECRET: ${JWT_SECRET:-wJjY8fXo+G6Vkhd4yLh3JOp6tH8l29PY5zR0DboYdxM=}
+    ports:
+      - "8082:8082"
+
+  wallet-service:
+    <<: *java-service
+    build:
+      context: ./elite-backend
+      dockerfile: wallet-service/Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+      consul-seed:
+        condition: service_completed_successfully
+    environment:
+      <<: *java-env
+      CONSUL_HOST: consul
+      SERVICE_HOSTNAME: wallet-service
+      DB_HOST: postgres
+      DB_NAME: ${DB_NAME:-EliteSchool}
+      DB_USERNAME: ${DB_USERNAME:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-root}
+      JWT_SECRET: ${JWT_SECRET:-wJjY8fXo+G6Vkhd4yLh3JOp6tH8l29PY5zR0DboYdxM=}
+    ports:
+      - "8083:8083"
+
+  store-service:
+    <<: *java-service
+    build:
+      context: ./elite-backend
+      dockerfile: store-service/Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+      consul-seed:
+        condition: service_completed_successfully
+    environment:
+      <<: *java-env
+      CONSUL_HOST: consul
+      SERVICE_HOSTNAME: store-service
+      DB_HOST: postgres
+      DB_NAME: ${DB_NAME:-EliteSchool}
+      DB_USERNAME: ${DB_USERNAME:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-root}
+      JWT_SECRET: ${JWT_SECRET:-wJjY8fXo+G6Vkhd4yLh3JOp6tH8l29PY5zR0DboYdxM=}
+    ports:
+      - "8084:8084"
+
+  api-gateway:
+    build:
+      context: ./elite-backend
+      dockerfile: api-gateway/Dockerfile
+    depends_on:
+      consul-seed:
+        condition: service_completed_successfully
+      auth-service:
+        condition: service_started
+      task-service:
+        condition: service_started
+      wallet-service:
+        condition: service_started
+      store-service:
+        condition: service_started
+    environment:
+      JAVA_OPTS: ${GATEWAY_JAVA_OPTS:--Xms64m -Xmx256m -XX:+UseG1GC -XX:+UseCompactObjectHeaders -XX:MaxGCPauseMillis=50 -XX:+ExitOnOutOfMemoryError}
+      CONSUL_HOST: consul
+      SERVICE_HOSTNAME: api-gateway
+      JWT_SECRET: ${JWT_SECRET:-wJjY8fXo+G6Vkhd4yLh3JOp6tH8l29PY5zR0DboYdxM=}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:4200}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:4200,http://127.0.0.1:4200}
+    ports:
+      - "8080:8080"
+    mem_limit: 448m
+    cpus: 0.65
+    # Alpine JRE image has no curl/wget; rely on restart until Consul discovery is ready
+    restart: on-failure
+
+  frontend:
+    build:
+      context: ./elite-frontend
+    depends_on:
+      - api-gateway
+    ports:
+      - "4200:80"
+    mem_limit: 96m
+    cpus: 0.20
+    restart: on-failure
+
+volumes:
+  postgres-data:

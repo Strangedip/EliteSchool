@@ -8,6 +8,5 @@ import java.util.UUID;
 
 public interface StoreItemRepository extends JpaRepository<StoreItem, UUID> {
 
-    // Find an item by name
     Optional<StoreItem> findByName(String name);
 }

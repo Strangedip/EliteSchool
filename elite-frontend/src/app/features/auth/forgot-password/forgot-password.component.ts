@@ -1,17 +1,19 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { InputTextModule } from 'primeng/inputtext';
+import { ButtonModule } from 'primeng/button';
 import { AuthService } from '../../../core/services/auth.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { finalize } from 'rxjs';
 
 @Component({
-  selector: 'app-forgot-password',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
-  templateUrl: './forgot-password.component.html',
-  styleUrls: ['./forgot-password.component.scss']
+    selector: 'app-forgot-password',
+    imports: [CommonModule, ReactiveFormsModule, RouterModule, InputTextModule, ButtonModule],
+    templateUrl: './forgot-password.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrls: ['./forgot-password.component.scss']
 })
 export class ForgotPasswordComponent {
   forgotPasswordForm: FormGroup;
@@ -46,7 +48,7 @@ export class ForgotPasswordComponent {
     this.authService.forgotPassword(email)
       .pipe(finalize(() => this.loading = false))
       .subscribe({
-        next: (response) => {
+        next: () => {
           this.emailSent = true;
           this.toastService.showSuccess('Password reset email sent! Check your inbox.');
         },
@@ -66,4 +68,3 @@ export class ForgotPasswordComponent {
     });
   }
 }
-

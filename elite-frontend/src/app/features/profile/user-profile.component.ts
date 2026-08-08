@@ -1,17 +1,23 @@
-import { Component, OnInit, CUSTOM_ELEMENTS_SCHEMA, AfterViewInit, ElementRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TabViewModule } from 'primeng/tabview';
+import { Router } from '@angular/router';
+import { Tabs, TabList, Tab, TabPanels, TabPanel } from 'primeng/tabs';
 import { TableModule } from 'primeng/table';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { Select } from 'primeng/select';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
-import { AuthService } from '../../core/services/auth.service';
 import { UserService } from '../../core/services/user.service';
 import { User } from '../../core/models/user.model';
 import { WalletService } from '../../core/services/wallet.service';
 import { Transaction } from '../../core/models/wallet.model';
 import { TaskService } from '../../core/services/task.service';
-import { TaskSubmission } from '../../core/models/task.model';
-import { Router } from '@angular/router';
+import { StoreService } from '../../core/services/store.service';
+import { StorePurchase } from '../../core/models/store-item.model';
 
 interface UserTaskDisplay {
   id: string;
@@ -22,99 +28,235 @@ interface UserTaskDisplay {
   feedbackNotes?: string;
 }
 
+interface ContributionEvent {
+  date: string;
+  kind: 'TASK' | 'CLAIM' | 'CREDIT' | 'DEBIT';
+  title: string;
+  detail: string;
+}
+
 @Component({
-  selector: 'app-user-profile',
-  templateUrl: './user-profile.component.html',
-  styleUrls: ['./user-profile.component.scss'],
-  standalone: true,
-  imports: [CommonModule, FormsModule, TabViewModule, TableModule],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    selector: 'app-user-profile',
+    templateUrl: './user-profile.component.html',
+    styleUrls: ['./user-profile.component.scss'],
+    imports: [
+        CommonModule,
+        FormsModule,
+        Tabs, TabList, Tab, TabPanels, TabPanel,
+        TableModule,
+        ButtonModule,
+        InputTextModule,
+        Select,
+        InputNumberModule,
+        ToastModule
+    ],
+    providers: [MessageService],
+    changeDetection: ChangeDetectionStrategy.Eager
 })
-export class UserProfileComponent implements OnInit, AfterViewInit {
+export class UserProfileComponent implements OnInit {
   user: User | null = null;
-  rewardPoints: number = 0;
+  rewardPoints = 0;
   transactions: Transaction[] = [];
   userTasks: UserTaskDisplay[] = [];
+  storeClaims: StorePurchase[] = [];
+  contributionTimeline: ContributionEvent[] = [];
+
+  editing = false;
+  saving = false;
+  editForm = {
+    name: '',
+    email: '',
+    mobileNumber: '',
+    age: null as number | null,
+    gender: '',
+    address: '',
+    emergencyContact: ''
+  };
+
+  genderOptions = [
+    { label: 'Male', value: 'MALE' },
+    { label: 'Female', value: 'FEMALE' },
+    { label: 'Other', value: 'OTHER' }
+  ];
 
   constructor(
-    private authService: AuthService,
     private userService: UserService,
     private walletService: WalletService,
     private taskService: TaskService,
-    private el: ElementRef,
-    private router: Router
+    private storeService: StoreService,
+    private router: Router,
+    private messageService: MessageService
   ) { }
 
   ngOnInit(): void {
     this.loadUserProfile();
   }
 
-  ngAfterViewInit(): void {
-    // Apply styling to the TabView after view is initialized
-    setTimeout(() => {
-      this.stylingTabView();
-    }, 100);
+  loadUserProfile(): void {
+    this.user = this.userService.getCurrentUser();
+    if (!this.user) {
+      this.userService.getUserProfile().subscribe({
+        next: (res) => {
+          if (res.success && res.data) {
+            this.user = res.data;
+            this.syncEditForm();
+            this.loadRoleData();
+          }
+        }
+      });
+      return;
+    }
+
+    this.syncEditForm();
+    this.loadRoleData();
   }
 
-  loadUserProfile(): void {
-    // Using User Service to get current user
-    this.user = this.userService.getCurrentUser();
-    
-    if (this.user && this.user.role === 'STUDENT') {
-      const userId = this.user.eliteId;
-      if (userId) {
-        this.loadRewardPoints(userId);
-        this.loadTransactions(userId);
-        this.loadUserTasks(userId);
-      }
+  private syncEditForm(): void {
+    if (!this.user) return;
+    this.editForm = {
+      name: this.user.name || '',
+      email: this.user.email || '',
+      mobileNumber: this.user.mobileNumber || '',
+      age: this.user.age ?? null,
+      gender: this.user.gender || '',
+      address: this.user.address || '',
+      emergencyContact: this.user.emergencyContact || ''
+    };
+  }
+
+  private loadRoleData(): void {
+    if (!this.user || this.user.role !== 'STUDENT' || !this.user.eliteId) {
+      return;
     }
+    this.loadRewardPoints(this.user.eliteId);
+    this.loadTransactions(this.user.eliteId);
+    this.loadUserTasks(this.user.eliteId);
+    this.loadStoreClaims(this.user.eliteId);
   }
 
   loadRewardPoints(userId: string): void {
-    this.walletService.getWalletBalance(userId).subscribe((points: number) => {
+    this.walletService.getWalletBalance(userId).subscribe((points) => {
       this.rewardPoints = points;
     });
   }
 
   loadTransactions(userId: string): void {
-    this.walletService.getTransactionHistory(userId).subscribe((transactions: Transaction[]) => {
+    this.walletService.getTransactionHistory(userId).subscribe((transactions) => {
       this.transactions = transactions;
+      this.rebuildContributionTimeline();
     });
   }
 
   loadUserTasks(userId: string): void {
-    // Get all task submissions for the student
-    this.taskService.getSubmissionsByStudent(userId).subscribe((submissions: any[]) => {
-      const taskPromises: Promise<UserTaskDisplay>[] = submissions.map(submission => {
-        // For each submission, get the related task to get its title and points
-        return new Promise<UserTaskDisplay>((resolve) => {
-          this.taskService.getTaskById(submission.taskId).subscribe((task: any) => {
-            resolve({
-              id: submission.id || '',
-              title: task.title,
-              status: submission.status || 'UNKNOWN',
-              submittedAt: submission.submittedAt,
-              rewardPoints: task.rewardPoints,
-              feedbackNotes: submission.feedbackNotes
-            });
-          }, error => {
-            // Fallback if task fetch fails
-            resolve({
-              id: submission.id || '',
-              title: 'Unknown Task',
-              status: submission.status || 'UNKNOWN',
-              submittedAt: submission.submittedAt,
-              rewardPoints: 0,
-              feedbackNotes: submission.feedbackNotes
-            });
-          });
+    this.taskService.getSubmissionsByStudent(userId).subscribe((submissions) => {
+      this.userTasks = submissions.map(s => ({
+        id: s.id || '',
+        title: s.taskTitle || 'Task',
+        status: s.status || 'UNKNOWN',
+        submittedAt: s.submittedAt,
+        rewardPoints: s.rewardPoints || 0,
+        feedbackNotes: s.feedbackNotes
+      }));
+      this.rebuildContributionTimeline();
+    });
+  }
+
+  loadStoreClaims(userId: string): void {
+    this.storeService.getPurchasesForStudent(userId).subscribe({
+      next: (claims) => {
+        this.storeClaims = claims || [];
+        this.rebuildContributionTimeline();
+      },
+      error: () => {
+        this.storeClaims = [];
+      }
+    });
+  }
+
+  private rebuildContributionTimeline(): void {
+    const events: ContributionEvent[] = [];
+
+    this.userTasks
+      .filter(t => t.status === 'COMPLETED')
+      .forEach(t => {
+        events.push({
+          date: t.submittedAt || '',
+          kind: 'TASK',
+          title: t.title,
+          detail: `Verified contribution (+${t.rewardPoints} Elite Points)`
         });
       });
 
-      // Wait for all task lookups to complete
-      Promise.all(taskPromises).then(taskDisplays => {
-        this.userTasks = taskDisplays;
+    this.storeClaims.forEach(c => {
+      events.push({
+        date: c.claimedAt,
+        kind: 'CLAIM',
+        title: c.itemName,
+        detail: 'Obtained from school store'
       });
+    });
+
+    this.transactions.forEach(tx => {
+      const desc = tx.description || '';
+      const isAdminAdjust = /admin|adjust|grant|credit/i.test(desc) && !/task completion/i.test(desc);
+      events.push({
+        date: tx.createdAt || '',
+        kind: tx.transactionType === 'CREDIT' ? 'CREDIT' : 'DEBIT',
+        title: desc || (tx.transactionType === 'CREDIT' ? 'Points credited' : 'Points used'),
+        detail: tx.transactionType === 'CREDIT'
+          ? (isAdminAdjust
+            ? `Admin adjustment (+${tx.points})`
+            : `+${tx.points} Elite Points`)
+          : `−${tx.points} Elite Points`
+      });
+    });
+
+    this.contributionTimeline = events
+      .filter(e => !!e.date)
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  }
+
+  startEdit(): void {
+    this.syncEditForm();
+    this.editing = true;
+  }
+
+  cancelEdit(): void {
+    this.editing = false;
+    this.syncEditForm();
+  }
+
+  saveProfile(): void {
+    if (!this.user?.eliteId) return;
+
+    this.saving = true;
+    this.userService.updateUserProfile(this.user.eliteId, {
+      name: this.editForm.name,
+      email: this.editForm.email,
+      mobileNumber: this.editForm.mobileNumber || undefined,
+      age: this.editForm.age ?? undefined,
+      gender: this.editForm.gender || undefined,
+      address: this.editForm.address || undefined,
+      emergencyContact: this.editForm.emergencyContact || undefined
+    }).subscribe({
+      next: (res) => {
+        this.saving = false;
+        if (res.success && res.data) {
+          this.user = res.data;
+          this.editing = false;
+          this.messageService.add({ severity: 'success', summary: 'Saved', detail: 'Profile updated' });
+        } else {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: res.message || 'Failed to update profile' });
+        }
+      },
+      error: (err) => {
+        this.saving = false;
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: err.error?.message || 'Failed to update profile'
+        });
+      }
     });
   }
 
@@ -123,53 +265,7 @@ export class UserProfileComponent implements OnInit, AfterViewInit {
     return new Date(date).toLocaleDateString();
   }
 
-  /**
-   * Apply custom styling to the TabView active bar
-   */
-  stylingTabView(): void {
-    // Find all active bars in the component
-    const activeBarElements = this.el.nativeElement.querySelectorAll('.p-tablist-active-bar, .p-tabview-ink-bar');
-    
-    // Apply styling to each active bar
-    activeBarElements.forEach((element: Element) => {
-      if (element instanceof HTMLElement) {
-        element.style.background = 'linear-gradient(90deg, #0077b6, #00d4ff)';
-        element.style.height = '3px';
-        element.style.borderRadius = '3px';
-        element.style.boxShadow = '0 1px 3px rgba(0, 180, 216, 0.3)';
-        element.style.zIndex = '2';
-      }
-    });
-    
-    // Also style all text in tab headers
-    const tabHeaders = this.el.nativeElement.querySelectorAll('.p-tabview-nav li, .p-tablist-item');
-    
-    tabHeaders.forEach((header: Element) => {
-      if (header instanceof HTMLElement) {
-        // Remove any background color
-        header.style.backgroundColor = 'transparent';
-        
-        // Set default text color
-        const titleElements = header.querySelectorAll('.p-tabview-title, .p-tablist-item-title, span');
-        titleElements.forEach((titleEl: Element) => {
-          if (titleEl instanceof HTMLElement) {
-            titleEl.style.color = '#a3c1d9';
-          }
-        });
-        
-        // If this is the active tab, set text color
-        if (header.classList.contains('p-highlight')) {
-          const activeTitleElements = header.querySelectorAll('.p-tabview-title, .p-tablist-item-title, span');
-          activeTitleElements.forEach((titleEl: Element) => {
-            if (titleEl instanceof HTMLElement) {
-              titleEl.style.color = '#00d4ff';
-            }
-          });
-        }
-      }
-    });
-  }
-  NavigateToStore(): void {
+  navigateToStore(): void {
     this.router.navigate(['/store']);
   }
 }

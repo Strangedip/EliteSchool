@@ -1,0 +1,84 @@
+@use '../../../styles/mixins' as *;
+
+.dialog-hint {
+  margin: 0 0 1rem;
+  color: var(--text-color-secondary);
+  font-size: 0.9rem;
+}
+
+::ng-deep .filter-dropdown {
+  min-width: 160px;
+}
+
+.action-button {
+  min-width: 130px;
+}
+
+.users-table-wrapper {
+  @include glass-card;
+  overflow: hidden;
+  padding: 0.5rem;
+}
+
+::ng-deep .role-dropdown {
+  min-width: 140px;
+
+  .p-select-label {
+    padding: 0.4rem 0.6rem;
+  }
+}
+
+.row-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.field {
+  margin-bottom: 1.5rem;
+  flex: 1;
+
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
+    font-weight: 500;
+
+    .text-danger {
+      color: var(--danger-color);
+    }
+  }
+
+  input {
+    background: var(--surface-input);
+    color: var(--text-color);
+    border: 1px solid var(--surface-border);
+    width: 100%;
+  }
+}
+
+.field-row {
+  display: flex;
+  gap: 1rem;
+
+  .field {
+    flex: 1;
+  }
+}
+
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.text-danger {
+  color: var(--danger-color) !important;
+}
+
+@media (max-width: 768px) {
+  .field-row {
+    flex-direction: column;
+    gap: 0;
+  }
+}

@@ -232,12 +232,14 @@ class UserServiceImplTest {
     @DisplayName("Should delete user successfully")
     void shouldDeleteUserSuccessfully() {
         // Arrange
+        when(userRepository.existsById(testUserId)).thenReturn(true);
         doNothing().when(userRepository).deleteById(testUserId);
 
         // Act
         userService.deleteUser(testUserId);
 
         // Assert
+        verify(userRepository, times(1)).existsById(testUserId);
         verify(userRepository, times(1)).deleteById(testUserId);
     }
 }

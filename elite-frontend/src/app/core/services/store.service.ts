@@ -6,11 +6,8 @@ import { StoreItem } from '../models/store-item.model';
 import { CommonResponseDto } from '../models/common-response.model';
 import { WalletService } from './wallet.service';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class StoreService {
-  // API Gateway will route requests to the store-service
   private apiUrl = `${environment.apiUrl}/store`;
 
   constructor(
@@ -21,11 +18,6 @@ export class StoreService {
   getAllItems(): Observable<StoreItem[]> {
     return this.http.get<CommonResponseDto<StoreItem[]>>(`${this.apiUrl}/items`)
       .pipe(map(response => response.data ?? []));
-  }
-
-  getItemById(itemId: string): Observable<StoreItem> {
-    return this.http.get<CommonResponseDto<StoreItem>>(`${this.apiUrl}/items/${itemId}`)
-      .pipe(map(response => response.data as StoreItem));
   }
 
   addItem(item: StoreItem): Observable<StoreItem> {
@@ -43,7 +35,18 @@ export class StoreService {
   }
 
   purchaseItem(studentId: string, itemId: string): Observable<any> {
-    // Use the wallet service to purchase the item
     return this.walletService.purchaseItem(studentId, itemId);
   }
-} 
+
+  getPurchasesForStudent(studentId: string): Observable<import('../models/store-item.model').StorePurchase[]> {
+    return this.http.get<CommonResponseDto<import('../models/store-item.model').StorePurchase[]>>(
+      `${this.apiUrl}/purchases/student/${studentId}`
+    ).pipe(map(response => response.data ?? []));
+  }
+
+  getAllPurchases(): Observable<import('../models/store-item.model').StorePurchase[]> {
+    return this.http.get<CommonResponseDto<import('../models/store-item.model').StorePurchase[]>>(
+      `${this.apiUrl}/purchases`
+    ).pipe(map(response => response.data ?? []));
+  }
+}

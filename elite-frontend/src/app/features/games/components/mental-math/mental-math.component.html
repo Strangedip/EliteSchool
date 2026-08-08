@@ -1,0 +1,49 @@
+<div class="brain-game">
+  <div class="brain-top">
+    <button type="button" class="back-btn" (click)="backToGames()" aria-label="Back to games">
+      <i class="pi pi-arrow-left"></i>
+    </button>
+    <div class="titles">
+      <h1>Mental Math</h1>
+      <p>Timed arithmetic that gets harder as you succeed. Strengthens number fluency and focus.</p>
+    </div>
+  </div>
+
+  <div class="brain-stats">
+    <div class="stat"><span class="label">Score</span><span class="value">{{ score }}</span></div>
+    <div class="stat"><span class="label">Streak</span><span class="value">{{ streak }}</span></div>
+    <div class="stat"><span class="label">Level</span><span class="value">{{ level }}</span></div>
+    <div class="stat"><span class="label">Time</span><span class="value">{{ timeLeft }}s</span></div>
+  </div>
+
+  <div class="brain-panel">
+    <p class="brain-status">{{ message }}</p>
+
+    <div class="math-prompt">
+      {{ problem?.prompt || '—' }}
+    </div>
+    <div class="math-answer">{{ draft || '0' }}</div>
+
+    <div class="math-pad">
+      @for (d of ['1','2','3','4','5','6','7','8','9','-','0','⌫']; track d) {
+        <button
+          type="button"
+          class="math-key"
+          [disabled]="!running"
+          (click)="d === '⌫' ? backspace() : typeDigit(d)">
+          {{ d }}
+        </button>
+      }
+    </div>
+
+    <div class="brain-actions">
+      @if (!running) {
+        <button type="button" class="brain-btn" (click)="start()">
+          {{ finished ? 'Play again' : 'Start 60s challenge' }}
+        </button>
+      } @else {
+        <button type="button" class="brain-btn" (click)="submit()">Submit</button>
+      }
+    </div>
+  </div>
+</div>

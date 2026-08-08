@@ -1,200 +1,180 @@
 <div class="home-container">
-  <!-- Navbar -->
-  <nav class="home-navbar">
+  <nav class="home-navbar" [class.is-solid]="navSolid">
     <div class="nav-content">
       <a routerLink="/home" class="nav-brand">
-        <i class="pi pi-bolt"></i>
-        <span>EliteSchool</span>
+        <img class="brand-mark" src="assets/images/brand-mark.svg" width="40" height="40" alt="EliteSchool" />
+        <span class="brand-wordmark">EliteSchool</span>
       </a>
       <div class="nav-links">
-        <ng-container *ngIf="!isLoggedIn; else loggedInLinks">
+        <button
+          type="button"
+          class="theme-toggle-btn"
+          (click)="toggleTheme()"
+          [title]="themeService.isDark() ? 'Switch to light mode' : 'Switch to dark mode'">
+          <i class="pi" [class.pi-sun]="themeService.isDark()" [class.pi-moon]="!themeService.isDark()"></i>
+        </button>
+        @if (!isLoggedIn) {
+          <a routerLink="/docs" class="nav-link">Docs</a>
+          <a routerLink="/games" class="nav-link nav-link-games">Games</a>
           <a routerLink="/login" class="nav-link">Sign In</a>
           <a routerLink="/register" class="nav-btn">Get Started</a>
-        </ng-container>
-        <ng-template #loggedInLinks>
-          <a routerLink="/dashboard" class="nav-btn">Go to Dashboard</a>
-        </ng-template>
+        } @else {
+          <a routerLink="/docs" class="nav-link">Docs</a>
+          <a routerLink="/games" class="nav-link nav-link-games">Games</a>
+          <a routerLink="/dashboard" class="nav-btn">Dashboard</a>
+        }
       </div>
     </div>
   </nav>
 
-  <!-- Hero Section -->
   <section class="hero-section">
-    <div class="hero-background">
-      <div class="gradient-orb orb-1"></div>
-      <div class="gradient-orb orb-2"></div>
-      <div class="gradient-orb orb-3"></div>
+    <div class="hero-plane" aria-hidden="true">
+      <img class="hero-photo" src="assets/images/hero-campus.jpg" alt="" />
+      <div class="hero-scrim"></div>
     </div>
-    
+
     <div class="hero-content">
-      <div class="hero-badge">
-        <i class="pi pi-bolt"></i>
-        <span>Welcome to the Future of Learning</span>
-      </div>
-      
-      <h1 class="hero-title">
-        Where <span class="gradient-text">Excellence</span> Meets
-        <span class="gradient-text">Rewards</span>
-      </h1>
-      
-      <p class="hero-subtitle">
-        EliteSchool is a gamified learning platform where students earn points by completing tasks, 
-        track their achievements, and redeem rewards. Transform your educational journey into an exciting adventure.
+      <p class="hero-eyebrow">Student achievement platform</p>
+      <h1 class="hero-brand">EliteSchool</h1>
+      <p class="hero-line">
+        Verified effort. Elite Points that recognise contribution — and open school rewards for every learner.
       </p>
-      
       <div class="hero-actions">
-        <ng-container *ngIf="!isLoggedIn; else loggedInActions">
-          <button pButton pRipple label="Get Started" icon="pi pi-arrow-right" iconPos="right" 
-                  class="p-button-lg hero-btn-primary" routerLink="/register"></button>
-          <button pButton pRipple label="Sign In" icon="pi pi-sign-in" 
-                  class="p-button-lg p-button-outlined hero-btn-secondary" routerLink="/login"></button>
-        </ng-container>
-        <ng-template #loggedInActions>
-          <button pButton pRipple label="Go to Dashboard" icon="pi pi-th-large" iconPos="right" 
-                  class="p-button-lg hero-btn-primary" routerLink="/dashboard"></button>
-          <button pButton pRipple label="View Tasks" icon="pi pi-list-check" 
-                  class="p-button-lg p-button-outlined hero-btn-secondary" routerLink="/tasks"></button>
-        </ng-template>
-      </div>
-      
-      <div class="hero-stats">
-        @for (stat of stats; track stat.label) {
-          <div class="stat-item">
-            <span class="stat-value">{{ stat.value }}</span>
-            <span class="stat-label">{{ stat.label }}</span>
-          </div>
+        @if (!isLoggedIn) {
+          <a routerLink="/register" class="hero-cta hero-cta-primary">
+            Join as Student
+            <i class="pi pi-arrow-right" aria-hidden="true"></i>
+          </a>
+          <a routerLink="/docs" class="hero-cta hero-cta-secondary">Product guide</a>
+        } @else {
+          <a routerLink="/dashboard" class="hero-cta hero-cta-primary">
+            Go to Dashboard
+            <i class="pi pi-arrow-right" aria-hidden="true"></i>
+          </a>
+          <a routerLink="/docs" class="hero-cta hero-cta-secondary">Product guide</a>
         }
       </div>
     </div>
   </section>
 
-  <!-- Features Section -->
+  <section class="path-section">
+    <div class="section-intro">
+      <p class="section-kicker">How it works</p>
+      <h2 class="section-title">From contribution to opportunity</h2>
+      <p class="section-subtitle">
+        One clear loop schools can trust — choose work, get verified, earn Elite Points, claim rewards.
+      </p>
+    </div>
+
+    <ol class="steps-rail">
+      <li>
+        <strong>Join</strong>
+        <span>Students register. Faculty and admins are added by school management.</span>
+      </li>
+      <li>
+        <strong>Contribute</strong>
+        <span>Choose school tasks, complete them, and mark done for faculty review.</span>
+      </li>
+      <li>
+        <strong>Earn</strong>
+        <span>Approved work credits Elite Points — a clear measure of achievement.</span>
+      </li>
+      <li>
+        <strong>Claim</strong>
+        <span>Use points for materials and opportunities that help students grow.</span>
+      </li>
+    </ol>
+  </section>
+
   <section class="features-section">
-    <div class="section-header">
-      <span class="section-badge">Features</span>
-      <h2 class="section-title">Everything You Need to <span class="gradient-text">Excel</span></h2>
-      <p class="section-subtitle">Discover the tools and features that make EliteSchool the ultimate learning companion</p>
+    <div class="section-intro">
+      <p class="section-kicker">Built for schools</p>
+      <h2 class="section-title">Achievement that faculty can stand behind</h2>
     </div>
-    
-    <div class="features-grid">
-      @for (feature of features; track feature.title) {
-        <div class="feature-card">
-          <div class="feature-icon"><i [class]="feature.icon"></i></div>
-          <h3 class="feature-title">{{ feature.title }}</h3>
-          <p class="feature-description">{{ feature.description }}</p>
-        </div>
-      }
-    </div>
-  </section>
 
-  <!-- How It Works Section -->
-  <section class="how-it-works-section">
-    <div class="section-header">
-      <span class="section-badge">How It Works</span>
-      <h2 class="section-title">Your Journey to <span class="gradient-text">Success</span></h2>
-    </div>
-    
-    <div class="steps-container">
-      <div class="step-card">
-        <div class="step-number">01</div>
-        <div class="step-content">
-          <h3>Sign Up</h3>
-          <p>Create your free account and join the EliteSchool community in seconds.</p>
-        </div>
-      </div>
-      <div class="step-connector"></div>
-      <div class="step-card">
-        <div class="step-number">02</div>
-        <div class="step-content">
-          <h3>Complete Tasks</h3>
-          <p>Browse available tasks, submit your work, and get verified by faculty.</p>
-        </div>
-      </div>
-      <div class="step-connector"></div>
-      <div class="step-card">
-        <div class="step-number">03</div>
-        <div class="step-content">
-          <h3>Earn Points</h3>
-          <p>Every approved task earns you Elite Points based on difficulty level.</p>
-        </div>
-      </div>
-      <div class="step-connector"></div>
-      <div class="step-card">
-        <div class="step-number">04</div>
-        <div class="step-content">
-          <h3>Redeem Rewards</h3>
-          <p>Visit the Elite Store and exchange your points for amazing rewards.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Testimonials Section -->
-  <section class="testimonials-section">
-    <div class="section-header">
-      <span class="section-badge">Testimonials</span>
-      <h2 class="section-title">Loved by <span class="gradient-text">Students</span></h2>
-    </div>
-    
-    <div class="testimonials-grid">
-      @for (testimonial of testimonials; track testimonial.name) {
-        <div class="testimonial-card">
-          <div class="quote-icon"><i class="pi pi-quote-left"></i></div>
-          <p class="testimonial-quote">"{{ testimonial.quote }}"</p>
-          <div class="testimonial-author">
-            <div class="author-avatar">{{ testimonial.avatar }}</div>
-            <div class="author-info">
-              <span class="author-name">{{ testimonial.name }}</span>
-              <span class="author-role">{{ testimonial.role }}</span>
-            </div>
+    <div class="features-list">
+      @for (feature of features; track feature.title; let i = $index) {
+        <article class="feature-row">
+          <span class="feature-index">0{{ i + 1 }}</span>
+          <div class="feature-copy">
+            <h3>{{ feature.title }}</h3>
+            <p>{{ feature.description }}</p>
           </div>
-        </div>
+        </article>
       }
     </div>
   </section>
 
-  <!-- CTA Section -->
+  <section class="principles-section">
+    <div class="section-intro">
+      <p class="section-kicker">Principles</p>
+      <h2 class="section-title">What we stand for</h2>
+    </div>
+
+    <div class="principles-grid">
+      @for (pillar of pillars; track pillar.title) {
+        <article class="principle">
+          <h3>{{ pillar.title }}</h3>
+          <p>{{ pillar.text }}</p>
+        </article>
+      }
+    </div>
+  </section>
+
+  <section class="docs-teaser-section">
+    <div class="docs-teaser">
+      <p class="section-kicker">Product guide</p>
+      <h2 class="section-title">See everything EliteSchool can do</h2>
+      <p class="section-subtitle">
+        Roles, modules, trust rules, and the full achievement loop — written for schools evaluating the product.
+      </p>
+      <a routerLink="/docs" class="hero-cta hero-cta-primary cta-inline">
+        Open documentation
+        <i class="pi pi-book" aria-hidden="true"></i>
+      </a>
+    </div>
+  </section>
+
   <section class="cta-section">
     <div class="cta-content">
-      <ng-container *ngIf="!isLoggedIn; else loggedInCta">
-        <h2>Ready to Start Your <span class="gradient-text">Elite Journey</span>?</h2>
-        <p>Join thousands of students who are already achieving more with EliteSchool.</p>
-        <button pButton pRipple label="Create Free Account" icon="pi pi-user-plus" 
-                class="p-button-lg cta-btn" routerLink="/register"></button>
-      </ng-container>
-      <ng-template #loggedInCta>
-        <h2>Continue Your <span class="gradient-text">Elite Journey</span></h2>
-        <p>Complete tasks, earn points, and redeem amazing rewards!</p>
-        <button pButton pRipple label="View Available Tasks" icon="pi pi-list-check" 
-                class="p-button-lg cta-btn" routerLink="/tasks"></button>
-      </ng-template>
+      @if (!isLoggedIn) {
+        <h2>Ready to grow with <em>EliteSchool</em>?</h2>
+        <p>Create a student account and build a verified record of contribution.</p>
+        <a routerLink="/register" class="hero-cta hero-cta-primary cta-inline">
+          Create Student Account
+          <i class="pi pi-user-plus" aria-hidden="true"></i>
+        </a>
+      } @else {
+        <h2>Continue your achievement journey</h2>
+        <p>Complete tasks, get verified, and claim school rewards with Elite Points.</p>
+        <a routerLink="/tasks" class="hero-cta hero-cta-primary cta-inline">
+          View Available Tasks
+          <i class="pi pi-list-check" aria-hidden="true"></i>
+        </a>
+      }
     </div>
   </section>
 
-  <!-- Footer -->
   <footer class="home-footer">
     <div class="footer-content">
       <div class="footer-brand">
-        <i class="pi pi-bolt"></i>
-        <span>EliteSchool</span>
+        <img class="brand-mark" src="assets/images/brand-mark.svg" width="36" height="36" alt="" />
+        <span class="brand-wordmark">EliteSchool</span>
       </div>
-      <p class="footer-tagline">Empowering students through gamified learning</p>
+      <p class="footer-tagline">Achievement management for schools — rewards that keep every student moving forward</p>
       <div class="footer-links">
-        <ng-container *ngIf="!isLoggedIn; else loggedInFooter">
+        <a routerLink="/docs">Docs</a>
+        <a routerLink="/games">Games</a>
+        @if (!isLoggedIn) {
           <a routerLink="/login">Sign In</a>
-          <span class="divider">•</span>
           <a routerLink="/register">Register</a>
-        </ng-container>
-        <ng-template #loggedInFooter>
+        } @else {
           <a routerLink="/dashboard">Dashboard</a>
-          <span class="divider">•</span>
           <a routerLink="/tasks">Tasks</a>
-          <span class="divider">•</span>
-          <a routerLink="/store">Store</a>
-        </ng-template>
+          <a routerLink="/store">Rewards</a>
+        }
       </div>
-      <p class="footer-copyright">© 2025 EliteSchool. All rights reserved.</p>
+      <p class="footer-copyright">© {{ currentYear }} EliteSchool</p>
     </div>
   </footer>
 </div>
-

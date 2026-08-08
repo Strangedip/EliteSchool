@@ -5,6 +5,7 @@ import com.eliteschool.task_service.model.Task;
 import com.eliteschool.task_service.model.enums.TaskStatus;
 import com.eliteschool.task_service.model.enums.TaskType;
 import com.eliteschool.task_service.repository.TaskRepository;
+import com.eliteschool.task_service.repository.TaskTemplateRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,7 +13,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Arrays;
 import java.util.List;
@@ -31,7 +31,7 @@ class TaskServiceTest {
     private TaskRepository taskRepository;
 
     @Mock
-    private WebClient.Builder webClientBuilder;
+    private TaskTemplateRepository taskTemplateRepository;
 
     @InjectMocks
     private TaskService taskService;

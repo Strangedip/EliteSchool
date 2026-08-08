@@ -1,17 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
+import { InputTextModule } from 'primeng/inputtext';
+import { ButtonModule } from 'primeng/button';
 import { AuthService } from '../../../core/services/auth.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { finalize } from 'rxjs';
 
 @Component({
-  selector: 'app-reset-password',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
-  templateUrl: './reset-password.component.html',
-  styleUrls: ['./reset-password.component.scss']
+    selector: 'app-reset-password',
+    imports: [CommonModule, ReactiveFormsModule, RouterModule, InputTextModule, ButtonModule],
+    templateUrl: './reset-password.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrls: ['./reset-password.component.scss']
 })
 export class ResetPasswordComponent implements OnInit {
   resetPasswordForm: FormGroup;
@@ -41,9 +43,8 @@ export class ResetPasswordComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Get token from URL query params
     this.token = this.route.snapshot.queryParams['token'] || '';
-    
+
     if (!this.token) {
       this.toastService.showError('Invalid reset link');
       this.router.navigate(['/login']);
@@ -81,12 +82,12 @@ export class ResetPasswordComponent implements OnInit {
   passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
     const password = control.get('newPassword')?.value;
     const confirmPassword = control.get('confirmPassword')?.value;
-    
+
     if (password && confirmPassword && password !== confirmPassword) {
       control.get('confirmPassword')?.setErrors({ passwordMismatch: true });
       return { passwordMismatch: true };
     }
-    
+
     return null;
   }
 
@@ -105,8 +106,7 @@ export class ResetPasswordComponent implements OnInit {
         next: () => {
           this.resetSuccess = true;
           this.toastService.showSuccess('Password reset successful!');
-          
-          // Redirect to login after 3 seconds
+
           setTimeout(() => {
             this.router.navigate(['/login']);
           }, 3000);
@@ -136,7 +136,7 @@ export class ResetPasswordComponent implements OnInit {
   }
 
   get passwordValue(): string {
-  return this.newPassword?.value || '';
+    return this.newPassword?.value || '';
   }
 
   get hasUpperCase(): boolean {
@@ -159,4 +159,3 @@ export class ResetPasswordComponent implements OnInit {
     this.router.navigate(['/forgot-password']);
   }
 }
-

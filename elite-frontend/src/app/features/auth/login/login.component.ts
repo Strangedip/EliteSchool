@@ -1,4 +1,4 @@
-import { Component, OnInit, NO_ERRORS_SCHEMA } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -7,7 +7,6 @@ import { ButtonModule } from 'primeng/button';
 import { PasswordModule } from 'primeng/password';
 import { CardModule } from 'primeng/card';
 import { RippleModule } from 'primeng/ripple';
-import { FloatLabelModule } from 'primeng/floatlabel';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { finalize } from 'rxjs';
@@ -15,24 +14,22 @@ import { AuthService } from '../../../core/services/auth.service';
 import { CommonResponseDto } from '../../../core/models/common-response.model';
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss'],
-  standalone: true,
-  schemas: [NO_ERRORS_SCHEMA],
-  imports: [
-    CommonModule, 
-    FormsModule, 
-    InputTextModule,
-    ButtonModule,
-    PasswordModule,
-    CardModule,
-    RippleModule,
-    FloatLabelModule,
-    RouterModule,
-    ToastModule
-  ],
-  providers: [MessageService]
+    selector: 'app-login',
+    templateUrl: './login.component.html',
+    styleUrls: ['./login.component.scss'],
+    imports: [
+        CommonModule,
+        FormsModule,
+        InputTextModule,
+        ButtonModule,
+        PasswordModule,
+        CardModule,
+        RippleModule,
+        RouterModule,
+        ToastModule
+    ],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    providers: [MessageService]
 })
 export class LoginComponent implements OnInit {
   username = '';
@@ -74,7 +71,7 @@ export class LoginComponent implements OnInit {
 
     this.loading = true;
     this.messageService.add({ severity: 'info', summary: 'Authenticating', detail: 'Please wait...', life: 2000 });
-    
+
     this.authService.login(this.username, this.password)
       .pipe(finalize(() => this.loading = false))
       .subscribe({
@@ -84,8 +81,8 @@ export class LoginComponent implements OnInit {
             this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Login successful', life: 2000 });
             this.router.navigate(['/dashboard']);
           } else {
-            const errorMessage = response.error 
-              ? `${response.error.errorCode}: ${response.error.errorDescription}` 
+            const errorMessage = response.error
+              ? `${response.error.errorCode}: ${response.error.errorDescription}`
               : (response.message || 'Login failed');
             this.messageService.add({ severity: 'error', summary: 'Login Failed', detail: errorMessage, life: 5000 });
           }

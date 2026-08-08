@@ -1,162 +1,105 @@
 # EliteSchool Frontend
 
-A modern, gamified learning platform built with **Angular 18** and **PrimeNG**. EliteSchool enables students to earn reward points by completing tasks, track their achievements, and redeem points for rewards in the Elite Store.
+Angular **22.1** SPA for student achievement management — verified contribution, Elite Points, school rewards, nominations, and support.
 
-## 🎯 Features
+| Related docs | |
+|--------------|--|
+| Product / demo | [USAGE_GUIDE.md](../USAGE_GUIDE.md) |
+| Root setup | [README.md](../README.md) |
+| Backend | [elite-backend/README.md](../elite-backend/README.md) |
 
-- **Dashboard** - Overview of student progress, reward points, and recent activity
-- **Task Management** - Browse, submit, and track task completion
-- **Reward Store** - Redeem earned points for exclusive items
-- **Wallet System** - View balance and transaction history
-- **Games** - Mini-games including Tic-Tac-Toe and Rock-Paper-Scissors
-- **User Profiles** - View and manage personal information
-- **Role-Based Access** - Different views for Students, Faculty, and Admins
+---
 
-## 🛠 Tech Stack
+## Features
 
-- **Framework**: Angular 18 (Standalone Components)
-- **UI Library**: PrimeNG with Aura Theme
-- **Styling**: SCSS with CSS Variables
-- **State Management**: RxJS BehaviorSubjects
-- **HTTP**: Angular HttpClient with Interceptors
-- **Routing**: Angular Router with Lazy Loading
+- Role dashboards (Student / Faculty / Admin)
+- Tasks + templates + verification standards (evidence, min notes, rubric)
+- Store (Materials / Opportunities, claim windows, FCFS)
+- Wallet · nominations (staff) · support · contribution portfolio · audit · leaderboard
+- Games (recreation only — no Elite Points)
+- Branded client UI: Fraunces + Sora, cyan/teal EliteAura theme, landing hero
 
-## 📁 Project Structure
+---
+
+## Tech stack
+
+| Layer | Choice |
+|-------|--------|
+| Framework | Angular 22.1 (standalone, application / esbuild builder) |
+| UI | PrimeNG 22 · `@primeuix/themes` (EliteAura) · PrimeFlex · PrimeIcons |
+| Style | SCSS design tokens · dark / light via `[data-theme]` |
+| Data | RxJS · functional guards · lazy routes |
+
+Requires **Node.js `^22.22.3`** (or 24 / 26).
+
+---
+
+## Getting started
+
+Backend API gateway must be reachable on **:8080** (see root [README](../README.md) or `demo-native.bat`).
+
+```bash
+cd elite-frontend
+npm install
+npm start
+```
+
+App: **http://localhost:4200**
+
+Login uses **username** (demo Admin: **`admin`** / **`Admin@123`**), not email.
+
+### API URL
+
+| Mode | `apiUrl` |
+|------|----------|
+| `ng serve` (development) | `http://localhost:8080/api` |
+| Production / Docker image | `/api` (nginx → `api-gateway:8080`) |
+
+Configured in `src/environments/environment.development.ts` and `environment.prod.ts`.
+
+---
+
+## Main routes
+
+| Route | Access |
+|-------|--------|
+| `/home`, `/games`, `/login`, `/register`, forgot/reset password | Public / guest |
+| `/dashboard`, `/tasks`, `/courses`, `/profile`, `/settings`, `/leaderboard` | Authenticated |
+| `/store`, `/wallet` | Student, Admin, Management |
+| `/support` | Student, Faculty, Admin, Management |
+| `/nominations` | Faculty, Admin, Management (`StaffGuard`) |
+| `/admin/users`, `/admin/audit` | Admin, Management |
+
+---
+
+## Structure
 
 ```
 src/app/
-├── app.component.*           # Root component
-├── app.routes.ts             # Main routing configuration
-│
-├── core/                     # Singleton services & utilities
-│   ├── enums/               # Application enums (roles, etc.)
-│   ├── guards/              # Route guards (AuthGuard, GuestGuard)
-│   ├── interceptors/        # HTTP interceptors (auth, error handling)
-│   ├── models/              # TypeScript interfaces & models
-│   └── services/            # Application services
-│       ├── auth.service.ts
-│       ├── user.service.ts
-│       ├── task.service.ts
-│       ├── wallet.service.ts
-│       ├── store.service.ts
-│       └── toast.service.ts
-│
-├── features/                 # Feature modules (lazy-loaded)
-│   ├── auth/                # Authentication (login, register)
-│   ├── dashboard/           # Main dashboard
-│   ├── tasks/               # Task board and management
-│   ├── store/               # Reward store
-│   ├── wallet/              # Wallet and transactions
-│   ├── profile/             # User profile
-│   ├── games/               # Mini-games
-│   ├── settings/            # User settings
-│   ├── home/                # Landing page
-│   └── not-found/           # 404 page
-│
-├── layouts/                  # Layout components
-│   └── main-layout/         # Authenticated app layout
-│
-└── shared/                   # Reusable components
-    └── top-navbar/          # Navigation bar
+├── core/          # guards, interceptors, models, services, theme
+├── features/      # auth, dashboard, tasks, store, wallet, nominations,
+│                  # support, admin, profile, courses, leaderboard, games, home
+├── layouts/       # main shell (sidebar + header)
+└── shared/
+src/assets/        # images (brand mark, hero), fonts via styles
+src/styles/        # tokens, mixins, forms, auth, components
 ```
 
-## 🚀 Getting Started
+---
 
-### Prerequisites
-
-- Node.js 18+ 
-- npm 9+
-- Angular CLI 18+
-
-### Installation
+## Build
 
 ```bash
-# Clone the repository
-git clone <repository-url>
-
-# Navigate to frontend directory
-cd elite-frontend
-
-# Install dependencies
-npm install
-
-# Start development server
-ng serve
+npm run build
+# or: ng build --configuration production
 ```
 
-The application will be available at `http://localhost:4200`
+Output: `dist/elite-frontend`.
 
-### Environment Configuration
+Docker: root `docker-compose.yml` builds this app with `Dockerfile` + `nginx.conf` (proxies `/api` to the gateway).
 
-The app connects to the backend API Gateway at `http://localhost:8080` by default.
+---
 
-## 📜 Available Routes
+## License
 
-| Route | Description | Access |
-|-------|-------------|--------|
-| `/home` | Landing page | Public |
-| `/login` | User login | Guest only |
-| `/register` | User registration | Guest only |
-| `/dashboard` | Main dashboard | Authenticated |
-| `/tasks` | Task board | Authenticated |
-| `/store` | Reward store | Authenticated |
-| `/wallet` | Wallet & transactions | Authenticated |
-| `/profile` | User profile | Authenticated |
-| `/games` | Mini-games | Authenticated |
-| `/settings` | User settings | Authenticated |
-
-## 🔐 Authentication
-
-- JWT-based authentication
-- Token stored in localStorage
-- Automatic token refresh handling
-- Route guards for protected pages
-- HTTP interceptor for API authentication
-
-## 🎨 Theming
-
-The application uses a dark theme with cyan/blue accent colors. Theme variables are defined in `styles.scss`:
-
-```scss
-:root {
-  --primary: #0077b6;
-  --primary-light: #00b4d8;
-  --accent: #00d4ff;
-  --bg-dark: #050f1e;
-  --text: #f1f5f9;
-}
-```
-
-## 📦 Build
-
-```bash
-# Development build
-ng build
-
-# Production build
-ng build --configuration production
-```
-
-Build artifacts are stored in the `dist/` directory.
-
-## 🧪 Testing
-
-```bash
-# Run unit tests
-ng test
-
-# Run tests with coverage
-ng test --code-coverage
-```
-
-## 📝 Code Style
-
-- Standalone components throughout
-- Functional route guards
-- Lazy loading for all feature modules
-- RxJS for reactive state management
-- Strict TypeScript configuration
-
-## 📄 License
-
-This project is proprietary software.
+Proprietary — all rights reserved unless otherwise agreed.

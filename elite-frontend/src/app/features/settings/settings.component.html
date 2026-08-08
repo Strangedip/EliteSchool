@@ -1,52 +1,79 @@
 <div class="settings-container">
-    <div class="settings-header">
-        <h2>Settings</h2>
-        <p>Manage your account settings and preferences</p>
+  <div class="settings-header">
+    <h2>Settings</h2>
+    <p>Manage your account settings and preferences</p>
+  </div>
+
+  <div class="settings-grid">
+    <div class="settings-card">
+      <div class="card-header">
+        <i class="pi pi-user"></i>
+        <h3>Account Settings</h3>
+      </div>
+      <div class="card-content">
+        @if (currentUser) {
+          <div class="account-summary">
+            <div class="summary-row"><span class="label">Name</span><span class="value">{{ currentUser.name }}</span></div>
+            <div class="summary-row"><span class="label">Username</span><span class="value">{{ currentUser.username }}</span></div>
+            <div class="summary-row"><span class="label">Email</span><span class="value">{{ currentUser.email }}</span></div>
+            <div class="summary-row"><span class="label">Role</span><span class="value">{{ currentUser.role }}</span></div>
+          </div>
+        }
+        <a routerLink="/profile" class="settings-btn">View & Edit Profile</a>
+      </div>
     </div>
 
-    <div class="settings-grid">
-        <div class="settings-card">
-            <div class="card-header">
-                <i class="pi pi-user"></i>
-                <h3>Account Settings</h3>
-            </div>
-            <div class="card-content">
-                <p>Update your account information, password, and personal details.</p>
-                <button class="settings-btn">Manage Account</button>
-            </div>
-        </div>
-
-        <div class="settings-card">
-            <div class="card-header">
-                <i class="pi pi-bell"></i>
-                <h3>Notifications</h3>
-            </div>
-            <div class="card-content">
-                <p>Configure which notifications you receive and how they're delivered.</p>
-                <button class="settings-btn">Manage Notifications</button>
-            </div>
-        </div>
-
-        <div class="settings-card">
-            <div class="card-header">
-                <i class="pi pi-shield"></i>
-                <h3>Privacy & Security</h3>
-            </div>
-            <div class="card-content">
-                <p>Review and adjust your privacy settings and security preferences.</p>
-                <button class="settings-btn">Review Settings</button>
-            </div>
-        </div>
-
-        <div class="settings-card">
-            <div class="card-header">
-                <i class="pi pi-palette"></i>
-                <h3>Appearance</h3>
-            </div>
-            <div class="card-content">
-                <p>Customize how Elite School looks and feels on your device.</p>
-                <button class="settings-btn">Customize Appearance</button>
-            </div>
-        </div>
+    <div class="settings-card security-card">
+      <div class="card-header">
+        <i class="pi pi-shield"></i>
+        <h3>Change Password</h3>
+      </div>
+      <div class="card-content">
+        <p>Update your password regularly to keep your account secure.</p>
+        <form #passwordForm="ngForm" (ngSubmit)="changePassword()" class="password-form">
+          <div class="field">
+            <label for="currentPassword">Current Password</label>
+            <p-password id="currentPassword" [(ngModel)]="currentPassword" name="currentPassword"
+            [toggleMask]="true" [feedback]="false" required class="w-full" inputStyleClass="w-full theme-input"></p-password>
+          </div>
+          <div class="field">
+            <label for="newPassword">New Password</label>
+            <p-password id="newPassword" [(ngModel)]="newPassword" name="newPassword"
+            [toggleMask]="true" required [minlength]="8" class="w-full" inputStyleClass="w-full theme-input"></p-password>
+          </div>
+          <div class="field">
+            <label for="confirmPassword">Confirm New Password</label>
+            <p-password id="confirmPassword" [(ngModel)]="confirmPassword" name="confirmPassword"
+            [toggleMask]="true" [feedback]="false" required class="w-full" inputStyleClass="w-full theme-input"></p-password>
+            @if (passwordsMismatch) {
+              <small class="error-text">Passwords do not match</small>
+            }
+          </div>
+          <p-button type="submit" label="Update Password" icon="pi pi-lock" [disabled]="!passwordForm.valid || passwordsMismatch || changingPassword" [loading]="changingPassword"></p-button>
+        </form>
+      </div>
     </div>
+
+    <div class="settings-card">
+      <div class="card-header">
+        <i class="pi pi-palette"></i>
+        <h3>Appearance</h3>
+      </div>
+      <div class="card-content">
+        <p>Customize how EliteSchool looks and feels on your device.</p>
+        <div class="theme-switch">
+          <button type="button" class="theme-option" [class.active]="themeService.current === 'dark'" (click)="setTheme('dark')">
+            <i class="pi pi-moon"></i>
+            <span>Dark</span>
+          </button>
+          <button type="button" class="theme-option" [class.active]="themeService.current === 'light'" (click)="setTheme('light')">
+            <i class="pi pi-sun"></i>
+            <span>Light</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
+
+<p-toast position="top-right"></p-toast>

@@ -1,2 +1,21 @@
-/.idea
-/.vscode
+.idea/
+.vscode/
+.env
+.env.*
+!.env.example
+
+**/target/
+**/node_modules/
+**/dist/
+**/.angular/
+*.iml
+.DS_Store
+Thumbs.db
+
+# JVM / build noise
+hs_err_pid*.log
+replay_pid*.log
+*.log
+!**/src/**/*.log
+build-fe.log
+compose-up.log

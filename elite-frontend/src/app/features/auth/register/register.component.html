@@ -1,134 +1,122 @@
 <div class="auth-container">
-    <div class="auth-wrapper">
-        <a routerLink="/home" class="back-link">
-            <i class="pi pi-arrow-left"></i>
-            <span>Back to Home</span>
-        </a>
-        
-        <p-card styleClass="auth-card">
-            <div class="text-center mb-6">
-                <h2>Create Account</h2>
-                <p>Be an elite student today</p>
-            </div>
+  <div class="auth-wrapper">
+    <a routerLink="/home" class="back-link">
+      <i class="pi pi-arrow-left"></i>
+      <span>Back to Home</span>
+    </a>
 
-            <form #registerForm="ngForm" (ngSubmit)="register()" class="p-fluid">
-                <div class="field">
-                    <p-floatLabel variant='on'>
-                        <input pInputText id="name" name="name" type="text" [(ngModel)]="userData.name"
-                            [ngClass]="{'ng-invalid ng-dirty': name.invalid && name.touched}" required #name="ngModel" />
-                        <label for="name">Full Name</label>
-                    </p-floatLabel>
-                    <small class="p-error" *ngIf="name.invalid && name.touched">
-                        <i class="pi pi-exclamation-circle"></i> Name is required
-                    </small>
-                </div>
-
-                <div class="field">
-                    <p-floatLabel variant='on'>
-                        <input pInputText id="age" name="age" type="number" [(ngModel)]="userData.age"
-                            [ngClass]="{'ng-invalid ng-dirty': age.invalid && age.touched}" required min="12" max="100" #age="ngModel" />
-                        <label for="age">Age</label>
-                    </p-floatLabel>
-                    <small class="p-error" *ngIf="age.invalid && age.touched">
-                        <i class="pi pi-exclamation-circle"></i> Valid age is required, min. 12
-                    </small>
-                </div>
-
-                <div class="field">
-                    <p-floatLabel variant='on'>
-                        <input pInputText id="email" name="email" type="email" [(ngModel)]="userData.email"
-                            [ngClass]="{'ng-invalid ng-dirty': email.invalid && email.touched}" required email #email="ngModel" />
-                        <label for="email">Email Address</label>
-                    </p-floatLabel>
-                    <small class="p-error" *ngIf="email.errors?.['required'] && email.touched">
-                        <i class="pi pi-exclamation-circle"></i> Email is required
-                    </small>
-                    <small class="p-error" *ngIf="email.errors?.['email'] && email.touched">
-                        <i class="pi pi-exclamation-circle"></i> Invalid email format
-                    </small>
-                </div>
-
-                <div class="field">
-                    <p-floatLabel variant='on'>
-                        <input pInputText id="mobileNumber" name="mobileNumber" type="tel" [(ngModel)]="userData.mobileNumber"
-                            [ngClass]="{'ng-invalid ng-dirty': mobileNumber.invalid && mobileNumber.touched}"
-                            required pattern="^[6-9]\d{9}$" #mobileNumber="ngModel" />
-                        <label for="mobileNumber">Mobile Number</label>
-                    </p-floatLabel>
-                    <small class="p-error" *ngIf="mobileNumber.errors?.['required'] && mobileNumber.touched">
-                        <i class="pi pi-exclamation-circle"></i> Mobile number is required
-                    </small>
-                    <small class="p-error" *ngIf="mobileNumber.errors?.['pattern'] && mobileNumber.touched">
-                        <i class="pi pi-exclamation-circle"></i> Enter valid number
-                    </small>
-                </div>
-
-                <div class="field">
-                    <p-floatLabel variant='on'>
-                        <input pInputText id="username" name="username" type="text" [(ngModel)]="userData.username"
-                            [ngClass]="{'ng-invalid ng-dirty': username.invalid && username.touched}" required #username="ngModel" />
-                        <label for="username">Username</label>
-                    </p-floatLabel>
-                    <small class="p-error" *ngIf="username.invalid && username.touched">
-                        <i class="pi pi-exclamation-circle"></i> Username is required
-                    </small>
-                </div>
-
-                <div class="field">
-                    <p-floatLabel variant='on'>
-                        <p-password id="password" name="password" [(ngModel)]="userData.password"
-                            [feedback]="true" [toggleMask]="true"
-                            [ngClass]="{'ng-invalid ng-dirty': password.invalid && password.touched}"
-                            required #password="ngModel">
-                        </p-password>
-                        <label for="password">Password</label>
-                    </p-floatLabel>
-                    <small class="p-error" *ngIf="password.invalid && password.touched">
-                        <i class="pi pi-exclamation-circle"></i> Password is required
-                    </small>
-                </div>
-
-                <div class="field-row">
-                    <div class="field-col">
-                        <p-floatLabel variant='on'>
-                            <p-select inputId="gender" [options]="genders" [(ngModel)]="userData.gender" name="gender"
-                                [required]="true" #gender="ngModel" [ngClass]="{'ng-invalid ng-dirty': gender.invalid && gender.touched}"
-                                appendTo="body" optionLabel="label" optionValue="value">
-                            </p-select>
-                            <label for="gender">Gender</label>
-                        </p-floatLabel>
-                        <small class="p-error" *ngIf="gender.invalid && gender.touched">
-                            <i class="pi pi-exclamation-circle"></i> Required
-                        </small>
-                    </div>
-
-                    <div class="field-col">
-                        <p-floatLabel variant='on'>
-                            <p-select inputId="role" [options]="roles" [(ngModel)]="userData.role" name="role"
-                                [required]="true" #role="ngModel" [ngClass]="{'ng-invalid ng-dirty': role.invalid && role.touched}"
-                                appendTo="body" optionLabel="label" optionValue="value">
-                            </p-select>
-                            <label for="role">Role</label>
-                        </p-floatLabel>
-                        <small class="p-error" *ngIf="role.invalid && role.touched">
-                            <i class="pi pi-exclamation-circle"></i> Required
-                        </small>
-                    </div>
-                </div>
-
-                <div class="button-container">
-                    <button pButton type="submit" label="Create Account" icon="pi pi-user-plus" iconPos="left"
-                        [loading]="loading" [disabled]="registerForm.invalid || loading" class="submit-button">
-                    </button>
-                    
-                    <div class="sign-in-link">
-                        <span>Already have an account?</span>
-                        <a routerLink="/login">Sign in</a>
-                    </div>
-                </div>
-            </form>
-        </p-card>
+    <div class="auth-brand">
+      <img src="assets/images/brand-mark.svg" width="48" height="48" alt="EliteSchool" />
+      <span class="auth-wordmark">EliteSchool</span>
+      <p class="auth-tag">Join as a student. Build a verified record of contribution.</p>
     </div>
-    <p-toast position="top-right"></p-toast>
-</div>
 
+    <p-card class="auth-card">
+      <div class="auth-card-intro">
+        <h2>Create student account</h2>
+        <p>Public signup is for students only</p>
+      </div>
+
+      <form #registerForm="ngForm" (ngSubmit)="register()" class="auth-form p-fluid">
+        <div class="field-row">
+          <div class="field">
+            <label class="field-label" for="name">Full Name</label>
+            <input pInputText id="name" name="name" type="text" [(ngModel)]="userData.name"
+              [ngClass]="{'ng-invalid ng-dirty': name.invalid && name.touched}" required #name="ngModel" />
+            @if (name.invalid && name.touched) {
+              <small class="p-error"><i class="pi pi-exclamation-circle"></i> Name is required</small>
+            }
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="age">Age</label>
+            <input pInputText id="age" name="age" type="number" [(ngModel)]="userData.age"
+              [ngClass]="{'ng-invalid ng-dirty': age.invalid && age.touched}" required min="12" max="100" #age="ngModel" />
+            @if (age.invalid && age.touched) {
+              <small class="p-error"><i class="pi pi-exclamation-circle"></i> Valid age is required (min. 12)</small>
+            }
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label class="field-label" for="email">Email Address</label>
+            <input pInputText id="email" name="email" type="email" [(ngModel)]="userData.email"
+              [ngClass]="{'ng-invalid ng-dirty': email.invalid && email.touched}" required email #email="ngModel" />
+            @if (email.errors?.['required'] && email.touched) {
+              <small class="p-error"><i class="pi pi-exclamation-circle"></i> Email is required</small>
+            }
+            @if (email.errors?.['email'] && email.touched) {
+              <small class="p-error"><i class="pi pi-exclamation-circle"></i> Invalid email format</small>
+            }
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="mobileNumber">Mobile Number</label>
+            <input pInputText id="mobileNumber" name="mobileNumber" type="tel" [(ngModel)]="userData.mobileNumber"
+              [ngClass]="{'ng-invalid ng-dirty': mobileNumber.invalid && mobileNumber.touched}"
+              required pattern="^[6-9]\d{9}$" #mobileNumber="ngModel" placeholder="9876543210" />
+            @if (mobileNumber.errors?.['required'] && mobileNumber.touched) {
+              <small class="p-error"><i class="pi pi-exclamation-circle"></i> Mobile number is required</small>
+            }
+            @if (mobileNumber.errors?.['pattern'] && mobileNumber.touched) {
+              <small class="p-error"><i class="pi pi-exclamation-circle"></i> Enter a valid 10-digit Indian mobile</small>
+            }
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="username">Username</label>
+          <input pInputText id="username" name="username" type="text" [(ngModel)]="userData.username"
+            [ngClass]="{'ng-invalid ng-dirty': username.invalid && username.touched}"
+            required pattern="^[a-zA-Z0-9_]{3,30}$" #username="ngModel" autocomplete="username" />
+          @if (username.errors?.['required'] && username.touched) {
+            <small class="p-error"><i class="pi pi-exclamation-circle"></i> Username is required</small>
+          }
+          @if (username.errors?.['pattern'] && username.touched) {
+            <small class="p-error"><i class="pi pi-exclamation-circle"></i> 3–30 characters: letters, numbers, underscore</small>
+          }
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="password">Password</label>
+          <p-password id="password" name="password" [(ngModel)]="userData.password"
+            [feedback]="true" [toggleMask]="true" styleClass="w-full" inputStyleClass="w-full"
+            [ngClass]="{'ng-invalid ng-dirty': password.invalid && password.touched}"
+            required [minlength]="8" #password="ngModel">
+          </p-password>
+          @if (password.errors?.['required'] && password.touched) {
+            <small class="p-error"><i class="pi pi-exclamation-circle"></i> Password is required</small>
+          }
+          @if (password.errors?.['minlength'] && password.touched) {
+            <small class="p-error"><i class="pi pi-exclamation-circle"></i> Password must be at least 8 characters</small>
+          }
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="gender">Gender</label>
+          <p-select inputId="gender" [options]="genders" [(ngModel)]="userData.gender" name="gender"
+            placeholder="Select gender" [required]="true" #gender="ngModel"
+            [ngClass]="{'ng-invalid ng-dirty': gender.invalid && gender.touched}"
+            appendTo="body" optionLabel="label" optionValue="value" styleClass="w-full">
+          </p-select>
+          @if (gender.invalid && gender.touched) {
+            <small class="p-error"><i class="pi pi-exclamation-circle"></i> Gender is required</small>
+          }
+        </div>
+
+        <p class="auth-trust">Your school will verify your student account after signup.</p>
+
+        <div class="button-container">
+          <p-button type="submit" label="Create Account" icon="pi pi-user-plus" iconPos="left"
+            [loading]="loading" [disabled]="registerForm.invalid || loading" styleClass="submit-button"></p-button>
+          <div class="sign-in-link">
+            <span>Already have an account?</span>
+            <a routerLink="/login">Sign in</a>
+          </div>
+        </div>
+      </form>
+    </p-card>
+  </div>
+  <p-toast position="top-right"></p-toast>
+</div>

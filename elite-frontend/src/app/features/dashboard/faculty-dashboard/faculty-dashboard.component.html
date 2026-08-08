@@ -1,0 +1,95 @@
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <div>
+      <h1 class="dashboard-title">Welcome back, {{ currentUserName }}</h1>
+      <p class="dashboard-subtitle">Set contribution tasks and verify student work so Elite Points are earned fairly</p>
+    </div>
+    <span class="role-badge"><i class="pi pi-graduation-cap"></i> Faculty</span>
+  </div>
+
+  @if (loading) {
+    <div class="loading-state">
+      <i class="pi pi-spin pi-spinner"></i>
+      <span>Loading your teaching data...</span>
+    </div>
+  }
+
+  @if (!loading) {
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-icon icon-warning"><i class="pi pi-hourglass"></i></div>
+        <div class="stat-body">
+          <div class="stat-value">{{ pendingCount }}</div>
+          <div class="stat-label">Pending Reviews</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon icon-success"><i class="pi pi-list-check"></i></div>
+        <div class="stat-body">
+          <div class="stat-value">{{ myOpenTaskCount }}</div>
+          <div class="stat-label">My Open Tasks</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"><i class="pi pi-book"></i></div>
+        <div class="stat-body">
+          <div class="stat-value">{{ activeCourseCount }}</div>
+          <div class="stat-label">Active Courses</div>
+        </div>
+      </div>
+    </div>
+    <div class="dashboard-columns">
+      <div class="panel-card">
+        <div class="panel-header">
+          <h2>Submissions Awaiting Review</h2>
+          <a routerLink="/tasks" class="view-all">Review Now</a>
+        </div>
+        @for (s of pendingSubmissions; track s) {
+          <div class="list-row">
+            <div class="list-icon"><i class="pi pi-file-edit"></i></div>
+            <div class="list-content">
+              <h4>{{ s.taskTitle || 'Task submission' }}</h4>
+              <p>{{ s.rewardPoints || 0 }} pts · Submitted {{ s.submittedAt | date:'medium' }}</p>
+            </div>
+            <div class="list-meta">Pending</div>
+          </div>
+        }
+        @if (!pendingSubmissions.length) {
+          <div class="empty-state">
+            <i class="pi pi-check-circle"></i>
+            <p>All caught up — no pending submissions</p>
+          </div>
+        }
+      </div>
+      <div class="panel-card">
+        <div class="panel-header">
+          <h2>Quick Actions</h2>
+        </div>
+        <div class="quick-links">
+          <a routerLink="/tasks" class="quick-link"><i class="pi pi-check-square"></i> Tasks</a>
+          <a routerLink="/nominations" class="quick-link"><i class="pi pi-star"></i> Nominations</a>
+          <a routerLink="/courses" class="quick-link"><i class="pi pi-book"></i> Courses</a>
+          <a routerLink="/leaderboard" class="quick-link"><i class="pi pi-trophy"></i> Leaderboard</a>
+        </div>
+        <div class="panel-header panel-header-spaced">
+          <h2>My Open Tasks</h2>
+        </div>
+        @for (t of myOpenTasks; track t) {
+          <div class="list-row">
+            <div class="list-icon"><i class="pi pi-check-square"></i></div>
+            <div class="list-content">
+              <h4>{{ t.title }}</h4>
+              <p>{{ t.rewardPoints }} pts</p>
+            </div>
+          </div>
+        }
+        @if (!myOpenTasks.length) {
+          <div class="empty-state">
+            <i class="pi pi-inbox"></i>
+            <p>You have no open tasks</p>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>

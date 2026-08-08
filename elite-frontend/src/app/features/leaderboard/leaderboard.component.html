@@ -1,0 +1,58 @@
+<div class="leaderboard-container page-shell">
+  <header class="page-header leaderboard-header">
+    <div class="page-header-title">
+      <i class="pi pi-trophy" aria-hidden="true"></i>
+      <div class="page-header-copy">
+        <h1>Leaderboard</h1>
+        <p class="page-subtitle">Students ranked by Elite Points from verified contribution</p>
+      </div>
+    </div>
+  </header>
+
+  @if (loading) {
+    <div class="loading-state">
+      <i class="pi pi-spin pi-spinner"></i>
+      <span>Loading leaderboard...</span>
+    </div>
+  }
+
+  @if (!loading && entries.length === 0) {
+    <div class="elite-empty">
+      <div class="elite-empty-icon"><i class="pi pi-trophy"></i></div>
+      <h3>No rankings yet</h3>
+      <p>Complete verified tasks to earn Elite Points and rise on the board.</p>
+    </div>
+  }
+
+  @if (!loading && entries.length > 0) {
+    <div class="leaderboard-list">
+      @for (entry of entries; track entry) {
+        <div class="leaderboard-row"
+          [class.current-user]="entry.studentId === currentUserId"
+          [class.top-three]="entry.rank <= 3">
+          <div class="rank" [ngClass]="getMedalClass(entry.rank)">
+            @if (entry.rank <= 3) {
+              <i class="pi pi-trophy"></i>
+            }
+            @if (entry.rank > 3) {
+              <span>{{ entry.rank }}</span>
+            }
+          </div>
+          <div class="user-info">
+            <span class="user-name">{{ entry.name }}</span>
+            @if (entry.role) {
+              <p-tag [value]="entry.role" severity="info" class="role-tag"></p-tag>
+            }
+            @if (entry.studentId === currentUserId) {
+              <span class="you-badge">You</span>
+            }
+          </div>
+          <div class="points">
+            <i class="pi pi-star-fill elite-star"></i>
+            <span>{{ entry.balance }}</span>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

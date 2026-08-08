@@ -1,0 +1,49 @@
+<div class="brain-game">
+  <div class="brain-top">
+    <button type="button" class="back-btn" (click)="backToGames()" aria-label="Back to games">
+      <i class="pi pi-arrow-left"></i>
+    </button>
+    <div class="titles">
+      <h1>Logic Patterns</h1>
+      <p>Infer the rule, then fill the missing cell. Builds fluid reasoning under pressure.</p>
+    </div>
+  </div>
+
+  <div class="brain-stats">
+    <div class="stat"><span class="label">Score</span><span class="value">{{ score }}</span></div>
+    <div class="stat"><span class="label">Streak</span><span class="value">{{ streak }}</span></div>
+    <div class="stat"><span class="label">Round</span><span class="value">{{ round }}</span></div>
+  </div>
+
+  <div class="brain-panel">
+    <p class="brain-status">{{ feedback }}</p>
+
+    @if (current) {
+      <div class="pattern-grid">
+        @for (cell of current.cells; track $index) {
+          <div class="pattern-cell" [class.empty]="cell === null">
+            {{ cell === null ? '?' : cell }}
+          </div>
+        }
+      </div>
+
+      <div class="option-row">
+        @for (opt of current.options; track opt) {
+          <button
+            type="button"
+            class="option-btn"
+            [disabled]="locked"
+            (click)="choose(opt)">
+            {{ opt }}
+          </button>
+        }
+      </div>
+    }
+
+    <div class="brain-actions">
+      @if (locked) {
+        <button type="button" class="brain-btn" (click)="nextRound()">Next pattern</button>
+      }
+    </div>
+  </div>
+</div>

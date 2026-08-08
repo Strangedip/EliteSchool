@@ -4,76 +4,105 @@ server:
 spring:
   application:
     name: api-gateway
+  config:
+    import: "optional:consul:${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"
   cloud:
-    gateway:
+    consul:
+      host: ${CONSUL_HOST:localhost}
+      port: ${CONSUL_PORT:8500}
+      config:
+        fail-fast: false
+        format: yaml
       discovery:
-        locator:
-          enabled: true
-          lower-case-service-id: true
-      routes:
-        - id: auth-service-auth
-          uri: lb://auth-service
-          predicates:
-            - Path=/api/auth/**
-          filters:
+        hostname: ${SERVICE_HOSTNAME:localhost}
+        prefer-ip-address: false
+    gateway:
+      server:
+        webflux:
+          discovery:
+            locator:
+              enabled: true
+              lower-case-service-id: true
+          routes:
+            - id: auth-service-auth
+              uri: lb://auth-service
+              predicates:
+                - Path=/api/auth/**
+              filters:
+                - PreserveHostHeader
+
+            - id: auth-service-user
+              uri: lb://auth-service
+              predicates:
+                - Path=/api/user/**
+              filters:
+                - PreserveHostHeader
+
+            - id: auth-service-courses
+              uri: lb://auth-service
+              predicates:
+                - Path=/api/courses/**
+              filters:
+                - PreserveHostHeader
+
+            - id: auth-service-support
+              uri: lb://auth-service
+              predicates:
+                - Path=/api/support/**
+              filters:
+                - PreserveHostHeader
+
+            - id: task-service-tasks
+              uri: lb://task-service
+              predicates:
+                - Path=/api/tasks/**
+              filters:
+                - PreserveHostHeader
+
+            - id: task-service-templates
+              uri: lb://task-service
+              predicates:
+                - Path=/api/task-templates/**
+              filters:
+                - PreserveHostHeader
+
+            - id: task-service-submissions
+              uri: lb://task-service
+              predicates:
+                - Path=/api/task-submissions/**
+              filters:
+                - PreserveHostHeader
+
+            - id: wallet-service
+              uri: lb://wallet-service
+              predicates:
+                - Path=/api/wallet/**
+              filters:
+                - PreserveHostHeader
+
+            - id: store-service
+              uri: lb://store-service
+              predicates:
+                - Path=/api/store/**
+              filters:
+                - PreserveHostHeader
+
+          default-filters:
             - PreserveHostHeader
+            - RemoveRequestHeader=Cookie
 
-        - id: auth-service-users
-          uri: lb://auth-service
-          predicates:
-            - Path=/api/users/**
-          filters:
-            - PreserveHostHeader
-
-        - id: auth-service-user
-          uri: lb://auth-service
-          predicates:
-            - Path=/api/user/**
-          filters:
-            - PreserveHostHeader
-
-        - id: task-service-tasks
-          uri: lb://task-service
-          predicates:
-            - Path=/api/tasks/**
-          filters:
-            - PreserveHostHeader
-
-        - id: task-service-submissions
-          uri: lb://task-service
-          predicates:
-            - Path=/api/task-submissions/**
-          filters:
-            - PreserveHostHeader
-
-        - id: wallet-service
-          uri: lb://wallet-service
-          predicates:
-            - Path=/api/wallet/**
-          filters:
-            - PreserveHostHeader
-
-        - id: store-service
-          uri: lb://store-service
-          predicates:
-            - Path=/api/store/**
-          filters:
-            - PreserveHostHeader
-
-      default-filters:
-        - PreserveHostHeader
-        - RemoveRequestHeader=Cookie
-
-# JWT Configuration (for token validation in gateway)
+# JWT Configuration (for token validation in gateway) — overridable via Consul KV
 jwt:
-  secret: wJjY8fXo+G6Vkhd4yLh3JOp6tH8l29PY5zR0DboYdxM=
+  secret: ${JWT_SECRET:wJjY8fXo+G6Vkhd4yLh3JOp6tH8l29PY5zR0DboYdxM=}
   expiration: 3600000
   cookie-name: AUTH_TOKEN
 
-# Eureka Client Configuration
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
-  instance:
-    prefer-ip-address: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      probes:
+        enabled: true

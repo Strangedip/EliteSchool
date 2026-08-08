@@ -27,7 +27,7 @@ public class UserDTO {
     @Email(message = "Invalid email format")
     private String email;
     
-    @Pattern(regexp = "^\\+?[1-9]\\d{1,14}$", message = "Invalid mobile number format")
+    @Pattern(regexp = "^$|^\\+?[1-9]\\d{1,14}$", message = "Invalid mobile number format")
     private String mobileNumber;
     
     @NotBlank(message = "Username is required")
@@ -35,7 +35,7 @@ public class UserDTO {
     private String username;
     
     @NotBlank(message = "Password is required")
-    @Size(min = 6, message = "Password must be at least 8 characters long")
+    @Size(min = 8, message = "Password must be at least 8 characters long")
     private String password;
     
     private RoleType role;
@@ -46,17 +46,14 @@ public class UserDTO {
     @Builder.Default
     private boolean emailVerified = false;
     
-    // Common fields for all users
     private String address;
     private String emergencyContact;
-    // Timestamps
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     
-    // Authentication field (not for persistence)
+    // Not persisted; used only in auth responses
     private String token;
     
-    // Helper methods to check role-specific fields
     public boolean isStudent() {
         return RoleType.STUDENT.equals(role);
     }

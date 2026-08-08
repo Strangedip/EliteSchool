@@ -1,0 +1,110 @@
+:root,
+[data-theme='dark'] {
+  color-scheme: dark;
+  --primary-color: #00b4d8;
+  --primary-color-text: #ffffff;
+  --primary-dark-color: #0077b6;
+  --primary-light-color: #48cae4;
+  --accent-strong: #90e0ef;
+  --gradient-brand: linear-gradient(135deg, #023e8a 0%, #0077b6 48%, #00b4d8 100%);
+  --success-color: #2dd4bf;
+  --info-color: #00b4d8;
+  --warning-color: #fb923c;
+  --danger-color: #f87171;
+  --surface-ground: #06101c;
+  --surface-section: #0a1628;
+  --surface-card: rgba(12, 28, 48, 0.82);
+  --surface-card-strong: rgba(10, 24, 42, 0.94);
+  --surface-elevated: rgba(14, 32, 54, 0.95);
+  --surface-tint: rgba(0, 180, 216, 0.06);
+  --surface-overlay: rgba(6, 16, 28, 0.97);
+  --surface-hover: rgba(0, 180, 216, 0.09);
+  --surface-input: rgba(10, 24, 42, 0.72);
+  --surface-border: rgba(72, 202, 228, 0.18);
+  --surface-border-strong: rgba(72, 202, 228, 0.32);
+  --text-color: #f0f7fc;
+  --text-color-secondary: #9eb6c9;
+  --text-color-muted: #6b8499;
+  --highlight-bg: rgba(0, 180, 216, 0.14);
+  --highlight-text-color: #48cae4;
+  --focus-ring: 0 0 0 2px rgba(0, 180, 216, 0.28);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.22);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.28);
+  --shadow-lg: 0 24px 48px rgba(0, 0, 0, 0.4);
+  --hero-scrim: linear-gradient(105deg, rgba(6, 16, 28, 0.92) 0%, rgba(6, 16, 28, 0.72) 42%, rgba(6, 16, 28, 0.35) 100%);
+  --page-glow: radial-gradient(ellipse 80% 50% at 0% 0%, rgba(0, 119, 182, 0.18), transparent 55%);
+}
+
+[data-theme='light'] {
+  color-scheme: light;
+  --primary-color: #0369a1;
+  --primary-color-text: #ffffff;
+  --primary-dark-color: #0c4a6e;
+  --primary-light-color: #0e7490;
+  --accent-strong: #0f766e;
+  --gradient-brand: linear-gradient(135deg, #0c4a6e 0%, #0369a1 42%, #0d9488 100%);
+  --success-color: #0f766e;
+  --info-color: #0369a1;
+  --warning-color: #b45309;
+  --danger-color: #b91c1c;
+
+  /* Ink-paper light: cool slate ground, crisp cards, teal/navy atmosphere */
+  --surface-ground: #d5e2ef;
+  --surface-section: #e2ebf4;
+  --surface-card: #f3f7fb;
+  --surface-card-strong: #ffffff;
+  --surface-elevated: #ffffff;
+  --surface-tint: rgba(12, 74, 110, 0.07);
+  --surface-overlay: #ffffff;
+  --surface-hover: rgba(3, 105, 161, 0.1);
+  --surface-input: #e6eef6;
+  --surface-border: rgba(12, 74, 110, 0.14);
+  --surface-border-strong: rgba(12, 74, 110, 0.3);
+  --text-color: #0b1f33;
+  --text-color-secondary: #334e66;
+  --text-color-muted: #5a738a;
+  --highlight-bg: rgba(3, 105, 161, 0.12);
+  --highlight-text-color: #0c4a6e;
+  --focus-ring: 0 0 0 2px rgba(3, 105, 161, 0.28);
+  --shadow-sm: 0 1px 2px rgba(11, 31, 51, 0.06), 0 2px 10px rgba(12, 74, 110, 0.07);
+  --shadow-md: 0 8px 28px rgba(11, 31, 51, 0.1), 0 2px 8px rgba(12, 74, 110, 0.07);
+  --shadow-lg: 0 22px 50px rgba(11, 31, 51, 0.14);
+
+  /* Deep ink scrim — photo stays vivid on the right; type sits on atmosphere, not milky white */
+  --hero-scrim: linear-gradient(
+    105deg,
+    rgba(8, 28, 48, 0.9) 0%,
+    rgba(8, 36, 58, 0.78) 28%,
+    rgba(12, 55, 80, 0.42) 52%,
+    rgba(213, 226, 239, 0.1) 76%,
+    transparent 100%
+  );
+  --page-glow:
+    radial-gradient(ellipse 75% 50% at 100% -8%, rgba(13, 148, 136, 0.24), transparent 52%),
+    radial-gradient(ellipse 65% 48% at -8% 0%, rgba(3, 105, 161, 0.22), transparent 50%),
+    radial-gradient(ellipse 55% 40% at 45% 100%, rgba(12, 74, 110, 0.1), transparent 55%);
+  --nav-glass: color-mix(in srgb, #eaf2f9 78%, transparent);
+}
+
+
+:root {
+  --radius-sm: 0.4rem;
+  --radius-md: 0.65rem;
+  --radius-lg: 0.9rem;
+  --radius-pill: 999px;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-8: 3rem;
+  --icon-size: 1.125rem;
+  --icon-box: 2.5rem;
+  --icon-box-sm: 2.25rem;
+  --icon-box-lg: 3rem;
+  --chip-height: 2.5rem;
+  --points-star: var(--warning-color);
+  --page-max: 72rem;
+  --card-pad: 1.25rem;
+}

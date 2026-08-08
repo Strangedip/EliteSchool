@@ -1,0 +1,74 @@
+@use '../../../styles/mixins' as *;
+
+.header-actions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+td .p-button + .p-button,
+td p-button + p-button {
+  margin-left: 0.35rem;
+}
+
+.loading-state {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 2rem 0;
+  color: var(--text-color-secondary);
+}
+
+.role-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  margin-bottom: 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--surface-border);
+  background: var(--surface-hover);
+  color: var(--text-color-secondary);
+  line-height: 1.4;
+
+  i {
+    color: var(--primary-color);
+    margin-top: 0.15rem;
+  }
+}
+
+.review-summary {
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  background: var(--surface-hover);
+
+  p {
+    margin: 0.35rem 0;
+  }
+}
+
+.field {
+  margin-bottom: 1rem;
+
+  label {
+    display: block;
+    margin-bottom: 0.35rem;
+  }
+}
+
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.text-danger {
+  color: var(--danger-color);
+}
+
+.text-secondary {
+  color: var(--text-color-secondary);
+}

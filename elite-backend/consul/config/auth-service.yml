@@ -1,0 +1,21 @@
+spring:
+  mail:
+    host: ${EMAIL_HOST:smtp.gmail.com}
+    port: ${EMAIL_PORT:587}
+    username: ${EMAIL_USERNAME:your-email@gmail.com}
+    password: ${EMAIL_PASSWORD:your-app-password}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+        from:
+          name: ${EMAIL_FROM_NAME:EliteSchool Support}
+          email: ${EMAIL_FROM:${EMAIL_USERNAME:noreply@eliteschool.com}}
+app:
+  password-reset:
+    token-expiry-minutes: 30
+    frontend-url: ${FRONTEND_URL:http://localhost:4200}
+    max-requests-per-hour: 3

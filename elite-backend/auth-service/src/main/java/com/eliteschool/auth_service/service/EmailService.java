@@ -13,10 +13,6 @@ import org.thymeleaf.context.Context;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 
-/**
- * Service for sending emails (password reset, notifications, etc.)
- * Uses Thymeleaf templates for professional HTML emails
- */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -34,10 +30,6 @@ public class EmailService {
     @Value("${app.password-reset.frontend-url:http://localhost:4200}")
     private String frontendUrl;
 
-    /**
-     * Send password reset email with token link
-     * Async to avoid blocking the API response
-     */
     @Async
     public void sendPasswordResetEmail(String toEmail, String resetToken, String recipientName) {
         try {
@@ -48,10 +40,8 @@ public class EmailService {
             helper.setTo(toEmail);
             helper.setSubject("Password Reset Request - EliteSchool");
 
-            // Build reset link
             String resetLink = String.format("%s/reset-password?token=%s", frontendUrl, resetToken);
 
-            // Create email content from Thymeleaf template
             Context context = new Context();
             context.setVariable("name", recipientName);
             context.setVariable("resetToken", resetToken);
@@ -74,9 +64,6 @@ public class EmailService {
         }
     }
 
-    /**
-     * Send confirmation email after successful password reset
-     */
     @Async
     public void sendPasswordResetSuccessEmail(String toEmail, String recipientName) {
         try {
@@ -99,14 +86,10 @@ public class EmailService {
 
         } catch (Exception e) {
             log.error("Failed to send password reset success email to: {} - {}", toEmail, e.getMessage());
-            // Don't throw exception - this is just a confirmation email
-            // User already successfully reset password, no need to fail the operation
+            // Don't fail the reset if the confirmation email fails
         }
     }
 
-    /**
-     * Send welcome email to new users (can be used for user registration)
-     */
     @Async
     public void sendWelcomeEmail(String toEmail, String recipientName) {
         try {
@@ -129,8 +112,7 @@ public class EmailService {
 
         } catch (Exception e) {
             log.error("Failed to send welcome email to: {} - {}", toEmail, e.getMessage());
-            // Don't throw exception - welcome email is optional
+            // Welcome email is optional
         }
     }
 }
-

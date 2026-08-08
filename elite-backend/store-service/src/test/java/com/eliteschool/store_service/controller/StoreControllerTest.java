@@ -1,17 +1,21 @@
 package com.eliteschool.store_service.controller;
 
+import com.eliteschool.common_utils.security.GatewayHeaders;
+import com.eliteschool.store_service.client.TaskServiceClient;
 import com.eliteschool.store_service.dto.StoreItemDto;
+import com.eliteschool.store_service.model.enums.AcquisitionType;
 import com.eliteschool.store_service.service.StoreService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
 import java.util.Arrays;
 import java.util.List;
@@ -33,17 +37,24 @@ class StoreControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private JsonMapper objectMapper;
 
-    @MockBean
+    @MockitoBean
     private StoreService storeService;
+
+    @MockitoBean
+    private TaskServiceClient taskServiceClient;
 
     private StoreItemDto testItem;
     private UUID itemId;
+    private UUID studentId;
+    private UUID adminId;
 
     @BeforeEach
     void setUp() {
         itemId = UUID.randomUUID();
+        studentId = UUID.randomUUID();
+        adminId = UUID.randomUUID();
 
         testItem = new StoreItemDto();
         testItem.setId(itemId);
@@ -52,17 +63,50 @@ class StoreControllerTest {
         testItem.setPrice(100);
         testItem.setStock(10);
         testItem.setImageUrl("http://example.com/image.jpg");
+        testItem.setAcquisitionType(AcquisitionType.POINTS);
+    }
+
+    private RequestPostProcessor asAdmin() {
+        return request -> {
+            request.addHeader(GatewayHeaders.USER_ID, adminId.toString());
+            request.addHeader(GatewayHeaders.ROLE, "ADMIN");
+            request.addHeader(GatewayHeaders.USERNAME, "admin");
+            return request;
+        };
+    }
+
+    private RequestPostProcessor asManagement() {
+        return request -> {
+            request.addHeader(GatewayHeaders.USER_ID, adminId.toString());
+            request.addHeader(GatewayHeaders.ROLE, "MANAGEMENT");
+            request.addHeader(GatewayHeaders.USERNAME, "management");
+            return request;
+        };
+    }
+
+    private RequestPostProcessor asStudent() {
+        return request -> {
+            request.addHeader(GatewayHeaders.USER_ID, studentId.toString());
+            request.addHeader(GatewayHeaders.ROLE, "STUDENT");
+            request.addHeader(GatewayHeaders.USERNAME, "student");
+            return request;
+        };
+    }
+
+    private RequestPostProcessor asInternal() {
+        return request -> {
+            request.addHeader(GatewayHeaders.INTERNAL_SERVICE, "wallet-service");
+            return request;
+        };
     }
 
     @Test
     @DisplayName("Should get all items successfully")
     void shouldGetAllItemsSuccessfully() throws Exception {
-        // Arrange
         List<StoreItemDto> items = Arrays.asList(testItem);
         when(storeService.getAllItems()).thenReturn(items);
 
-        // Act & Assert
-        mockMvc.perform(get("/api/store/items"))
+        mockMvc.perform(get("/api/store/items").with(asAdmin()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data").isArray())
@@ -73,13 +117,23 @@ class StoreControllerTest {
     }
 
     @Test
+    @DisplayName("Should get student catalog with enrichment")
+    void shouldGetStudentCatalog() throws Exception {
+        when(storeService.getCatalogForStudent(studentId)).thenReturn(List.of(testItem));
+
+        mockMvc.perform(get("/api/store/items").with(asStudent()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true));
+
+        verify(storeService, times(1)).getCatalogForStudent(studentId);
+    }
+
+    @Test
     @DisplayName("Should get item by ID successfully")
     void shouldGetItemByIdSuccessfully() throws Exception {
-        // Arrange
         when(storeService.getItemById(itemId)).thenReturn(Optional.of(testItem));
 
-        // Act & Assert
-        mockMvc.perform(get("/api/store/items/{itemId}", itemId))
+        mockMvc.perform(get("/api/store/items/{itemId}", itemId).with(asStudent()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data.id").value(itemId.toString()))
@@ -91,15 +145,13 @@ class StoreControllerTest {
     @Test
     @DisplayName("Should return not found for non-existent item")
     void shouldReturnNotFoundForNonExistentItem() throws Exception {
-        // Arrange
         UUID nonExistentId = UUID.randomUUID();
         when(storeService.getItemById(nonExistentId)).thenReturn(Optional.empty());
 
-        // Act & Assert
-        mockMvc.perform(get("/api/store/items/{itemId}", nonExistentId))
+        mockMvc.perform(get("/api/store/items/{itemId}", nonExistentId).with(asAdmin()))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.errorCode").value("ITEM_NOT_FOUND"));
+                .andExpect(jsonPath("$.error.errorCode").value("ITEM_NOT_FOUND"));
 
         verify(storeService, times(1)).getItemById(nonExistentId);
     }
@@ -107,13 +159,12 @@ class StoreControllerTest {
     @Test
     @DisplayName("Should add item successfully")
     void shouldAddItemSuccessfully() throws Exception {
-        // Arrange
         when(storeService.addItem(any(StoreItemDto.class))).thenReturn(testItem);
 
-        // Act & Assert
         mockMvc.perform(post("/api/store/items")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(testItem)))
+                        .with(asAdmin())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(testItem)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("Item added"))
@@ -125,18 +176,19 @@ class StoreControllerTest {
     @Test
     @DisplayName("Should update item successfully")
     void shouldUpdateItemSuccessfully() throws Exception {
-        // Arrange
         StoreItemDto updatedItem = new StoreItemDto();
         updatedItem.setName("Updated Item");
         updatedItem.setPrice(150);
+        updatedItem.setStock(5);
+        updatedItem.setAcquisitionType(AcquisitionType.POINTS);
 
         when(storeService.updateItem(eq(itemId), any(StoreItemDto.class)))
                 .thenReturn(Optional.of(updatedItem));
 
-        // Act & Assert
         mockMvc.perform(put("/api/store/items/{itemId}", itemId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(updatedItem)))
+                        .with(asManagement())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updatedItem)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("Item updated"));
@@ -147,18 +199,17 @@ class StoreControllerTest {
     @Test
     @DisplayName("Should return not found when updating non-existent item")
     void shouldReturnNotFoundWhenUpdatingNonExistentItem() throws Exception {
-        // Arrange
         UUID nonExistentId = UUID.randomUUID();
         when(storeService.updateItem(eq(nonExistentId), any(StoreItemDto.class)))
                 .thenReturn(Optional.empty());
 
-        // Act & Assert
         mockMvc.perform(put("/api/store/items/{itemId}", nonExistentId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(testItem)))
+                        .with(asAdmin())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(testItem)))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.errorCode").value("ITEM_NOT_FOUND"));
+                .andExpect(jsonPath("$.error.errorCode").value("ITEM_NOT_FOUND"));
 
         verify(storeService, times(1)).updateItem(eq(nonExistentId), any(StoreItemDto.class));
     }
@@ -166,11 +217,9 @@ class StoreControllerTest {
     @Test
     @DisplayName("Should delete item successfully")
     void shouldDeleteItemSuccessfully() throws Exception {
-        // Arrange
         doNothing().when(storeService).deleteItem(itemId);
 
-        // Act & Assert
-        mockMvc.perform(delete("/api/store/items/{itemId}", itemId))
+        mockMvc.perform(delete("/api/store/items/{itemId}", itemId).with(asAdmin()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("Item deleted"));
@@ -181,41 +230,39 @@ class StoreControllerTest {
     @Test
     @DisplayName("Should purchase item successfully")
     void shouldPurchaseItemSuccessfully() throws Exception {
-        // Arrange
-        when(storeService.decrementStock(itemId)).thenReturn(Optional.of(testItem));
+        when(storeService.purchaseItem(eq(itemId), eq(studentId), any())).thenReturn(Optional.of(testItem));
 
-        // Act & Assert
-        mockMvc.perform(post("/api/store/purchase/{itemId}", itemId))
+        mockMvc.perform(post("/api/store/purchase/{itemId}", itemId)
+                        .with(asInternal())
+                        .param("studentId", studentId.toString()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("Purchase successful"));
 
-        verify(storeService, times(1)).decrementStock(itemId);
+        verify(storeService, times(1)).purchaseItem(eq(itemId), eq(studentId), any());
     }
 
     @Test
     @DisplayName("Should fail purchase when item out of stock")
     void shouldFailPurchaseWhenItemOutOfStock() throws Exception {
-        // Arrange
-        when(storeService.decrementStock(itemId)).thenReturn(Optional.empty());
+        when(storeService.purchaseItem(eq(itemId), eq(studentId), any())).thenReturn(Optional.empty());
 
-        // Act & Assert
-        mockMvc.perform(post("/api/store/purchase/{itemId}", itemId))
+        mockMvc.perform(post("/api/store/purchase/{itemId}", itemId)
+                        .with(asInternal())
+                        .param("studentId", studentId.toString()))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.errorCode").value("PURCHASE_FAILED"));
+                .andExpect(jsonPath("$.error.errorCode").value("PURCHASE_FAILED"));
 
-        verify(storeService, times(1)).decrementStock(itemId);
+        verify(storeService, times(1)).purchaseItem(eq(itemId), eq(studentId), any());
     }
 
     @Test
     @DisplayName("Should get item price successfully")
     void shouldGetItemPriceSuccessfully() throws Exception {
-        // Arrange
         when(storeService.getItemById(itemId)).thenReturn(Optional.of(testItem));
 
-        // Act & Assert
-        mockMvc.perform(get("/api/store/items/{itemId}/price", itemId))
+        mockMvc.perform(get("/api/store/items/{itemId}/price", itemId).with(asStudent()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data").value(100));
@@ -226,15 +273,12 @@ class StoreControllerTest {
     @Test
     @DisplayName("Should fail to add item with invalid data")
     void shouldFailToAddItemWithInvalidData() throws Exception {
-        // Arrange
         StoreItemDto invalidItem = new StoreItemDto();
-        // Missing required fields
 
-        // Act & Assert
         mockMvc.perform(post("/api/store/items")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(invalidItem)))
+                        .with(asAdmin())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidItem)))
                 .andExpect(status().isBadRequest());
     }
 }
-

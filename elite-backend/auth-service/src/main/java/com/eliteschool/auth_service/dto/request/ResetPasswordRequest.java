@@ -7,9 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * Request DTO for reset password endpoint
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -26,4 +23,3 @@ public class ResetPasswordRequest {
     )
     private String newPassword;
 }
-

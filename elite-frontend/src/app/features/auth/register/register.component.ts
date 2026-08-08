@@ -1,14 +1,13 @@
-import { Component, OnInit, ChangeDetectorRef, inject, NO_ERRORS_SCHEMA } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, inject, ChangeDetectionStrategy } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { SelectModule } from 'primeng/select';
+import { Select } from 'primeng/select';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { PasswordModule } from 'primeng/password';
 import { CardModule } from 'primeng/card';
 import { RippleModule } from 'primeng/ripple';
-import { FloatLabelModule } from 'primeng/floatlabel';
 import { ToastModule } from 'primeng/toast';
 import { SelectItem, MessageService } from 'primeng/api';
 import { finalize } from 'rxjs';
@@ -16,19 +15,18 @@ import { AuthService, UserRegistrationData } from '../../../core/services/auth.s
 import { CommonResponseDto } from '../../../core/models/common-response.model';
 
 export enum Gender { MALE = 'MALE', FEMALE = 'FEMALE', OTHER = 'OTHER' }
-export enum Role { ADMIN = 'ADMIN', FACULTY = 'FACULTY', STUDENT = 'STUDENT', GUEST = 'GUEST' }
+export enum Role { STUDENT = 'STUDENT' }
 
 @Component({
-  selector: 'app-register',
-  templateUrl: './register.component.html',
-  styleUrls: ['./register.component.scss'],
-  standalone: true,
-  schemas: [NO_ERRORS_SCHEMA],
-  imports: [
-    CommonModule, FormsModule, SelectModule, InputTextModule, ButtonModule,
-    PasswordModule, CardModule, RippleModule, FloatLabelModule, ToastModule, RouterModule
-  ],
-  providers: [MessageService]
+    selector: 'app-register',
+    templateUrl: './register.component.html',
+    styleUrls: ['./register.component.scss'],
+    imports: [
+        CommonModule, FormsModule, Select, InputTextModule, ButtonModule,
+        PasswordModule, CardModule, RippleModule, ToastModule, RouterModule
+    ],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    providers: [MessageService]
 })
 export class RegisterComponent implements OnInit {
   private authService = inject(AuthService);
@@ -39,7 +37,7 @@ export class RegisterComponent implements OnInit {
   loading = false;
   userData: UserRegistrationData = {
     name: '', age: null as any, gender: '', email: '',
-    mobileNumber: '', username: '', password: '', role: ''
+    mobileNumber: '', username: '', password: '', role: Role.STUDENT
   };
 
   genders: SelectItem[] = [
@@ -48,14 +46,8 @@ export class RegisterComponent implements OnInit {
     { label: 'Other', value: Gender.OTHER }
   ];
 
-  roles: SelectItem[] = [
-    { label: 'Student', value: Role.STUDENT },
-    { label: 'Faculty', value: Role.FACULTY },
-    { label: 'Guest', value: Role.GUEST }
-  ];
-
   ngOnInit(): void {
-    this.userData.role = this.roles[0].value;
+    this.userData.role = Role.STUDENT;
     this.userData.gender = this.genders[0].value;
     this.cdr.detectChanges();
   }
@@ -67,8 +59,9 @@ export class RegisterComponent implements OnInit {
     }
 
     this.loading = true;
+    this.userData.role = Role.STUDENT;
     this.messageService.add({ severity: 'info', summary: 'Registering', detail: 'Creating your account...', life: 2000 });
-    
+
     this.authService.signup(this.userData)
       .pipe(finalize(() => this.loading = false))
       .subscribe({
@@ -83,8 +76,8 @@ export class RegisterComponent implements OnInit {
               error: () => this.router.navigate(['/login'])
             });
           } else {
-            const errorMessage = response.error 
-              ? `${response.error.errorCode}: ${response.error.errorDescription}` 
+            const errorMessage = response.error
+              ? `${response.error.errorCode}: ${response.error.errorDescription}`
               : (response.message || 'Registration failed');
             this.messageService.add({ severity: 'error', summary: 'Failed', detail: errorMessage, life: 5000 });
           }
@@ -103,7 +96,6 @@ export class RegisterComponent implements OnInit {
 
   private isFormValid(): boolean {
     return !!(this.userData.name && this.userData.email && this.userData.mobileNumber &&
-              this.userData.username && this.userData.password && this.userData.role && this.userData.gender);
+              this.userData.username && this.userData.password && this.userData.gender);
   }
 }
-

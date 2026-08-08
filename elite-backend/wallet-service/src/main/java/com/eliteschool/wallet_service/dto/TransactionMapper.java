@@ -4,16 +4,8 @@ import com.eliteschool.wallet_service.model.Transaction;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Mapper class for converting between Transaction and TransactionDto
- */
 public class TransactionMapper {
 
-    /**
-     * Convert a Transaction entity to a TransactionDto
-     * @param transaction The transaction entity
-     * @return The transaction DTO
-     */
     public static TransactionDto toDto(Transaction transaction) {
         if (transaction == null) {
             return null;
@@ -29,11 +21,6 @@ public class TransactionMapper {
                 .build();
     }
     
-    /**
-     * Convert a TransactionDto to a Transaction entity
-     * @param dto The transaction DTO
-     * @return The transaction entity
-     */
     public static Transaction toEntity(TransactionDto dto) {
         if (dto == null) {
             return null;
@@ -48,11 +35,6 @@ public class TransactionMapper {
                 .build();
     }
     
-    /**
-     * Convert a list of Transaction entities to a list of TransactionDtos
-     * @param transactions The list of transaction entities
-     * @return The list of transaction DTOs
-     */
     public static List<TransactionDto> toDtoList(List<Transaction> transactions) {
         if (transactions == null) {
             return List.of();
@@ -62,4 +44,4 @@ public class TransactionMapper {
                 .map(TransactionMapper::toDto)
                 .collect(Collectors.toList());
     }
-} 
+}

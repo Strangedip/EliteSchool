@@ -3,9 +3,6 @@ package com.eliteschool.auth_service.dto.request;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
-/**
- * DTO for user login requests.
- */
 @Data
 public class LoginRequestDTO {
     
@@ -15,4 +12,3 @@ public class LoginRequestDTO {
     @NotBlank(message = "Password is required")
     private String password;
 }
-

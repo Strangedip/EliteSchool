@@ -1,82 +1,45 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { WalletService } from '../../core/services/wallet.service';
-import { AuthService } from '../../core/services/auth.service';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+
 import { UserService } from '../../core/services/user.service';
-import { ToastService } from '../../core/services/toast.service';
-import { finalize } from 'rxjs';
-import { Transaction } from '../../core/models/wallet.model';
+import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
+import { FacultyDashboardComponent } from './faculty-dashboard/faculty-dashboard.component';
+import { StudentDashboardComponent } from './student-dashboard/student-dashboard.component';
 
 @Component({
-  selector: 'app-dashboard',
-  templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.scss'],
-  standalone: true,
-  imports: [CommonModule]
+    selector: 'app-dashboard',
+    templateUrl: './dashboard.component.html',
+    styleUrls: ['./dashboard.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [AdminDashboardComponent, FacultyDashboardComponent, StudentDashboardComponent]
 })
 export class DashboardComponent implements OnInit {
-  rewardPoints = 0;
-  totalEarned = 0;
-  totalSpent = 0;
-  loadingRewards = false;
-  currentUserId = '';
-  
-  constructor(
-    private walletService: WalletService,
-    private authService: AuthService,
-    private userService: UserService,
-    private toastService: ToastService
-  ) {}
-  
+  role = '';
+  loaded = false;
+
+  constructor(private userService: UserService) {}
+
   ngOnInit(): void {
-    this.loadUserInfo();
-  }
-  
-  loadUserInfo(): void {
-    const user = this.userService.getCurrentUser();
-    if (user) {
-      this.currentUserId = user.eliteId || '';
-      if (this.currentUserId) {
-        this.loadWalletData();
+    this.userService.getUserProfile().subscribe({
+      next: (response) => {
+        this.role = (response.data?.role || this.userService.getCurrentUser()?.role || '').toUpperCase();
+        this.loaded = true;
+      },
+      error: () => {
+        this.role = (this.userService.getCurrentUser()?.role || '').toUpperCase();
+        this.loaded = true;
       }
-    } else {
-      this.userService.getUserProfile().subscribe({
-        next: (response) => {
-          if (response.success && response.data) {
-            this.currentUserId = response.data.eliteId || '';
-            if (this.currentUserId) {
-              this.loadWalletData();
-            }
-          }
-        },
-        error: (error) => {
-          console.error('Failed to load user profile:', error);
-          this.toastService.showError('Failed to load user profile');
-        }
-      });
-    }
-  }
-  
-  loadWalletData(): void {
-    if (!this.currentUserId) return;
-    
-    this.loadingRewards = true;
-    
-    this.walletService.getWalletBalance(this.currentUserId).subscribe({
-      next: (balance: number) => this.rewardPoints = balance,
-      error: (error: any) => console.error('Error loading wallet balance', error)
     });
-      
-    this.walletService.getTransactionHistory(this.currentUserId)
-      .pipe(finalize(() => this.loadingRewards = false))
-      .subscribe({
-        next: (transactions: Transaction[]) => this.calculateWalletTotals(transactions),
-        error: (error: any) => console.error('Error loading transaction history', error)
-      });
   }
-  
-  calculateWalletTotals(transactions: Transaction[]): void {
-    this.totalEarned = transactions.filter(t => t.transactionType === 'CREDIT').reduce((sum, t) => sum + t.points, 0);
-    this.totalSpent = transactions.filter(t => t.transactionType === 'DEBIT').reduce((sum, t) => sum + t.points, 0);
+
+  get isAdmin(): boolean {
+    return this.role === 'ADMIN' || this.role === 'MANAGEMENT';
+  }
+
+  get isFaculty(): boolean {
+    return this.role === 'FACULTY';
+  }
+
+  get isStudent(): boolean {
+    return this.role === 'STUDENT';
   }
 }

@@ -1,357 +1,165 @@
 # EliteSchool Backend
 
-A microservices-based backend for the EliteSchool gamified learning platform. Built with **Spring Boot 3** and **Spring Cloud**, this system provides APIs for user authentication, task management, reward wallets, and a store system.
+Spring Boot **4.1** / Java **25** microservices for Elite Points, tasks, school store, nominations, and support. Clients talk only to the **API Gateway**.
 
-## 🏗 Architecture
+| Related docs | |
+|--------------|--|
+| Product / demo | [USAGE_GUIDE.md](../USAGE_GUIDE.md) |
+| Root setup | [README.md](../README.md) |
+| Env sample | [.env.example](../.env.example) |
+| Frontend | [elite-frontend/README.md](../elite-frontend/README.md) |
 
-EliteSchool backend follows a **microservices architecture** with the following components:
+---
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                         CLIENT (Frontend)                        │
-└─────────────────────────────────────────────────────────────────┘
-                                │
-                                ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                      API GATEWAY (:8080)                         │
-│              JWT Validation, Routing, Load Balancing             │
-└─────────────────────────────────────────────────────────────────┘
-                                │
-        ┌───────────────────────┼───────────────────────┐
-        │                       │                       │
-        ▼                       ▼                       ▼
-┌───────────────┐    ┌───────────────┐    ┌───────────────┐
-│ AUTH SERVICE  │    │ TASK SERVICE  │    │ WALLET SERVICE│
-│    (:8081)    │    │    (:8082)    │    │    (:8083)    │
-└───────────────┘    └───────────────┘    └───────────────┘
-                                                   │
-                                                   ▼
-                                          ┌───────────────┐
-                                          │ STORE SERVICE │
-                                          │    (:8084)    │
-                                          └───────────────┘
-                                │
-                                ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    EUREKA SERVER (:8761)                         │
-│                    Service Discovery                             │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-## 📦 Microservices
-
-### Eureka Server (`eureka-server`)
-Service discovery server that enables microservices to locate each other.
-- **Port**: 8761
-- **Dashboard**: http://localhost:8761
-
-### API Gateway (`api-gateway`)
-Central entry point for all client requests.
-- **Port**: 8080
-- **Features**:
-  - JWT token validation
-  - Request routing to microservices
-  - CORS configuration
-  - Load balancing
-
-### Auth Service (`auth-service`)
-Handles user authentication and authorization.
-- **Port**: 8081
-- **Features**:
-  - User registration and login
-  - JWT token generation
-  - Password encryption (BCrypt)
-  - User profile management
-  - Role-based access (ADMIN, FACULTY, STUDENT, GUEST)
-
-### Task Service (`task-service`)
-Manages tasks and submissions.
-- **Port**: 8082
-- **Features**:
-  - Task CRUD operations
-  - Task submission by students
-  - Task verification by faculty
-  - Task types: SINGLE (one student) / MULTIPLE (many students)
-  - Status tracking: OPEN, SUBMITTED, COMPLETED, CLOSED
-
-### Wallet Service (`wallet-service`)
-Manages student reward points and transactions.
-- **Port**: 8083
-- **Features**:
-  - Wallet balance management
-  - Point credits (task completion rewards)
-  - Point debits (store purchases)
-  - Transaction history
-  - Inter-service communication with Store Service
-
-### Store Service (`store-service`)
-Manages the reward store.
-- **Port**: 8084
-- **Features**:
-  - Store item management
-  - Item purchase processing
-  - Stock management
-  - Integration with Wallet Service via Feign Client
-
-### Common Utils (`common-utils`)
-Shared library used across all services.
-- **Components**:
-  - `CommonResponseDto` - Standardized API response format
-  - `GlobalExceptionHandler` - Centralized exception handling
-  - `AppException` - Custom application exception
-  - `ResponseUtil` - Response builder utilities
-
-## 🛠 Tech Stack
-
-- **Framework**: Spring Boot 3.x
-- **Cloud**: Spring Cloud (Gateway, Eureka, OpenFeign)
-- **Security**: Spring Security + JWT
-- **Database**: H2 (In-Memory) - configurable for MySQL/PostgreSQL
-- **Build Tool**: Maven
-- **Java Version**: 17+
-
-## 📁 Service Structure
-
-Each microservice follows a consistent structure:
+## Architecture
 
 ```
-service-name/
-├── pom.xml
-└── src/main/java/com/eliteschool/service_name/
-    ├── ServiceApplication.java      # Main application class
-    ├── config/                      # Configuration classes
-    ├── controller/                  # REST controllers
-    ├── dto/                         # Data Transfer Objects
-    │   ├── request/                # Request DTOs
-    │   └── response/               # Response DTOs
-    ├── exception/                   # Custom exceptions
-    ├── mapper/                      # Entity-DTO mappers
-    ├── model/                       # JPA entities
-    ├── repository/                  # Spring Data repositories
-    └── service/                     # Business logic
+Client → API Gateway (:8080)
+           ├── Auth (:8081) — users, login, courses, support
+           ├── Task (:8082) — tasks, templates, submissions
+           ├── Wallet (:8083) — points, nominations, purchases
+           └── Store (:8084) — catalog, claims
+Consul (:8500) · PostgreSQL (:5432)
 ```
 
-## 🚀 Getting Started
+---
 
-### Prerequisites
+## Services
 
-- Java 17+
-- Maven 3.8+
+| Service | Port | Responsibility |
+|---------|------|----------------|
+| **api-gateway** | 8080 | JWT validation, routing, CORS |
+| **auth-service** | 8081 | Auth, users, courses, support; demo Admin bootstrap; SMTP for password reset |
+| **task-service** | 8082 | Tasks, templates, submissions, evidence / min-notes / rubric |
+| **wallet-service** | 8083 | Balances, credits/debits, nominations, store purchase orchestration |
+| **store-service** | 8084 | Materials / Opportunities, claim windows, stock, purchases |
+| **common-utils** | — | Shared DTOs / exceptions (`com.eliteschool`) |
+| **Consul** | 8500 | Discovery + KV (`consul/config/*.yml`) |
 
-### Quick Start (Recommended)
+Demo Admin (when no Admin exists): **`admin`** / **`Admin@123`**.
 
-Use the provided startup scripts to launch all services automatically. Scripts are **cross-platform** and work regardless of where the project is cloned.
+---
 
-**Windows:**
-```cmd
-cd elite-backend
+## Getting started
+
+### Native (recommended on 16GB hosts)
+
+1. Install **JDK 25**, **Consul** (on `PATH`), and **PostgreSQL** with DB `EliteSchool`.
+2. Optional: copy repo-root `.env.example` → `.env`.
+3. Build and run:
+
+```bat
+build-all.bat
 start-all.bat
-# or with PowerShell
-.\start-all.ps1
 ```
 
-**macOS / Linux:**
-```bash
-cd elite-backend
-chmod +x start-all.sh stop-all.sh  # First time only
-./start-all.sh
-```
+`build-all.bat` prefers JDK 25 when installed under `C:\Program Files\Java\jdk-25.0.4`.  
+`start-all.bat` starts Consul → seeds KV → auth/task/wallet/store → gateway. It does **not** start PostgreSQL.
 
-The script will:
-1. Start Eureka Server and wait for it to initialize (25 seconds)
-2. Start each microservice in sequence with proper delays
-3. Start the API Gateway last
-4. Display all service URLs when complete
-5. Create logs in `elite-backend/logs/` directory (Unix/macOS)
-
-### Stopping All Services
-
-**Windows:**
-```cmd
+```bat
 stop-all.bat
-# or with PowerShell
-.\stop-all.ps1
 ```
 
-**macOS / Linux:**
-```bash
-./stop-all.sh
-```
+From the repo root you can also use `demo-native.bat` (backend + frontend).
 
-### Manual Startup (Alternative)
+### Docker (optional)
 
-If you prefer to start services manually, run them in this order:
+From the **repo root** (not this folder):
 
 ```bash
-# 1. Start Eureka Server (Service Discovery)
-cd eureka-server
-mvn spring-boot:run
-
-# 2. Start Auth Service
-cd auth-service
-mvn spring-boot:run
-
-# 3. Start Task Service
-cd task-service
-mvn spring-boot:run
-
-# 4. Start Wallet Service
-cd wallet-service
-mvn spring-boot:run
-
-# 5. Start Store Service
-cd store-service
-mvn spring-boot:run
-
-# 6. Start API Gateway (Last)
-cd api-gateway
-mvn spring-boot:run
+cp .env.example .env
+docker compose up --build
 ```
 
-### Service URLs
+Images use **Temurin 25**. Compose Postgres is published on host **5433** to avoid clashing with a local Postgres on 5432. Cap Docker Desktop RAM (~4–6GB) on 16GB machines.
 
-| Service | Port | URL |
-|---------|------|-----|
-| Eureka Dashboard | 8761 | http://localhost:8761 |
-| API Gateway | 8080 | http://localhost:8080 |
-| Auth Service | 8081 | http://localhost:8081 |
-| Task Service | 8082 | http://localhost:8082 |
-| Wallet Service | 8083 | http://localhost:8083 |
-| Store Service | 8084 | http://localhost:8084 |
+---
 
-## 📡 API Endpoints
+## Environment
 
-All endpoints are accessed through the API Gateway at `http://localhost:8080`
+See [../.env.example](../.env.example).
 
-### Authentication
+| Variable | Purpose |
+|----------|---------|
+| `JWT_SECRET` | Must match across gateway + all services |
+| `DB_*` | PostgreSQL connection |
+| `FRONTEND_URL` | Password-reset links |
+| `CORS_ORIGINS` | Allowed browser origins (gateway) |
+| `EMAIL_*` | SMTP — optional for core demo; required for Forgot Password |
+| `CONSUL_HOST` / `CONSUL_PORT` | Native discovery (Compose sets these itself) |
+
+Consul KV stores YAML with `${…}` placeholders; **Spring resolves them at runtime** from each service’s environment.
+
+---
+
+## API (via gateway `http://localhost:8080`)
+
+### Auth / users / courses
+
 ```
-POST   /api/auth/signup          # User registration
-POST   /api/auth/login           # User login
-GET    /api/auth/validate-token  # Validate JWT token
-GET    /api/auth/profile         # Get current user profile
-POST   /api/auth/logout          # User logout
-```
-
-### Users
-```
-GET    /api/users                # Get all users (Admin)
-GET    /api/users/{id}           # Get user by ID
-PUT    /api/users/{id}           # Update user
-DELETE /api/users/{id}           # Delete user (Admin)
-```
-
-### Tasks
-```
-GET    /api/tasks/all            # Get all tasks
-GET    /api/tasks/{id}           # Get task by ID
-POST   /api/tasks/create         # Create new task (Faculty/Admin)
-PUT    /api/tasks/{id}           # Update task
-DELETE /api/tasks/{id}           # Delete task
-GET    /api/tasks/status/{status}       # Get tasks by status
-PUT    /api/tasks/{id}/complete/{userId} # Complete a task
-PUT    /api/tasks/{id}/close            # Close a task
+POST /api/auth/signup | login | logout
+GET  /api/auth/validate-token | profile
+POST /api/auth/forgot-password | reset-password | change-password
+GET  /api/user | /api/user/{id} | /api/user/students
+POST /api/user/create
+PUT  /api/user/{id} | /{id}/status | /{id}/role
+GET|POST|PUT|DELETE /api/courses
 ```
 
-### Task Submissions
-```
-POST   /api/submissions          # Submit task
-GET    /api/submissions/student/{id}    # Get student submissions
-PUT    /api/submissions/{id}/verify     # Verify submission (Faculty)
-```
+### Tasks / templates / submissions
 
-### Wallet
 ```
-GET    /api/wallet/{userId}              # Get wallet balance
-GET    /api/wallet/{userId}/transactions # Get transaction history
-POST   /api/wallet/{userId}/credit       # Credit points
-POST   /api/wallet/{userId}/debit        # Debit points
+GET|POST|PUT|DELETE /api/tasks/...
+POST /api/tasks/from-template/{id}
+PUT  /api/tasks/{id}/close
+GET|POST|PUT|DELETE /api/task-templates
+POST /api/task-submissions
+PUT  /api/task-submissions/{id}/verify
 ```
 
-### Store
+### Wallet / nominations
+
 ```
-GET    /api/store/items          # Get all store items
-GET    /api/store/items/{id}     # Get item by ID
-POST   /api/store/items          # Add new item (Admin)
-PUT    /api/store/items/{id}     # Update item (Admin)
-DELETE /api/store/items/{id}     # Delete item (Admin)
-POST   /api/store/purchase       # Purchase item
-```
-
-## 🔐 Security
-
-- **JWT Authentication**: All protected endpoints require a valid JWT token
-- **Token Header**: `Authorization: Bearer <token>`
-- **Password Encryption**: BCrypt with strength 10
-- **Role-Based Access Control**:
-  - `ADMIN` - Full system access
-  - `FACULTY` - Task management, verification
-  - `STUDENT` - Task submission, store purchases
-  - `GUEST` - Limited read access
-
-## 📊 Response Format
-
-All API responses follow a standardized format:
-
-```json
-{
-  "success": true,
-  "message": "Operation successful",
-  "data": { ... },
-  "error": null,
-  "timestamp": "2025-12-12T10:30:00Z"
-}
+GET  /api/wallet/{userId}/balance | transactions
+POST /api/wallet/{userId}/credit | debit
+POST /api/wallet/{userId}/purchase/{itemId}
+GET  /api/wallet/leaderboard
+POST|GET /api/wallet/nominations
+PUT  /api/wallet/nominations/{id}/approve   # Admin only
+PUT  /api/wallet/nominations/{id}/reject    # Admin only
 ```
 
-Error responses:
-```json
-{
-  "success": false,
-  "message": "Operation failed",
-  "data": null,
-  "error": {
-    "errorCode": "VALIDATION_ERROR",
-    "errorDescription": "Invalid input data",
-    "details": "Email format is invalid"
-  },
-  "timestamp": "2025-12-12T10:30:00Z"
-}
+### Store / support
+
+```
+GET|POST|PUT|DELETE /api/store/items
+GET  /api/store/purchases | /purchases/student/{id}
+GET|POST /api/support/tickets
+POST /api/support/tickets/{id}/messages
+PUT  /api/support/tickets/{id}/status
 ```
 
-## 🧪 Testing
+---
 
-```bash
-# Run tests for a specific service
-cd service-name
-mvn test
+## Security
 
-# Run tests with coverage
-mvn test jacoco:report
-```
+- JWT: `Authorization: Bearer <token>` (cookie `AUTH_TOKEN` also set on login; Angular uses Bearer)
+- Trusted identity headers from gateway: `e-username`, `e-user-role`, `e-user-id`
+- Roles: `ADMIN`, `MANAGEMENT`, `FACULTY`, `STUDENT`
+- Nomination approve/reject = **Admin only**
+- Public signup = **Student only**
+- SMTP failures must not break login; Forgot Password needs real `EMAIL_*`
 
-## 📝 Configuration
+---
 
-Each service has its own `application.properties` file. Key configurations:
+## Configuration notes
 
-```properties
-# Service Discovery
-eureka.client.service-url.defaultZone=http://localhost:8761/eureka
+- Per-service infra (port, DB, Consul) lives in `application.properties` / `application.yml`.
+- Shared JWT / mail / frontend URL also live under `consul/config/` and can be overridden by env.
+- Inter-service (Feign): **Wallet → Store** (purchase), **Task → Wallet** (award points).
 
-# Database (H2 default, can be changed to MySQL/PostgreSQL)
-spring.datasource.url=jdbc:h2:mem:dbname
-spring.jpa.hibernate.ddl-auto=update
+---
 
-# JWT Configuration (Auth Service)
-jwt.secret=your-secret-key
-jwt.expiration=86400000
-```
+## License
 
-## 🔄 Inter-Service Communication
-
-Services communicate using **OpenFeign** clients:
-- Store Service → Wallet Service (for purchase transactions)
-- Task Service → Wallet Service (for reward credits)
-
-## 📄 License
-
-This project is proprietary software.
-
+Proprietary — all rights reserved unless otherwise agreed.

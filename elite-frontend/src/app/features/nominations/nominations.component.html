@@ -1,0 +1,145 @@
+<div class="nominations-container">
+  <div class="nominations-header">
+    <div>
+      <h2><i class="pi pi-star mr-2"></i> Contribution nominations</h2>
+      <p class="subtitle">
+        Faculty and management nominate verified contributions.
+        Only an <strong>Admin</strong> can approve and credit Elite Points.
+        Students cannot request points here.
+      </p>
+    </div>
+    <div class="header-actions">
+      <p-select
+        [options]="statusOptions"
+        [(ngModel)]="statusFilter"
+        optionLabel="label"
+        optionValue="value"
+        (onChange)="load()"
+        placeholder="Filter"
+        styleClass="theme-dropdown">
+      </p-select>
+      <p-button type="button" icon="pi pi-plus" label="Nominate" styleClass="p-button-primary" *ngIf="canNominate()" (click)="openCreate()"></p-button>
+    </div>
+  </div>
+
+  <div class="role-banner" *ngIf="canNominate() && !canApprove()">
+    <i class="pi pi-info-circle"></i>
+    <span>You can submit nominations. Only an Admin can approve them and credit Elite Points.</span>
+  </div>
+
+  <div class="loading-state" *ngIf="loading">
+    <i class="pi pi-spin pi-spinner"></i>
+    <span>Loading nominations...</span>
+  </div>
+
+  <p-table *ngIf="!loading" [value]="nominations" [paginator]="true" [rows]="10"
+           styleClass="p-datatable-sm" [rowHover]="true">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>When</th>
+        <th>Student</th>
+        <th>Points</th>
+        <th>Reason</th>
+        <th>Status</th>
+        <th *ngIf="canApprove()">Actions</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-n>
+      <tr>
+        <td>{{ n.createdAt | date:'medium' }}</td>
+        <td>{{ studentLabel(n.studentId) }}</td>
+        <td>{{ n.awardedPoints ?? n.suggestedPoints }}</td>
+        <td>
+          <div>{{ n.reason }}</div>
+          <small class="text-secondary" *ngIf="n.evidenceNote">{{ n.evidenceNote }}</small>
+          <small class="text-secondary" *ngIf="n.reviewNotes"><br>Review: {{ n.reviewNotes }}</small>
+        </td>
+        <td><p-tag [value]="n.status || 'PENDING'" [severity]="statusSeverity(n.status)"></p-tag></td>
+        <td *ngIf="canApprove()">
+          <ng-container *ngIf="n.status === 'PENDING'">
+            <p-button type="button" label="Approve" icon="pi pi-check" styleClass="p-button-primary p-button-sm mr-1" (click)="openReview(n, 'APPROVE')"></p-button>
+            <p-button type="button" label="Reject" icon="pi pi-times" styleClass="p-button-danger p-button-sm p-button-outlined" (click)="openReview(n, 'REJECT')"></p-button>
+          </ng-container>
+          <span *ngIf="n.status !== 'PENDING'">—</span>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td [attr.colspan]="canApprove() ? 6 : 5">
+          <div class="elite-empty">
+            <div class="elite-empty-icon"><i class="pi pi-star"></i></div>
+            <p>No nominations yet. Faculty can nominate verified contributions for Admin approval.</p>
+            <p-button *ngIf="canNominate()" type="button" icon="pi pi-plus" label="Nominate" styleClass="p-button-primary" (click)="openCreate()"></p-button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<p-dialog header="Nominate contribution" [(visible)]="createVisible" [modal]="true"
+          [style]="{width: '520px'}" styleClass="custom-dialog">
+  <form (ngSubmit)="saveNomination()">
+    <div class="form-section">
+      <h4>Basics</h4>
+      <div class="field">
+        <label>Student <span class="text-danger">*</span></label>
+        <p-select [options]="students" [(ngModel)]="draft.studentId" name="studentId"
+                    optionLabel="label" optionValue="value" filter="true"
+                    placeholder="Select student" styleClass="w-full theme-dropdown" required></p-select>
+      </div>
+      <div class="field">
+        <label>Suggested Elite Points <span class="text-danger">*</span></label>
+        <p-inputnumber [(ngModel)]="draft.suggestedPoints" name="suggestedPoints"
+                       [min]="1" [showButtons]="true" required styleClass="theme-input-number"></p-inputnumber>
+      </div>
+    </div>
+    <div class="form-section">
+      <h4>Contribution</h4>
+      <div class="field">
+        <label>Contribution reason <span class="text-danger">*</span></label>
+        <textarea pInputTextarea [(ngModel)]="draft.reason" name="reason" rows="4"
+                  class="theme-textarea" required
+                  placeholder="What did the student contribute?"></textarea>
+      </div>
+      <div class="field">
+        <label>Evidence note (optional)</label>
+        <textarea pInputTextarea [(ngModel)]="draft.evidenceNote" name="evidenceNote" rows="2"
+                  class="theme-textarea" placeholder="Where can admin verify this?"></textarea>
+      </div>
+    </div>
+    <div class="dialog-footer">
+      <p-button type="button" label="Cancel" styleClass="p-button-text" (click)="createVisible = false"></p-button>
+      <p-button type="submit" label="Submit nomination" styleClass="p-button-primary" [disabled]="saving"></p-button>
+    </div>
+  </form>
+</p-dialog>
+
+<p-dialog [(visible)]="reviewVisible" [modal]="true" [style]="{width: '480px'}"
+          styleClass="custom-dialog"
+          [header]="reviewMode === 'APPROVE' ? 'Approve nomination' : 'Reject nomination'">
+  <div *ngIf="reviewTarget" class="review-summary">
+    <p><strong>Student:</strong> {{ studentLabel(reviewTarget.studentId) }}</p>
+    <p><strong>Suggested points:</strong> {{ reviewTarget.suggestedPoints }}</p>
+    <p><strong>Reason:</strong> {{ reviewTarget.reason }}</p>
+  </div>
+  <div class="field" *ngIf="reviewMode === 'APPROVE'">
+    <label>Points to credit (optional override)</label>
+    <p-inputnumber [(ngModel)]="reviewPoints" name="reviewPoints"
+                   [min]="1" [showButtons]="true" placeholder="Leave blank to use suggested"></p-inputnumber>
+  </div>
+  <div class="field">
+    <label>Review notes {{ reviewMode === 'REJECT' ? '(recommended)' : '(optional)' }}</label>
+    <textarea pInputTextarea [(ngModel)]="reviewNotes" name="reviewNotes" rows="3"
+              class="theme-textarea"
+              [placeholder]="reviewMode === 'APPROVE' ? 'Optional note for the record' : 'Why is this nomination rejected?'"></textarea>
+  </div>
+  <div class="dialog-footer">
+    <p-button type="button" label="Cancel" styleClass="p-button-text" (click)="reviewVisible = false"></p-button>
+    <p-button *ngIf="reviewMode === 'APPROVE'" type="button" label="Confirm approve" icon="pi pi-check" styleClass="p-button-primary" [disabled]="saving" (click)="confirmReview()"></p-button>
+    <p-button *ngIf="reviewMode === 'REJECT'" type="button" label="Confirm reject" icon="pi pi-times" styleClass="p-button-danger" [disabled]="saving" (click)="confirmReview()"></p-button>
+  </div>
+</p-dialog>
+
+<p-toast></p-toast>
