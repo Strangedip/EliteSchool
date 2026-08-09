@@ -16,53 +16,38 @@ import java.util.UUID;
 @Builder
 public class UserDTO {
     private UUID eliteId;
-    
+
     @NotBlank(message = "Name is required")
     private String name;
-    
+
     private Integer age;
     private Gender gender;
-    
+
     @NotBlank(message = "Email is required")
     @Email(message = "Invalid email format")
     private String email;
-    
+
     @Pattern(regexp = "^$|^\\+?[1-9]\\d{1,14}$", message = "Invalid mobile number format")
     private String mobileNumber;
-    
+
     @NotBlank(message = "Username is required")
     @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters")
     private String username;
-    
+
     @NotBlank(message = "Password is required")
     @Size(min = 8, message = "Password must be at least 8 characters long")
     private String password;
-    
+
     private RoleType role;
-    
+
     @Builder.Default
     private boolean active = true;
-    
+
     @Builder.Default
     private boolean emailVerified = false;
-    
+
     private String address;
     private String emergencyContact;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    
-    // Not persisted; used only in auth responses
-    private String token;
-    
-    public boolean isStudent() {
-        return RoleType.STUDENT.equals(role);
-    }
-    
-    public boolean isFaculty() {
-        return RoleType.FACULTY.equals(role);
-    }
-    
-    public boolean isAdmin() {
-        return RoleType.ADMIN.equals(role);
-    }
-} 
+}

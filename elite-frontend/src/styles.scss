@@ -1,8 +1,5 @@
-/* Fonts & typography utilities */
 @use 'assets/fonts';
-@use 'assets/typography';
 
-/* Design system */
 @use 'styles/tokens';
 @use 'styles/mixins' as *;
 @use 'styles/forms';
@@ -13,37 +10,52 @@
   box-sizing: border-box;
 }
 
+html {
+  height: 100%;
+  overflow-x: clip;
+  -webkit-text-size-adjust: 100%;
+}
+
 html,
 body {
   height: 100%;
+  max-width: 100%;
 }
 
 body {
-    background-color: var(--surface-ground);
-    background-image: var(--page-glow);
-    background-attachment: fixed;
-    color: var(--text-color);
-    font-family: var(--font-secondary);
-    font-size: var(--text-base);
-    line-height: var(--leading-normal);
-    margin: 0;
-    padding: 0;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    transition: background-color 0.2s ease, color 0.2s ease;
+  background-color: var(--surface-ground);
+  background-image: var(--page-glow);
+  background-attachment: fixed;
+  color: var(--text-color);
+  font-family: var(--font-secondary);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  margin: 0;
+  padding: 0;
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.main-app-container {
+  width: 100%;
+  min-height: 100%;
+  max-width: 100%;
+  overflow-x: clip;
 }
 
 .p-component {
-    font-family: var(--font-secondary);
-    font-size: var(--text-base);
+  font-family: var(--font-secondary);
+  font-size: var(--text-base);
 }
 
 h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-primary);
-    letter-spacing: var(--tracking-tight);
-    line-height: var(--leading-tight);
-    font-weight: var(--font-semibold);
-    margin-top: 0;
+  font-family: var(--font-primary);
+  letter-spacing: var(--tracking-tight);
+  line-height: var(--leading-tight);
+  font-weight: var(--font-semibold);
+  margin-top: 0;
   color: var(--text-color);
 }
 
@@ -69,68 +81,57 @@ a {
   color: var(--primary-light-color);
 }
 
-.subtitle {
-    font-family: var(--font-secondary);
-    font-weight: var(--font-regular);
-  color: var(--text-color-secondary);
-    font-size: var(--text-base);
-}
-
-.text-accent {
-    font-family: var(--font-accent);
-}
-
-.text-gradient {
-  @include gradient-text;
-}
-
 ul, ol {
   margin: 0;
   padding: 0 0 0 1.25rem;
 }
-.page-title {
-    font-family: var(--font-primary);
-    font-size: var(--text-3xl);
-    font-weight: var(--font-bold);
-    letter-spacing: var(--tracking-tight);
-  color: var(--text-color);
-    margin-bottom: 1rem;
 
-    &.gradient-text {
+.page-title {
+  font-family: var(--font-primary);
+  font-size: var(--text-3xl);
+  font-weight: var(--font-bold);
+  letter-spacing: var(--tracking-tight);
+  color: var(--text-color);
+  margin-bottom: 1rem;
+
+  &.gradient-text {
     @include gradient-text;
-    }
+  }
 }
 
 .section-title {
-    font-family: var(--font-primary);
-    font-size: var(--text-xl);
-    font-weight: var(--font-semibold);
-    letter-spacing: var(--tracking-tight);
+  font-family: var(--font-primary);
+  font-size: var(--text-xl);
+  font-weight: var(--font-semibold);
+  letter-spacing: var(--tracking-tight);
   color: var(--text-color);
-    margin-bottom: 1rem;
+  margin-bottom: 1rem;
 }
-
-.card-title {
-    font-family: var(--font-primary);
-    font-size: var(--text-lg);
-    font-weight: var(--font-semibold);
-    letter-spacing: var(--tracking-tight);
-  color: var(--text-color);
-    margin-bottom: 0.75rem;
-}
-
-.status-active { color: var(--success-color); }
-.status-pending { color: var(--info-color); }
-.status-completed { color: var(--primary-color); }
 
 @media (max-width: 768px) {
-    :root {
-        --text-4xl: 2.5rem;
-        --text-3xl: 2rem;
-        --text-2xl: 1.75rem;
-        --text-xl: 1.25rem;
-    }
+  :root {
+    --text-4xl: 2.25rem;
+    --text-3xl: 1.85rem;
+    --text-2xl: 1.5rem;
+    --text-xl: 1.2rem;
+    --space-5: 1rem;
+    --space-6: 1.25rem;
+  }
 
   .page-title { font-size: var(--text-2xl); }
   .section-title { font-size: var(--text-lg); }
+
+  body {
+    background-attachment: scroll;
+  }
+
+  h1 { font-size: var(--text-3xl); margin-bottom: 1rem; }
+  h2 { font-size: var(--text-2xl); margin-bottom: 0.85rem; }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --text-4xl: 2rem;
+    --text-3xl: 1.65rem;
+  }
 }

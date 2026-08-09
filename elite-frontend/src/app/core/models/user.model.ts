@@ -4,7 +4,6 @@ export interface User {
   email: string;
   username: string;
   role: string;
-  profilePicture?: string;
   mobileNumber?: string;
   gender?: string;
   age?: number;
@@ -16,20 +15,8 @@ export interface User {
   emailVerified?: boolean;
 }
 
-export interface UserAuth {
-  user: User;
-  token: string;
-  tokenExpiry?: string;
-}
-
 export interface LoginResponseDto {
   user: User;
   token: string;
   tokenExpiry?: string;
-}
-
-export interface UserResponseDto<T = any> {
-  success: boolean;
-  message?: string;
-  data?: T;
 }

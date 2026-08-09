@@ -1,7 +1,8 @@
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { ThemeService } from '../../core/services/theme.service';
+import { BrandMarkComponent } from '../../shared/brand-mark.component';
 
 interface DocSection {
   id: string;
@@ -18,13 +19,14 @@ interface CapabilityRow {
 
 @Component({
   selector: 'app-docs',
-  imports: [RouterModule],
+  imports: [RouterModule, BrandMarkComponent],
   templateUrl: './docs.component.html',
   styleUrls: ['./docs.component.scss'],
   changeDetection: ChangeDetectionStrategy.Default
 })
 export class DocsComponent implements OnInit, OnDestroy {
   isLoggedIn = false;
+  embedded = false;
   currentYear = new Date().getFullYear();
   private authSub?: { unsubscribe(): void };
 
@@ -125,10 +127,12 @@ export class DocsComponent implements OnInit, OnDestroy {
 
   constructor(
     private authService: AuthService,
+    private route: ActivatedRoute,
     public themeService: ThemeService
   ) {}
 
   ngOnInit(): void {
+    this.embedded = this.route.pathFromRoot.some(r => !!r.snapshot.data['embedded']);
     this.authSub = this.authService.isAuthenticated$.subscribe(auth => {
       this.isLoggedIn = auth;
     });

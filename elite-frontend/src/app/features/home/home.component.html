@@ -1,31 +1,61 @@
 <div class="home-container">
-  <nav class="home-navbar" [class.is-solid]="navSolid">
-    <div class="nav-content">
-      <a routerLink="/home" class="nav-brand">
-        <img class="brand-mark" src="assets/images/brand-mark.svg" width="40" height="40" alt="EliteSchool" />
-        <span class="brand-wordmark">EliteSchool</span>
-      </a>
-      <div class="nav-links">
-        <button
-          type="button"
-          class="theme-toggle-btn"
-          (click)="toggleTheme()"
-          [title]="themeService.isDark() ? 'Switch to light mode' : 'Switch to dark mode'">
-          <i class="pi" [class.pi-sun]="themeService.isDark()" [class.pi-moon]="!themeService.isDark()"></i>
-        </button>
-        @if (!isLoggedIn) {
-          <a routerLink="/docs" class="nav-link">Docs</a>
-          <a routerLink="/games" class="nav-link nav-link-games">Games</a>
-          <a routerLink="/login" class="nav-link">Sign In</a>
-          <a routerLink="/register" class="nav-btn">Get Started</a>
-        } @else {
-          <a routerLink="/docs" class="nav-link">Docs</a>
-          <a routerLink="/games" class="nav-link nav-link-games">Games</a>
-          <a routerLink="/dashboard" class="nav-btn">Dashboard</a>
-        }
-      </div>
-    </div>
+  <div
+    class="nav-scrim"
+    [class.is-open]="mobileNavOpen"
+    (click)="closeMobileNav()"
+    aria-hidden="true">
+  </div>
+
+  <nav
+    id="home-nav-menu"
+    class="nav-panel"
+    [class.is-open]="mobileNavOpen"
+    aria-label="Primary">
+    <ng-container *ngTemplateOutlet="navLinks"></ng-container>
   </nav>
+
+  <header class="home-header" [class.is-solid]="navSolid">
+    <a routerLink="/home" class="nav-brand" (click)="closeMobileNav()">
+      <app-brand-mark class="brand-mark" [size]="40" alt="EliteSchool" />
+      <span class="brand-wordmark">EliteSchool</span>
+    </a>
+
+    <nav class="nav-inline" aria-label="Primary">
+      <ng-container *ngTemplateOutlet="navLinks"></ng-container>
+    </nav>
+
+    <div class="nav-toolbar">
+      <button
+        type="button"
+        class="theme-toggle-btn"
+        (click)="toggleTheme()"
+        [title]="themeService.isDark() ? 'Switch to light mode' : 'Switch to dark mode'">
+        <i class="pi" [class.pi-sun]="themeService.isDark()" [class.pi-moon]="!themeService.isDark()"></i>
+      </button>
+      <button
+        type="button"
+        class="nav-burger"
+        (click)="toggleMobileNav()"
+        [attr.aria-expanded]="mobileNavOpen"
+        aria-controls="home-nav-menu"
+        aria-label="Menu">
+        <i class="pi" [class.pi-bars]="!mobileNavOpen" [class.pi-times]="mobileNavOpen"></i>
+      </button>
+    </div>
+  </header>
+
+  <ng-template #navLinks>
+    @if (!isLoggedIn) {
+      <a routerLink="/docs" class="nav-link" (click)="closeMobileNav()">Docs</a>
+      <a routerLink="/games" class="nav-link" (click)="closeMobileNav()">Games</a>
+      <a routerLink="/login" class="nav-link" (click)="closeMobileNav()">Sign In</a>
+      <a routerLink="/register" class="nav-btn" (click)="closeMobileNav()">Get Started</a>
+    } @else {
+      <a routerLink="/docs" class="nav-link" (click)="closeMobileNav()">Docs</a>
+      <a routerLink="/games" class="nav-link" (click)="closeMobileNav()">Games</a>
+      <a routerLink="/dashboard" class="nav-btn" (click)="closeMobileNav()">Dashboard</a>
+    }
+  </ng-template>
 
   <section class="hero-section">
     <div class="hero-plane" aria-hidden="true">
@@ -121,36 +151,34 @@
     </div>
   </section>
 
-  <section class="docs-teaser-section">
-    <div class="docs-teaser">
-      <p class="section-kicker">Product guide</p>
-      <h2 class="section-title">See everything EliteSchool can do</h2>
-      <p class="section-subtitle">
-        Roles, modules, trust rules, and the full achievement loop — written for schools evaluating the product.
-      </p>
-      <a routerLink="/docs" class="hero-cta hero-cta-primary cta-inline">
-        Open documentation
-        <i class="pi pi-book" aria-hidden="true"></i>
-      </a>
-    </div>
-  </section>
-
   <section class="cta-section">
     <div class="cta-content">
       @if (!isLoggedIn) {
         <h2>Ready to grow with <em>EliteSchool</em>?</h2>
-        <p>Create a student account and build a verified record of contribution.</p>
-        <a routerLink="/register" class="hero-cta hero-cta-primary cta-inline">
-          Create Student Account
-          <i class="pi pi-user-plus" aria-hidden="true"></i>
-        </a>
+        <p>Create a student account and build a verified record of contribution. Prefer to read first? Open the product guide.</p>
+        <div class="cta-actions">
+          <a routerLink="/register" class="hero-cta hero-cta-primary cta-inline">
+            Create Student Account
+            <i class="pi pi-user-plus" aria-hidden="true"></i>
+          </a>
+          <a routerLink="/docs" class="hero-cta hero-cta-secondary cta-inline cta-docs">
+            Product guide
+            <i class="pi pi-book" aria-hidden="true"></i>
+          </a>
+        </div>
       } @else {
         <h2>Continue your achievement journey</h2>
         <p>Complete tasks, get verified, and claim school rewards with Elite Points.</p>
-        <a routerLink="/tasks" class="hero-cta hero-cta-primary cta-inline">
-          View Available Tasks
-          <i class="pi pi-list-check" aria-hidden="true"></i>
-        </a>
+        <div class="cta-actions">
+          <a routerLink="/tasks" class="hero-cta hero-cta-primary cta-inline">
+            View Available Tasks
+            <i class="pi pi-list-check" aria-hidden="true"></i>
+          </a>
+          <a routerLink="/docs" class="hero-cta hero-cta-secondary cta-inline cta-docs">
+            Product guide
+            <i class="pi pi-book" aria-hidden="true"></i>
+          </a>
+        </div>
       }
     </div>
   </section>
@@ -158,7 +186,7 @@
   <footer class="home-footer">
     <div class="footer-content">
       <div class="footer-brand">
-        <img class="brand-mark" src="assets/images/brand-mark.svg" width="36" height="36" alt="" />
+        <app-brand-mark class="brand-mark" [size]="36" />
         <span class="brand-wordmark">EliteSchool</span>
       </div>
       <p class="footer-tagline">Achievement management for schools — rewards that keep every student moving forward</p>

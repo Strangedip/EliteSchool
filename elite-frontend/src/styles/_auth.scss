@@ -1,15 +1,35 @@
 .auth-container {
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--space-5);
+  padding: max(var(--space-5), env(safe-area-inset-top)) var(--space-4) max(var(--space-5), env(safe-area-inset-bottom));
   position: relative;
-  overflow: hidden;
+  overflow-x: clip;
+  overflow-y: auto;
   background:
     radial-gradient(ellipse 80% 60% at 10% 0%, rgba(0, 119, 182, 0.18), transparent 55%),
     radial-gradient(ellipse 70% 50% at 100% 100%, rgba(0, 180, 216, 0.12), transparent 50%),
     var(--surface-ground);
+}
+
+.auth-theme-toggle {
+  position: absolute;
+  top: max(1rem, env(safe-area-inset-top));
+  right: max(1rem, env(safe-area-inset-right));
+  z-index: 2;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--surface-border-strong);
+  background: var(--surface-card-strong);
+  color: var(--primary-color);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 [data-theme='light'] .auth-container {
@@ -56,10 +76,10 @@
   margin-bottom: 1.35rem;
   text-align: center;
 
-  img {
+  app-brand-mark {
     width: 48px;
     height: 48px;
-    border-radius: 14px;
+    border-radius: 13px;
     box-shadow: var(--shadow-md);
   }
 
@@ -181,17 +201,19 @@
     width: 100%;
     max-width: 320px;
     height: 3.25rem;
-    background: var(--gradient-brand) !important;
-    border: none !important;
+    background: var(--btn-primary-bg) !important;
+    color: var(--btn-primary-color) !important;
+    border: 1px solid color-mix(in srgb, var(--primary-dark-color) 35%, transparent) !important;
     border-radius: var(--radius-md) !important;
     font-family: var(--font-secondary) !important;
     font-weight: var(--font-semibold) !important;
     text-transform: none !important;
     letter-spacing: var(--tracking-wide) !important;
+    box-shadow: var(--btn-primary-shadow) !important;
 
     &:hover:not(:disabled) {
       filter: brightness(1.05) !important;
-      box-shadow: var(--shadow-md) !important;
+      box-shadow: var(--btn-primary-shadow-hover) !important;
     }
   }
 
@@ -425,8 +447,17 @@
 }
 
 @media (max-width: 768px) {
+  .auth-container {
+    align-items: flex-start;
+    padding-top: 4.5rem;
+  }
+
   .auth-card {
-    padding: 1.5rem !important;
+    padding: 1.25rem !important;
+  }
+
+  .auth-wrapper {
+    max-width: 100%;
   }
 
   .button-container .submit-button {

@@ -3,24 +3,8 @@
 .taskboard-container {
   display: flex;
   flex-direction: column;
-  max-width: 920px;
-  margin: 0 auto;
   position: relative;
   gap: 1.25rem;
-  @include page-enter;
-}
-
-.taskboard-header {
-  @include page-header;
-
-  .header-subtitle {
-    margin: 0.35rem 0 0;
-    max-width: 36rem;
-    font-family: var(--font-secondary);
-    font-size: 0.95rem;
-    line-height: 1.45;
-    color: var(--text-color-secondary);
-  }
 }
 
 .flow-hint {
@@ -40,6 +24,17 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
+
+  @include bp-down($bp-sm) {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 0.25rem;
+
+    .status-filter {
+      flex-shrink: 0;
+    }
+  }
 }
 
 .status-filter {
@@ -275,13 +270,19 @@
 }
 
 .form-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 1rem;
-  flex-wrap: wrap;
+  align-items: start;
 
   .field {
-    flex: 1;
-    min-width: 140px;
+    margin-bottom: 0;
+    min-width: 0;
+    width: 100%;
+  }
+
+  @media (max-width: 560px) {
+    grid-template-columns: 1fr;
   }
 }
 

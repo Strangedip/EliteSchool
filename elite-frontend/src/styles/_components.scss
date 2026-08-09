@@ -1,13 +1,16 @@
 @use 'mixins' as *;
 
-/* Buttons — app chrome uses soft radius (pills reserved for marketing via .btn-pill) */
+/* Buttons */
 .p-button {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
+  min-height: 2.5rem;
   border-radius: var(--radius-md) !important;
-  font-weight: 500 !important;
-  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease !important;
+  font-family: var(--font-secondary) !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.01em;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease !important;
 
   .p-button-icon {
     margin-right: 0.5rem !important;
@@ -16,45 +19,58 @@
   &:focus-visible {
     box-shadow: var(--focus-ring) !important;
   }
+
+  &:disabled {
+    opacity: 0.55 !important;
+    filter: grayscale(0.15);
+  }
 }
 
 .p-button.p-button-primary,
 .p-button:not(.p-button-outlined):not(.p-button-text):not(.p-button-secondary):not(.p-button-success):not(.p-button-danger):not(.p-button-warning) {
-  background: var(--gradient-brand) !important;
-  color: var(--primary-color-text) !important;
-  border: none !important;
-  box-shadow: var(--shadow-sm) !important;
+  background: var(--btn-primary-bg) !important;
+  color: var(--btn-primary-color) !important;
+  border: 1px solid color-mix(in srgb, var(--primary-dark-color) 35%, transparent) !important;
+  box-shadow: var(--btn-primary-shadow) !important;
 
   &:hover:not(:disabled) {
-    filter: brightness(1.06);
-    box-shadow: var(--shadow-md) !important;
+    filter: brightness(1.05);
+    box-shadow: var(--btn-primary-shadow-hover) !important;
+  }
+
+  &:active:not(:disabled) {
+    filter: brightness(0.97);
   }
 }
 
 .p-button.p-button-secondary {
-  background: var(--surface-hover) !important;
-  color: var(--text-color) !important;
-  border: 1px solid var(--surface-border) !important;
+  background: var(--btn-secondary-bg) !important;
+  color: var(--btn-secondary-color) !important;
+  border: 1px solid var(--btn-secondary-border) !important;
+  box-shadow: var(--shadow-sm) !important;
 
   &:hover:not(:disabled) {
-    border-color: var(--surface-border-strong) !important;
+    background: var(--btn-secondary-hover-bg) !important;
+    border-color: var(--primary-color) !important;
   }
 }
 
 .p-button.p-button-success {
   background: var(--success-color) !important;
   color: #ffffff !important;
-  border: none !important;
+  border: 1px solid color-mix(in srgb, var(--success-color) 70%, #000) !important;
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--success-color) 28%, transparent) !important;
 
   &:hover:not(:disabled) {
-    filter: brightness(1.08);
+    filter: brightness(1.06);
   }
 }
 
 .p-button.p-button-danger {
   background: var(--danger-color) !important;
   color: #ffffff !important;
-  border: none !important;
+  border: 1px solid color-mix(in srgb, var(--danger-color) 70%, #000) !important;
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--danger-color) 25%, transparent) !important;
 
   &:hover:not(:disabled) {
     filter: brightness(1.05);
@@ -64,26 +80,28 @@
 .p-button.p-button-warning {
   background: var(--warning-color) !important;
   color: #ffffff !important;
-  border: none !important;
+  border: 1px solid color-mix(in srgb, var(--warning-color) 70%, #000) !important;
 }
 
 .p-button.p-button-text {
   background: transparent !important;
   color: var(--primary-color) !important;
-  border: none !important;
+  border: 1px solid transparent !important;
+  box-shadow: none !important;
 
   &:hover:not(:disabled) {
-    background: var(--surface-hover) !important;
+    background: var(--highlight-bg) !important;
   }
 }
 
 .p-button.p-button-outlined {
   background: transparent !important;
   color: var(--primary-color) !important;
-  border: 1px solid var(--primary-color) !important;
+  border: 1.5px solid var(--primary-color) !important;
+  box-shadow: none !important;
 
   &:hover:not(:disabled) {
-    background: var(--surface-hover) !important;
+    background: var(--highlight-bg) !important;
   }
 
   &.p-button-success {
@@ -98,7 +116,7 @@
 
   &.p-button-secondary {
     color: var(--text-color-secondary) !important;
-    border-color: var(--surface-border) !important;
+    border-color: var(--surface-border-strong) !important;
   }
 
   &.p-button-warning {
@@ -327,7 +345,6 @@
   overflow: hidden !important;
   box-shadow: var(--shadow-lg) !important;
   border: 1px solid var(--surface-border) !important;
-  animation: elite-dialog-in 0.22s ease-out;
 
   .p-dialog-header {
     background: var(--surface-card-strong) !important;
@@ -542,17 +559,6 @@
   }
 }
 
-@keyframes elite-dialog-in {
-  from {
-    opacity: 0;
-    transform: translateY(0.5rem) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
 /* Shared empty state */
 .elite-empty {
   display: flex;
@@ -592,16 +598,32 @@
   }
 }
 
-/* App page shell — layout owns gutters; pages stay flush */
 .page-shell {
   @include page-enter;
   width: 100%;
   max-width: var(--page-max);
   margin: 0 auto;
+  min-width: 0;
+
+  &.page-shell-wide {
+    max-width: min(100%, 88rem);
+  }
 }
 
 .page-header {
   @include page-header;
+  padding: 1rem 1.15rem;
+  margin-bottom: var(--space-5);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--surface-card-strong) 88%, transparent);
+  box-shadow: var(--shadow-sm);
+}
+
+.table-scroll {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .search-box {
@@ -630,5 +652,71 @@
   .p-toast {
     width: calc(100% - 2rem) !important;
     max-width: 320px !important;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0.9rem 1rem;
+    margin-bottom: 1rem;
+    gap: 0.85rem;
+
+    .page-header-title {
+      width: 100%;
+    }
+
+    .page-header-copy {
+      max-width: none;
+    }
+
+    h1, h2 {
+      font-size: 1.35rem;
+    }
+
+    .page-subtitle {
+      font-size: 0.88rem;
+    }
+
+    .header-actions {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.65rem;
+
+      .search-box {
+        width: 100%;
+
+        input {
+          width: 100%;
+        }
+      }
+
+      .p-select,
+      p-select,
+      .p-button,
+      p-button {
+        width: 100%;
+      }
+    }
+  }
+
+  .custom-dialog.p-dialog,
+  .p-dialog.custom-dialog {
+    width: calc(100vw - 1.5rem) !important;
+    max-width: calc(100vw - 1.5rem) !important;
+    margin: 0.75rem !important;
+  }
+
+  .p-datatable,
+  .p-datatable-table-container,
+  .users-table-wrapper,
+  .tickets-table-wrapper {
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .settings-grid {
+    grid-template-columns: 1fr !important;
   }
 }

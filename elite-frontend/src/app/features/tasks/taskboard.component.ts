@@ -37,7 +37,7 @@ type TaskFilterId = 'available' | 'review' | 'approved' | 'revision';
     InputNumber,
     ConfirmDialog
 ],
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.Default,
     providers: [ConfirmationService]
 })
 export class TaskboardComponent implements OnInit {

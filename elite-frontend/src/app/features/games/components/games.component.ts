@@ -1,8 +1,10 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { Router, RouterModule, NavigationEnd } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule, NavigationEnd } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { filter } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
+import { ThemeService } from '../../../core/services/theme.service';
+import { BrandMarkComponent } from '../../../shared/brand-mark.component';
 
 interface GameCard {
   id: string;
@@ -18,7 +20,7 @@ interface GameCard {
   templateUrl: './games.component.html',
   styleUrls: ['./games.component.scss'],
   changeDetection: ChangeDetectionStrategy.Default,
-  imports: [ButtonModule, RouterModule]
+  imports: [ButtonModule, RouterModule, BrandMarkComponent]
 })
 export class GamesComponent implements OnInit {
   games: GameCard[] = [
@@ -66,21 +68,29 @@ export class GamesComponent implements OnInit {
 
   isPlaying = false;
   isLoggedIn = false;
+  embedded = false;
 
   private readonly playPaths = ['/games/xo', '/games/memory', '/games/sequence', '/games/patterns', '/games/math'];
 
   constructor(
     private router: Router,
-    private authService: AuthService
+    private route: ActivatedRoute,
+    private authService: AuthService,
+    public themeService: ThemeService
   ) {}
 
   ngOnInit(): void {
+    this.embedded = this.route.pathFromRoot.some(r => !!r.snapshot.data['embedded']);
     this.isLoggedIn = !!this.authService.getToken();
     this.authService.isAuthenticated$.subscribe(v => this.isLoggedIn = v);
     this.syncPlayingState(this.router.url);
     this.router.events
       .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
       .subscribe(e => this.syncPlayingState(e.urlAfterRedirects));
+  }
+
+  toggleTheme(): void {
+    this.themeService.toggle();
   }
 
   private syncPlayingState(url: string): void {

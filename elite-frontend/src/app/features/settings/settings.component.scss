@@ -1,26 +1,5 @@
 @use '../../../styles/mixins' as *;
 
-.settings-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  @include page-enter;
-}
-
-.settings-header {
-  margin-bottom: 2rem;
-
-  h2 {
-    font-size: 1.75rem;
-    margin-bottom: 0.5rem;
-    color: var(--text-color);
-  }
-
-  p {
-    color: var(--text-color-secondary);
-    font-size: 1rem;
-  }
-}
-
 .settings-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -50,12 +29,43 @@
     }
   }
 
+  .card-header-toggle {
+    width: 100%;
+    margin: 0 0 0.35rem;
+    padding: 0;
+    border: none;
+    background: transparent;
+    justify-content: space-between;
+    cursor: pointer;
+    color: inherit;
+    text-align: left;
+
+    .card-header-main {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    > .pi-chevron-down,
+    > .pi-chevron-up {
+      width: auto;
+      height: auto;
+      background: transparent;
+      color: var(--text-color-muted);
+      font-size: 0.95rem;
+    }
+  }
+
   .card-content {
     p {
       color: var(--text-color-secondary);
       margin-bottom: 1.5rem;
       line-height: 1.5;
     }
+  }
+
+  .card-content-collapsed p {
+    margin-bottom: 0;
   }
 }
 
@@ -64,31 +74,21 @@
   width: 100%;
   box-sizing: border-box;
   padding: 0.75rem;
-  background: var(--surface-hover);
-  color: var(--text-color);
-  border: 1px solid color-mix(in srgb, var(--primary-color) 30%, transparent);
+  background: var(--btn-secondary-bg);
+  color: var(--btn-secondary-color);
+  border: 1px solid var(--btn-secondary-border);
   border-radius: var(--radius-md);
-  font-weight: 500;
+  font-family: var(--font-secondary);
+  font-weight: 600;
   text-align: center;
   text-decoration: none;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background 0.2s ease, border-color 0.2s ease;
 
   &:hover {
-    background: color-mix(in srgb, var(--primary-color) 20%, transparent);
-    border-color: color-mix(in srgb, var(--primary-color) 50%, transparent);
+    background: var(--btn-secondary-hover-bg);
+    border-color: var(--primary-color);
   }
-}
-
-.coming-soon {
-  display: inline-block;
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.03em;
-  color: var(--text-color-secondary);
-  background: var(--surface-hover);
-  padding: 0.3rem 0.75rem;
-  border-radius: var(--radius-md);
 }
 
 .theme-switch {
@@ -129,7 +129,8 @@
 }
 
 .security-card {
-  grid-column: span 2;
+  /* Stay one column so the collapsed card does not stretch across the grid */
+  grid-column: span 1;
 }
 
 .account-summary {
@@ -159,12 +160,13 @@
 .password-form {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1rem;
 
   .field {
     display: flex;
     flex-direction: column;
     gap: 0.4rem;
+    margin-bottom: 0;
 
     label {
       color: var(--text-color);
@@ -178,7 +180,26 @@
     font-size: 0.8rem;
   }
 
-  button {
+  ::ng-deep {
+    .settings-password,
+    .p-password {
+      display: block;
+      width: 100%;
+    }
+
+    .p-password-input,
+    .p-password input {
+      width: 100%;
+      min-height: 3.1rem;
+    }
+
+    .p-password-panel {
+      display: none !important;
+    }
+  }
+
+  button,
+  p-button {
     align-self: flex-start;
   }
 }
@@ -186,9 +207,5 @@
 @media (max-width: 768px) {
   .settings-grid {
     grid-template-columns: 1fr;
-  }
-
-  .security-card {
-    grid-column: span 1;
   }
 }

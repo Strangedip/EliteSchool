@@ -1,12 +1,23 @@
-<div class="wallet-container">
-  <div class="wallet-header">
-    <h1 class="wallet-title">{{ isAdmin ? 'Elite Points Admin' : 'Elite Points Wallet' }}</h1>
-    <p class="wallet-subtitle">
-      {{ isAdmin
-        ? 'Staff-initiated adjustments so need never blocks talent. Prefer nominations for contribution credits.'
-        : 'Balance and history from verified tasks and approved nominations' }}
-    </p>
-  </div>
+<div class="wallet-container page-shell">
+  <header class="page-header wallet-header">
+    <div class="page-header-title">
+      <i class="pi pi-wallet" aria-hidden="true"></i>
+      <div class="page-header-copy">
+        <h1>{{ isAdmin ? 'Elite Points admin' : 'Elite Points' }}</h1>
+        <p class="page-subtitle">
+          {{ isAdmin
+            ? 'Staff adjustments when needed. Prefer nominations for contribution credits.'
+            : 'Balance and history from verified tasks and approved nominations — spend them in the store.' }}
+        </p>
+      </div>
+    </div>
+    <div class="header-actions" *ngIf="!isAdmin">
+      <a routerLink="/store" class="wallet-info">
+        <i class="pi pi-shopping-bag"></i>
+        <span>Open store</span>
+      </a>
+    </div>
+  </header>
 
   <div class="wallet-card admin-adjust-card" *ngIf="isAdmin">
     <h3>Adjust Elite Points</h3>
@@ -17,13 +28,16 @@
         placeholder="Select student"
         [filter]="true"
         (onChange)="onStudentSelected()"
-        styleClass="w-full">
+        optionLabel="label"
+        optionValue="value"
+        styleClass="w-full theme-dropdown">
       </p-select>
-      <p-inputnumber [(ngModel)]="adjustPoints" [min]="1" [showButtons]="true" placeholder="Points"></p-inputnumber>
+      <p-inputnumber [(ngModel)]="adjustPoints" [min]="1" [showButtons]="true" placeholder="Points"
+                     styleClass="theme-input-number"></p-inputnumber>
       <input pInputText [(ngModel)]="adjustDescription" placeholder="Reason (optional)" class="theme-input" />
       <div class="admin-adjust-actions">
-        <p-button type="button" label="Credit" icon="pi pi-plus" styleClass="p-button-primary" [disabled]="adjusting || !selectedStudentId" (click)="applyCredit()"></p-button>
-        <p-button type="button" label="Debit" icon="pi pi-minus" styleClass="p-button-danger" [disabled]="adjusting || !selectedStudentId" (click)="applyDebit()"></p-button>
+        <p-button type="button" label="Credit" icon="pi pi-plus" styleClass="p-button-primary" [disabled]="adjusting || !selectedStudentId" (onClick)="applyCredit()"></p-button>
+        <p-button type="button" label="Debit" icon="pi pi-minus" styleClass="p-button-danger" [disabled]="adjusting || !selectedStudentId" (onClick)="applyDebit()"></p-button>
       </div>
     </div>
   </div>
@@ -36,7 +50,7 @@
       <div class="balance-amount balance-row" *ngIf="!loading">
         <span *ngIf="showBalance">{{ walletBalance }} Elite Points</span>
         <span *ngIf="!showBalance">••••</span>
-        <p-button styleClass="p-button-sm p-button-secondary showBalance" (click)="toggleBalanceVisibility()">
+        <p-button styleClass="p-button-sm p-button-secondary showBalance" (onClick)="toggleBalanceVisibility()">
           <i class="pi" [ngClass]="showBalance ? 'pi-eye-slash' : 'pi-eye'"></i>
         </p-button>
       </div>
@@ -78,15 +92,15 @@
     <div class="card-header with-filters">
       <h3>Transaction History</h3>
       <div class="filter-buttons">
-        <p-button styleClass="p-button-sm p-button-primary" [outlined]="viewMode !== 'all'" (click)="setViewMode('all')" label="All"></p-button>
-        <p-button styleClass="p-button-sm p-button-primary" [outlined]="viewMode !== 'credit'" (click)="setViewMode('credit')" label="Credits"></p-button>
-        <p-button styleClass="p-button-sm p-button-danger" [outlined]="viewMode !== 'debit'" (click)="setViewMode('debit')" label="Debits"></p-button>
+        <p-button styleClass="p-button-sm p-button-primary" [outlined]="viewMode !== 'all'" (onClick)="setViewMode('all')" label="All"></p-button>
+        <p-button styleClass="p-button-sm p-button-primary" [outlined]="viewMode !== 'credit'" (onClick)="setViewMode('credit')" label="Credits"></p-button>
+        <p-button styleClass="p-button-sm p-button-danger" [outlined]="viewMode !== 'debit'" (onClick)="setViewMode('debit')" label="Debits"></p-button>
       </div>
     </div>
 
     <p-table [value]="getFilteredTransactions()" [loading]="transactionLoading"
       styleClass="p-datatable-sm p-datatable-striped" responsiveLayout="scroll">
-      <ng-template pTemplate="header">
+      <ng-template #header>
         <tr>
           <th>Date</th>
           <th>Description</th>
@@ -94,7 +108,7 @@
           <th>Points</th>
         </tr>
       </ng-template>
-      <ng-template pTemplate="body" let-transaction>
+      <ng-template #body let-transaction>
         <tr>
           <td>{{ formatDate(transaction.createdAt) }}</td>
           <td>{{ transaction.description }}</td>
@@ -109,7 +123,7 @@
           </td>
         </tr>
       </ng-template>
-      <ng-template pTemplate="emptymessage">
+      <ng-template #emptymessage>
         <tr>
           <td colspan="4">
             <div *ngIf="transactionLoading" class="elite-empty">
@@ -126,3 +140,4 @@
     </p-table>
   </div>
 </div>
+

@@ -5,11 +5,11 @@ import com.eliteschool.common_utils.security.GatewayAuth;
 import com.eliteschool.common_utils.util.ResponseUtil;
 import com.eliteschool.wallet_service.dto.TransactionDto;
 import com.eliteschool.wallet_service.dto.WalletDto;
+import com.eliteschool.wallet_service.model.enums.TransactionSource;
 import com.eliteschool.wallet_service.service.WalletService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +19,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/wallet")
 @RequiredArgsConstructor
-@Slf4j
 public class WalletController {
 
     private final WalletService walletService;
@@ -38,7 +37,7 @@ public class WalletController {
             @RequestParam String description,
             HttpServletRequest request) {
         GatewayAuth.requireRoles(request, "ADMIN", "MANAGEMENT");
-        walletService.creditPoints(studentId, points, description);
+        walletService.creditPoints(studentId, points, description, null, TransactionSource.ADMIN_ADJUSTMENT);
         return ResponseUtil.success("Points credited", walletService.getWalletBalance(studentId));
     }
 
@@ -50,7 +49,8 @@ public class WalletController {
                 requestBody.studentId(),
                 requestBody.points(),
                 requestBody.description(),
-                requestBody.referenceId());
+                requestBody.referenceId(),
+                TransactionSource.TASK_REWARD);
         return ResponseUtil.success("Points awarded", null);
     }
 
@@ -61,7 +61,7 @@ public class WalletController {
             @RequestParam String description,
             HttpServletRequest request) {
         GatewayAuth.requireRoles(request, "ADMIN", "MANAGEMENT");
-        walletService.debitPoints(studentId, points, description);
+        walletService.debitPoints(studentId, points, description, TransactionSource.ADMIN_ADJUSTMENT);
         return ResponseUtil.success("Points debited", walletService.getWalletBalance(studentId));
     }
 
@@ -79,7 +79,6 @@ public class WalletController {
                     "FORBIDDEN",
                     org.springframework.http.HttpStatus.FORBIDDEN);
         }
-        log.info("Purchase request: student={}, item={}", studentId, itemId);
         walletService.purchaseItem(studentId, itemId);
         int remainingBalance = walletService.getWalletBalance(studentId);
         return ResponseUtil.success("Purchase successful",
@@ -92,6 +91,14 @@ public class WalletController {
             HttpServletRequest request) {
         GatewayAuth.requireSelfOrRoles(request, studentId, "ADMIN", "MANAGEMENT", "FACULTY");
         return ResponseUtil.success("Transactions retrieved", walletService.getTransactionHistory(studentId));
+    }
+
+    @GetMapping("/admin-adjustments")
+    public ResponseEntity<CommonResponseDto<List<TransactionDto>>> getAdminAdjustments(
+            @RequestParam(defaultValue = "100") int limit,
+            HttpServletRequest request) {
+        GatewayAuth.requireRoles(request, "ADMIN", "MANAGEMENT");
+        return ResponseUtil.success("Admin adjustments retrieved", walletService.getAdminAdjustments(limit));
     }
 
     @GetMapping("/leaderboard")

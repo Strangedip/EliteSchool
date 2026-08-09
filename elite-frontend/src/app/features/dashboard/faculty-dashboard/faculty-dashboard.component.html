@@ -1,94 +1,145 @@
 <div class="dashboard-container">
-  <div class="dashboard-header">
-    <div>
-      <h1 class="dashboard-title">Welcome back, {{ currentUserName }}</h1>
-      <p class="dashboard-subtitle">Set contribution tasks and verify student work so Elite Points are earned fairly</p>
-    </div>
-    <span class="role-badge"><i class="pi pi-graduation-cap"></i> Faculty</span>
-  </div>
+  <header class="dash-welcome">
+    <p class="welcome-kicker">Faculty workspace</p>
+    <h1 class="welcome-title">Welcome back, {{ currentUserName }}</h1>
+    <p class="welcome-lede">
+      Post contribution tasks and verify student submissions so Elite Points are earned fairly.
+    </p>
+  </header>
 
   @if (loading) {
     <div class="loading-state">
-      <i class="pi pi-spin pi-spinner"></i>
-      <span>Loading your teaching data...</span>
+      <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
+      <span>Loading teaching overview…</span>
     </div>
   }
 
   @if (!loading) {
-    <div class="stat-grid">
-      <div class="stat-card">
-        <div class="stat-icon icon-warning"><i class="pi pi-hourglass"></i></div>
-        <div class="stat-body">
-          <div class="stat-value">{{ pendingCount }}</div>
-          <div class="stat-label">Pending Reviews</div>
+    @if (pendingCount > 0) {
+      <section class="focus-banner" data-tone="alert" aria-label="Needs attention">
+        <div class="focus-copy">
+          <p class="focus-label">Needs attention</p>
+          <h2 class="focus-title">{{ pendingCount }} {{ pendingCount === 1 ? 'submission' : 'submissions' }} awaiting review</h2>
+          <p class="focus-detail">Approve or return work so students receive points without delay.</p>
         </div>
+        <a routerLink="/tasks" class="focus-cta">Review now</a>
+      </section>
+    } @else {
+      <section class="focus-banner" data-tone="calm" aria-label="Status">
+        <div class="focus-copy">
+          <p class="focus-label">Review queue clear</p>
+          <h2 class="focus-title">No pending submissions</h2>
+          <p class="focus-detail">Post a new task or recognise standout contribution through nominations.</p>
+        </div>
+        <a routerLink="/tasks" class="focus-cta">Manage tasks</a>
+      </section>
+    }
+
+    <div class="metric-rail" aria-label="Faculty metrics">
+      <div class="metric">
+        <p class="metric-label">Pending reviews</p>
+        <p class="metric-value">{{ pendingCount }}</p>
+        <p class="metric-note">Waiting on you</p>
       </div>
-      <div class="stat-card">
-        <div class="stat-icon icon-success"><i class="pi pi-list-check"></i></div>
-        <div class="stat-body">
-          <div class="stat-value">{{ myOpenTaskCount }}</div>
-          <div class="stat-label">My Open Tasks</div>
-        </div>
+      <div class="metric">
+        <p class="metric-label">My open tasks</p>
+        <p class="metric-value">{{ myOpenTaskCount }}</p>
+        <p class="metric-note">Still accepting work</p>
       </div>
-      <div class="stat-card">
-        <div class="stat-icon"><i class="pi pi-book"></i></div>
-        <div class="stat-body">
-          <div class="stat-value">{{ activeCourseCount }}</div>
-          <div class="stat-label">Active Courses</div>
-        </div>
+      <div class="metric">
+        <p class="metric-label">Active courses</p>
+        <p class="metric-value">{{ activeCourseCount }}</p>
+        <p class="metric-note">This term</p>
       </div>
     </div>
-    <div class="dashboard-columns">
-      <div class="panel-card">
-        <div class="panel-header">
-          <h2>Submissions Awaiting Review</h2>
-          <a routerLink="/tasks" class="view-all">Review Now</a>
+
+    <div class="dash-grid">
+      <section class="dash-panel">
+        <div class="panel-head">
+          <h2 class="panel-title">Submissions awaiting review</h2>
+          <a routerLink="/tasks" class="panel-link">Open taskboard</a>
         </div>
-        @for (s of pendingSubmissions; track s) {
-          <div class="list-row">
-            <div class="list-icon"><i class="pi pi-file-edit"></i></div>
-            <div class="list-content">
-              <h4>{{ s.taskTitle || 'Task submission' }}</h4>
-              <p>{{ s.rewardPoints || 0 }} pts · Submitted {{ s.submittedAt | date:'medium' }}</p>
+        <div class="work-list">
+          @for (s of pendingSubmissions; track s.id || s.submittedAt) {
+            <a routerLink="/tasks" class="work-item">
+              <div>
+                <h3 class="work-title">{{ s.taskTitle || 'Task submission' }}</h3>
+                <p class="work-meta">Submitted {{ s.submittedAt | date:'medium' }}</p>
+              </div>
+              <span class="work-aside">{{ s.rewardPoints || 0 }} pts</span>
+            </a>
+          }
+          @if (!pendingSubmissions.length) {
+            <div class="empty-state">
+              <p>All caught up — new submissions will land here when students turn work in.</p>
             </div>
-            <div class="list-meta">Pending</div>
-          </div>
-        }
-        @if (!pendingSubmissions.length) {
-          <div class="empty-state">
-            <i class="pi pi-check-circle"></i>
-            <p>All caught up — no pending submissions</p>
-          </div>
-        }
-      </div>
-      <div class="panel-card">
-        <div class="panel-header">
-          <h2>Quick Actions</h2>
+          }
         </div>
-        <div class="quick-links">
-          <a routerLink="/tasks" class="quick-link"><i class="pi pi-check-square"></i> Tasks</a>
-          <a routerLink="/nominations" class="quick-link"><i class="pi pi-star"></i> Nominations</a>
-          <a routerLink="/courses" class="quick-link"><i class="pi pi-book"></i> Courses</a>
-          <a routerLink="/leaderboard" class="quick-link"><i class="pi pi-trophy"></i> Leaderboard</a>
-        </div>
-        <div class="panel-header panel-header-spaced">
-          <h2>My Open Tasks</h2>
-        </div>
-        @for (t of myOpenTasks; track t) {
-          <div class="list-row">
-            <div class="list-icon"><i class="pi pi-check-square"></i></div>
-            <div class="list-content">
-              <h4>{{ t.title }}</h4>
-              <p>{{ t.rewardPoints }} pts</p>
-            </div>
+      </section>
+
+      <div>
+        <section class="dash-panel">
+          <div class="panel-head">
+            <h2 class="panel-title">Faculty paths</h2>
           </div>
-        }
-        @if (!myOpenTasks.length) {
-          <div class="empty-state">
-            <i class="pi pi-inbox"></i>
-            <p>You have no open tasks</p>
+          <div class="path-list">
+            <a routerLink="/tasks" class="path-link">
+              <i class="pi pi-check-square" aria-hidden="true"></i>
+              <span class="path-copy">
+                <span class="path-label">Tasks</span>
+                <span class="path-hint">Create work and verify submissions</span>
+              </span>
+              <i class="pi pi-chevron-right path-chevron" aria-hidden="true"></i>
+            </a>
+            <a routerLink="/nominations" class="path-link">
+              <i class="pi pi-star" aria-hidden="true"></i>
+              <span class="path-copy">
+                <span class="path-label">Nominations</span>
+                <span class="path-hint">Recognise contribution outside tasks</span>
+              </span>
+              <i class="pi pi-chevron-right path-chevron" aria-hidden="true"></i>
+            </a>
+            <a routerLink="/courses" class="path-link">
+              <i class="pi pi-book" aria-hidden="true"></i>
+              <span class="path-copy">
+                <span class="path-label">Courses</span>
+                <span class="path-hint">Subjects linked to achievement work</span>
+              </span>
+              <i class="pi pi-chevron-right path-chevron" aria-hidden="true"></i>
+            </a>
+            <a routerLink="/leaderboard" class="path-link">
+              <i class="pi pi-trophy" aria-hidden="true"></i>
+              <span class="path-copy">
+                <span class="path-label">Leaderboard</span>
+                <span class="path-hint">See contribution ranking school-wide</span>
+              </span>
+              <i class="pi pi-chevron-right path-chevron" aria-hidden="true"></i>
+            </a>
           </div>
-        }
+        </section>
+
+        <section class="dash-panel">
+          <div class="panel-head">
+            <h2 class="panel-title">My open tasks</h2>
+            <a routerLink="/tasks" class="panel-link">Manage</a>
+          </div>
+          <div class="work-list">
+            @for (t of myOpenTasks; track t.id || t.title) {
+              <a routerLink="/tasks" class="work-item">
+                <div>
+                  <h3 class="work-title">{{ t.title }}</h3>
+                  <p class="work-meta">Open for student claims</p>
+                </div>
+                <span class="work-aside">{{ t.rewardPoints }} pts</span>
+              </a>
+            }
+            @if (!myOpenTasks.length) {
+              <div class="empty-state">
+                <p>You have no open tasks. Create one when you want students to contribute.</p>
+              </div>
+            }
+          </div>
+        </section>
       </div>
     </div>
   }

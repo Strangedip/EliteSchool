@@ -9,7 +9,6 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { CardModule } from 'primeng/card';
 import { TagModule } from 'primeng/tag';
-import { PanelModule } from 'primeng/panel';
 import { TableModule } from 'primeng/table';
 import { Select } from 'primeng/select';
 import { InputNumber } from 'primeng/inputnumber';
@@ -43,13 +42,12 @@ import { ConfirmDialog } from 'primeng/confirmdialog';
         CardModule,
         TagModule,
         InputNumber,
-        PanelModule,
         TableModule,
         Select,
         MultiSelect,
         SelectButton
     ],
-    changeDetection: ChangeDetectionStrategy.OnPush,
+    changeDetection: ChangeDetectionStrategy.Default,
     providers: [ConfirmationService, MessageService]
 })
 export class StoreComponent implements OnInit {
@@ -462,8 +460,9 @@ export class StoreComponent implements OnInit {
     if (!local) {
       return null;
     }
-    const d = new Date(local);
-    return Number.isNaN(d.getTime()) ? null : d.toISOString();
+    // datetime-local → LocalDateTime-friendly ISO without timezone suffix
+    const normalized = local.length === 16 ? `${local}:00` : local;
+    return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?$/.test(normalized) ? normalized : null;
   }
 
   addItem(): void {

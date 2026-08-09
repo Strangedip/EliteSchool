@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { forkJoin, of } from 'rxjs';
@@ -11,11 +11,11 @@ import { Transaction } from '../../../core/models/wallet.model';
 import { Task } from '../../../core/models/task.model';
 
 @Component({
-    selector: 'app-student-dashboard',
-    imports: [CommonModule, RouterLink],
-    templateUrl: './student-dashboard.component.html',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    styleUrls: ['../dashboard-shared.scss', './student-dashboard.component.scss']
+  selector: 'app-student-dashboard',
+  imports: [CommonModule, RouterLink],
+  templateUrl: './student-dashboard.component.html',
+  changeDetection: ChangeDetectionStrategy.Default,
+  styleUrls: ['../dashboard-shared.scss']
 })
 export class StudentDashboardComponent implements OnInit {
   loading = true;
@@ -31,25 +31,33 @@ export class StudentDashboardComponent implements OnInit {
   openTasks: Task[] = [];
   activeCourseCount = 0;
 
-  constructor(private walletService: WalletService,
+  constructor(
+    private walletService: WalletService,
     private taskService: TaskService,
     private courseService: CourseService,
-    private userService: UserService,
-    private cdr: ChangeDetectorRef
+    private userService: UserService
   ) {}
 
   ngOnInit(): void {
+    const user = this.userService.getCurrentUser();
+    this.currentUserName = user?.name || 'Student';
+    this.currentUserId = user?.eliteId || '';
+    this.roleLabel = 'Student';
+
+    if (this.currentUserId) {
+      this.loadData();
+      return;
+    }
+
     this.userService.getUserProfile().subscribe({
       next: (response) => {
-        const user = response.data || this.userService.getCurrentUser();
-        this.currentUserName = user?.name || 'Student';
-        this.currentUserId = user?.eliteId || '';
-        this.roleLabel = 'Student';
+        const resolved = response.data || this.userService.getCurrentUser();
+        this.currentUserName = resolved?.name || 'Student';
+        this.currentUserId = resolved?.eliteId || '';
         this.loadData();
       },
       error: () => {
         this.loading = false;
-        this.cdr.markForCheck();
       }
     });
   }
@@ -57,7 +65,6 @@ export class StudentDashboardComponent implements OnInit {
   private loadData(): void {
     if (!this.currentUserId) {
       this.loading = false;
-      this.cdr.markForCheck();
       return;
     }
 
@@ -85,9 +92,11 @@ export class StudentDashboardComponent implements OnInit {
         this.openTaskCount = available.length;
         this.openTasks = available.slice(0, 6);
         this.activeCourseCount = courses.filter(c => c.active).length;
+        this.loading = false;
       },
-      error: () => {},
-      complete: () => { this.loading = false; this.cdr.markForCheck(); }
+      error: () => {
+        this.loading = false;
+      }
     });
   }
 }

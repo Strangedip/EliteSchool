@@ -3,10 +3,10 @@
   color-scheme: dark;
   --primary-color: #00b4d8;
   --primary-color-text: #ffffff;
-  --primary-dark-color: #0077b6;
-  --primary-light-color: #48cae4;
-  --accent-strong: #90e0ef;
-  --gradient-brand: linear-gradient(135deg, #023e8a 0%, #0077b6 48%, #00b4d8 100%);
+  --primary-dark-color: #0e7490;
+  --primary-light-color: #67e8f9;
+  --accent-strong: #a5f3fc;
+  --gradient-brand: linear-gradient(135deg, #0e7490 0%, #0891b2 48%, #22d3ee 100%);
   --success-color: #2dd4bf;
   --info-color: #00b4d8;
   --warning-color: #fb923c;
@@ -33,6 +33,21 @@
   --shadow-lg: 0 24px 48px rgba(0, 0, 0, 0.4);
   --hero-scrim: linear-gradient(105deg, rgba(6, 16, 28, 0.92) 0%, rgba(6, 16, 28, 0.72) 42%, rgba(6, 16, 28, 0.35) 100%);
   --page-glow: radial-gradient(ellipse 80% 50% at 0% 0%, rgba(0, 119, 182, 0.18), transparent 55%);
+
+  --brand-mark-from: #0e7490;
+  --brand-mark-mid: #0891b2;
+  --brand-mark-to: #22d3ee;
+  --brand-mark-fg: #ffffff;
+  --brand-mark-star: #ecfeff;
+
+  --btn-primary-bg: linear-gradient(135deg, #0e7490 0%, #0891b2 48%, #22d3ee 100%);
+  --btn-primary-color: #ffffff;
+  --btn-primary-shadow: 0 6px 20px rgba(8, 145, 178, 0.4);
+  --btn-primary-shadow-hover: 0 10px 28px rgba(34, 211, 238, 0.35);
+  --btn-secondary-bg: color-mix(in srgb, var(--surface-card-strong) 92%, transparent);
+  --btn-secondary-color: var(--text-color);
+  --btn-secondary-border: var(--surface-border-strong);
+  --btn-secondary-hover-bg: var(--highlight-bg);
 }
 
 [data-theme='light'] {
@@ -42,35 +57,33 @@
   --primary-dark-color: #0c4a6e;
   --primary-light-color: #0e7490;
   --accent-strong: #0f766e;
-  --gradient-brand: linear-gradient(135deg, #0c4a6e 0%, #0369a1 42%, #0d9488 100%);
+  --gradient-brand: linear-gradient(135deg, #0c4a6e 0%, #0369a1 45%, #0e7490 100%);
   --success-color: #0f766e;
   --info-color: #0369a1;
   --warning-color: #b45309;
   --danger-color: #b91c1c;
 
-  /* Ink-paper light: cool slate ground, crisp cards, teal/navy atmosphere */
-  --surface-ground: #d5e2ef;
-  --surface-section: #e2ebf4;
-  --surface-card: #f3f7fb;
+  --surface-ground: #c3d3e4;
+  --surface-section: #d7e3ef;
+  --surface-card: #eef4fa;
   --surface-card-strong: #ffffff;
   --surface-elevated: #ffffff;
-  --surface-tint: rgba(12, 74, 110, 0.07);
+  --surface-tint: rgba(12, 74, 110, 0.09);
   --surface-overlay: #ffffff;
-  --surface-hover: rgba(3, 105, 161, 0.1);
-  --surface-input: #e6eef6;
-  --surface-border: rgba(12, 74, 110, 0.14);
-  --surface-border-strong: rgba(12, 74, 110, 0.3);
+  --surface-hover: rgba(3, 105, 161, 0.12);
+  --surface-input: #e2ebf4;
+  --surface-border: rgba(12, 74, 110, 0.2);
+  --surface-border-strong: rgba(12, 74, 110, 0.38);
   --text-color: #0b1f33;
-  --text-color-secondary: #334e66;
-  --text-color-muted: #5a738a;
-  --highlight-bg: rgba(3, 105, 161, 0.12);
+  --text-color-secondary: #2c4660;
+  --text-color-muted: #54708a;
+  --highlight-bg: rgba(3, 105, 161, 0.14);
   --highlight-text-color: #0c4a6e;
   --focus-ring: 0 0 0 2px rgba(3, 105, 161, 0.28);
-  --shadow-sm: 0 1px 2px rgba(11, 31, 51, 0.06), 0 2px 10px rgba(12, 74, 110, 0.07);
-  --shadow-md: 0 8px 28px rgba(11, 31, 51, 0.1), 0 2px 8px rgba(12, 74, 110, 0.07);
-  --shadow-lg: 0 22px 50px rgba(11, 31, 51, 0.14);
+  --shadow-sm: 0 1px 2px rgba(11, 31, 51, 0.08), 0 4px 14px rgba(12, 74, 110, 0.1);
+  --shadow-md: 0 10px 28px rgba(11, 31, 51, 0.12), 0 2px 8px rgba(12, 74, 110, 0.08);
+  --shadow-lg: 0 22px 50px rgba(11, 31, 51, 0.16);
 
-  /* Deep ink scrim — photo stays vivid on the right; type sits on atmosphere, not milky white */
   --hero-scrim: linear-gradient(
     105deg,
     rgba(8, 28, 48, 0.9) 0%,
@@ -84,6 +97,21 @@
     radial-gradient(ellipse 65% 48% at -8% 0%, rgba(3, 105, 161, 0.22), transparent 50%),
     radial-gradient(ellipse 55% 40% at 45% 100%, rgba(12, 74, 110, 0.1), transparent 55%);
   --nav-glass: color-mix(in srgb, #eaf2f9 78%, transparent);
+
+  --brand-mark-from: #0c4a6e;
+  --brand-mark-mid: #0369a1;
+  --brand-mark-to: #0e7490;
+  --brand-mark-fg: #ffffff;
+  --brand-mark-star: #e0f2fe;
+
+  --btn-primary-bg: linear-gradient(135deg, #0c4a6e 0%, #0369a1 50%, #0e7490 100%);
+  --btn-primary-color: #ffffff;
+  --btn-primary-shadow: 0 6px 18px rgba(3, 105, 161, 0.28);
+  --btn-primary-shadow-hover: 0 10px 26px rgba(3, 105, 161, 0.36);
+  --btn-secondary-bg: #ffffff;
+  --btn-secondary-color: #0b1f33;
+  --btn-secondary-border: rgba(12, 74, 110, 0.28);
+  --btn-secondary-hover-bg: rgba(3, 105, 161, 0.08);
 }
 
 

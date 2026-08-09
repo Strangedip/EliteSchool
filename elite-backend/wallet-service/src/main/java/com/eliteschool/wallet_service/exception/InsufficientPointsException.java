@@ -4,17 +4,8 @@ import com.eliteschool.common_utils.exception.AppException;
 import org.springframework.http.HttpStatus;
 
 public class InsufficientPointsException extends AppException {
-    
+
     public InsufficientPointsException(String message) {
         super(message, "You don't have enough points for this transaction", "INSUFFICIENT_POINTS", HttpStatus.CONFLICT);
-    }
-    
-    public InsufficientPointsException(int required, int available) {
-        super(
-            String.format("Insufficient points: required %d, available %d", required, available),
-            "You don't have enough points for this transaction",
-            "INSUFFICIENT_POINTS",
-            HttpStatus.CONFLICT
-        );
     }
 }

@@ -6,9 +6,7 @@ import { ToastModule } from 'primeng/toast';
     selector: 'app-root',
     imports: [RouterOutlet, ToastModule],
     templateUrl: './app.component.html',
-    styleUrls: ['./app.component.scss'],
     changeDetection: ChangeDetectionStrategy.Eager
 })
-export class AppComponent {
-  title = 'elite-school';
-}
+export class AppComponent {}
+

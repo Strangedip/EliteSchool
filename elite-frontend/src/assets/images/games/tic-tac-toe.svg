@@ -7,7 +7,7 @@
   </defs>
   <rect width="480" height="300" fill="url(#xo-bg)"/>
   <circle cx="40" cy="260" r="80" fill="#caf0f8" opacity=".12"/>
-  <circle cx="450" cy="40" r="90" fill="#023e8a" opacity=".16"/>
+  <circle cx="450" cy="40" r="90" fill="#0c4a6e" opacity=".16"/>
 
   <g transform="translate(140,40)">
     <line x1="66" y1="8" x2="66" y2="212" stroke="#fff" stroke-width="8" stroke-linecap="round" opacity=".95"/>

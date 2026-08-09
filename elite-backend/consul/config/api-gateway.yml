@@ -1,3 +1,2 @@
 jwt:
   cookie-name: AUTH_TOKEN
-  expiration: 3600000

@@ -2,6 +2,7 @@ package com.eliteschool.wallet_service.controller;
 
 import com.eliteschool.common_utils.security.GatewayHeaders;
 import com.eliteschool.wallet_service.dto.TransactionDto;
+import com.eliteschool.wallet_service.model.enums.TransactionSource;
 import com.eliteschool.wallet_service.model.enums.TransactionType;
 import com.eliteschool.wallet_service.service.WalletService;
 import org.junit.jupiter.api.BeforeEach;
@@ -90,7 +91,7 @@ class WalletControllerTest {
     @Test
     @DisplayName("Should credit points successfully")
     void shouldCreditPointsSuccessfully() throws Exception {
-        doNothing().when(walletService).creditPoints(any(UUID.class), anyInt(), anyString());
+        doNothing().when(walletService).creditPoints(any(UUID.class), anyInt(), anyString(), any(), any());
         when(walletService.getWalletBalance(studentId)).thenReturn(150);
 
         mockMvc.perform(post("/api/wallet/{studentId}/credit", studentId)
@@ -102,14 +103,15 @@ class WalletControllerTest {
                 .andExpect(jsonPath("$.message").value("Points credited"))
                 .andExpect(jsonPath("$.data").value(150));
 
-        verify(walletService, times(1)).creditPoints(studentId, 50, "Test credit");
+        verify(walletService, times(1)).creditPoints(
+                studentId, 50, "Test credit", null, TransactionSource.ADMIN_ADJUSTMENT);
         verify(walletService, times(1)).getWalletBalance(studentId);
     }
 
     @Test
     @DisplayName("Should debit points successfully")
     void shouldDebitPointsSuccessfully() throws Exception {
-        when(walletService.debitPoints(any(UUID.class), anyInt(), anyString())).thenReturn(true);
+        when(walletService.debitPoints(any(UUID.class), anyInt(), anyString(), any())).thenReturn(true);
         when(walletService.getWalletBalance(studentId)).thenReturn(50);
 
         mockMvc.perform(post("/api/wallet/{studentId}/debit", studentId)
@@ -121,7 +123,8 @@ class WalletControllerTest {
                 .andExpect(jsonPath("$.message").value("Points debited"))
                 .andExpect(jsonPath("$.data").value(50));
 
-        verify(walletService, times(1)).debitPoints(studentId, 50, "Test debit");
+        verify(walletService, times(1)).debitPoints(
+                studentId, 50, "Test debit", TransactionSource.ADMIN_ADJUSTMENT);
         verify(walletService, times(1)).getWalletBalance(studentId);
     }
 
@@ -185,7 +188,7 @@ class WalletControllerTest {
                 }
                 """.formatted(studentId);
 
-        doNothing().when(walletService).creditPoints(any(UUID.class), anyInt(), anyString(), any());
+        doNothing().when(walletService).creditPoints(any(UUID.class), anyInt(), anyString(), any(), any());
 
         mockMvc.perform(post("/api/wallet/award")
                 .with(asInternal())
@@ -195,6 +198,30 @@ class WalletControllerTest {
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("Points awarded"));
 
-        verify(walletService, times(1)).creditPoints(eq(studentId), eq(50), anyString(), any());
+        verify(walletService, times(1)).creditPoints(
+                eq(studentId), eq(50), anyString(), any(), eq(TransactionSource.TASK_REWARD));
+    }
+
+    @Test
+    @DisplayName("Should list admin adjustments")
+    void shouldListAdminAdjustments() throws Exception {
+        TransactionDto row = new TransactionDto();
+        row.setId(UUID.randomUUID());
+        row.setStudentId(studentId);
+        row.setStudentName("Ada");
+        row.setTransactionType(TransactionType.CREDIT);
+        row.setSource(TransactionSource.ADMIN_ADJUSTMENT);
+        row.setPoints(25);
+        row.setDescription("Admin credit");
+
+        when(walletService.getAdminAdjustments(100)).thenReturn(List.of(row));
+
+        mockMvc.perform(get("/api/wallet/admin-adjustments").with(asAdmin()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data[0].source").value("ADMIN_ADJUSTMENT"))
+                .andExpect(jsonPath("$.data[0].points").value(25));
+
+        verify(walletService, times(1)).getAdminAdjustments(100);
     }
 }

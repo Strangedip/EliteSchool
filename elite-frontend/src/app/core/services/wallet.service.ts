@@ -15,6 +15,8 @@ export interface PurchaseResponse {
 export interface WalletBalanceEntry {
   studentId: string;
   balance: number;
+  studentName?: string;
+  role?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -31,6 +33,12 @@ export class WalletService {
   getTransactionHistory(studentId: string): Observable<Transaction[]> {
     return this.http.get<CommonResponseDto<Transaction[]>>(`${this.apiUrl}/${studentId}/transactions`)
       .pipe(map(response => response.data ?? []));
+  }
+
+  getAdminAdjustments(limit: number = 100): Observable<Transaction[]> {
+    return this.http.get<CommonResponseDto<Transaction[]>>(`${this.apiUrl}/admin-adjustments`, {
+      params: { limit: String(limit) }
+    }).pipe(map(response => response.data ?? []));
   }
 
   creditPoints(studentId: string, points: number, description: string): Observable<number> {

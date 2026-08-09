@@ -5,15 +5,16 @@ import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { AuthService } from '../../../core/services/auth.service';
+import { ThemeService } from '../../../core/services/theme.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { finalize } from 'rxjs';
+import { BrandMarkComponent } from '../../../shared/brand-mark.component';
 
 @Component({
     selector: 'app-reset-password',
-    imports: [CommonModule, ReactiveFormsModule, RouterModule, InputTextModule, ButtonModule],
+    imports: [CommonModule, ReactiveFormsModule, RouterModule, InputTextModule, ButtonModule, BrandMarkComponent],
     templateUrl: './reset-password.component.html',
-    changeDetection: ChangeDetectionStrategy.Eager,
-    styleUrls: ['./reset-password.component.scss']
+    changeDetection: ChangeDetectionStrategy.Eager
 })
 export class ResetPasswordComponent implements OnInit {
   resetPasswordForm: FormGroup;
@@ -30,7 +31,8 @@ export class ResetPasswordComponent implements OnInit {
     private authService: AuthService,
     private toastService: ToastService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    public themeService: ThemeService
   ) {
     this.resetPasswordForm = this.fb.group({
       newPassword: ['', [
@@ -40,6 +42,10 @@ export class ResetPasswordComponent implements OnInit {
       ]],
       confirmPassword: ['', Validators.required]
     }, { validators: this.passwordMatchValidator });
+  }
+
+  toggleTheme(): void {
+    this.themeService.toggle();
   }
 
   ngOnInit(): void {

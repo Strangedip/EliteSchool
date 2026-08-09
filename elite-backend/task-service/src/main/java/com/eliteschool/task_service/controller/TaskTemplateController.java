@@ -8,7 +8,6 @@ import com.eliteschool.task_service.service.TaskTemplateService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +18,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/task-templates")
 @RequiredArgsConstructor
-@Slf4j
 public class TaskTemplateController {
 
     private final TaskTemplateService taskTemplateService;
@@ -47,7 +45,6 @@ public class TaskTemplateController {
         GatewayAuth.requireRoles(request, "FACULTY", "ADMIN", "MANAGEMENT");
         UUID creatorId = GatewayAuth.requireUserId(request);
         templateDto.setCreatedBy(creatorId);
-        log.info("Creating task template: {}", templateDto.getTitle());
         return ResponseUtil.success("Task template created successfully",
                 taskTemplateService.createTemplate(templateDto));
     }

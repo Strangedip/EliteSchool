@@ -2,7 +2,8 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { TagModule } from 'primeng/tag';
-import { forkJoin } from 'rxjs';
+import { of } from 'rxjs';
+import { catchError, finalize } from 'rxjs/operators';
 
 import { WalletService, WalletBalanceEntry } from '../../core/services/wallet.service';
 import { UserService } from '../../core/services/user.service';
@@ -40,26 +41,33 @@ export class LeaderboardComponent implements OnInit {
 
   loadLeaderboard(): void {
     this.loading = true;
-    forkJoin({
-      wallets: this.walletService.getLeaderboard(20),
-      users: this.userService.getAllStudents()
-    }).subscribe({
-      next: ({ wallets, users }) => {
-        const userMap = new Map<string, User>((users.data ?? []).map(u => [u.eliteId, u]));
-        this.entries = wallets
-          .filter((w: WalletBalanceEntry) => w.balance > 0)
-          .map((w: WalletBalanceEntry, index: number) => ({
-            rank: index + 1,
-            studentId: w.studentId,
-            name: userMap.get(w.studentId)?.name || 'Unknown User',
-            role: userMap.get(w.studentId)?.role || 'STUDENT',
-            balance: w.balance
-          }));
+    this.walletService.getLeaderboard(20).pipe(
+      catchError(() => of([] as WalletBalanceEntry[])),
+      finalize(() => {
         this.loading = false;
-      },
-      error: (error) => {
-        console.error('Error loading leaderboard:', error);
-        this.loading = false;
+      })
+    ).subscribe((wallets) => {
+      const ranked = wallets.filter((w) => (w.balance ?? 0) > 0);
+      this.entries = ranked.map((w, index) => ({
+        rank: index + 1,
+        studentId: w.studentId,
+        name: w.studentName || 'Student',
+        role: w.role || 'STUDENT',
+        balance: w.balance
+      }));
+
+      if (this.entries.some(e => e.name === 'Student')) {
+        this.userService.getAllStudents().pipe(
+          catchError(() => of({ success: true, data: [] as User[], message: '' }))
+        ).subscribe((users) => {
+          const userMap = new Map((users.data ?? []).map(u => [u.eliteId, u]));
+          this.entries = this.entries.map(entry => {
+            const match = userMap.get(entry.studentId);
+            return match
+              ? { ...entry, name: match.name || entry.name, role: match.role || entry.role }
+              : entry;
+          });
+        });
       }
     });
   }

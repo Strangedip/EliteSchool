@@ -1,12 +1,24 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="EliteSchool">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="EliteSchool">
   <defs>
-    <linearGradient id="es-mark" x1="6" y1="2" x2="44" y2="46" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#023e8a"/>
-      <stop offset=".5" stop-color="#0077b6"/>
-      <stop offset="1" stop-color="#00b4d8"/>
+    <!-- Ocean teal brand gradient -->
+    <linearGradient id="es-bg" x1="8" y1="6" x2="56" y2="58" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0e7490"/>
+      <stop offset=".4" stop-color="#0284c7"/>
+      <stop offset="1" stop-color="#22d3ee"/>
     </linearGradient>
   </defs>
-  <rect width="48" height="48" rx="12" fill="url(#es-mark)"/>
-  <!-- Capital E -->
-  <path fill="#fff" d="M15 13h19v4.4H20.2v3.8H32v4.2H20.2v3.9H34V34H15V13z"/>
+
+  <rect width="64" height="64" rx="15" fill="url(#es-bg)"/>
+
+  <!-- Progress bars (group center ~32) -->
+  <rect x="14" y="42" width="10" height="11" rx="2.4" fill="#ffffff" fill-opacity=".88"/>
+  <rect x="27" y="33" width="10" height="20" rx="2.4" fill="#ffffff"/>
+  <!-- Tall bar: center x = 45.5 -->
+  <rect x="40" y="26" width="11" height="27" rx="2.4" fill="#ffffff"/>
+
+  <!-- Star centered on tall bar (45.5), clear air above peak -->
+  <path
+    fill="#f0fdfa"
+    transform="translate(45.5 14)"
+    d="M0-5.4 1.55-1.15H6.05L2.4 1.5 3.8 5.75 0 3.15l-3.8 2.6 1.4-4.25L-6.05-1.15H-1.55Z"/>
 </svg>

@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { AuthGuard } from './core/guards/auth.guard';
+import { AuthGuard, GuestCanMatch } from './core/guards/auth.guard';
 import { AdminGuard, StaffGuard, StoreWalletGuard } from './core/guards/role.guard';
 
 export const routes: Routes = [
@@ -30,17 +30,22 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/reset-password/reset-password.component').then(m => m.ResetPasswordComponent),
     title: 'Reset Password - EliteSchool'
   },
+
+  /* Visitors: public chrome (no app sidebar) */
   {
     path: 'docs',
+    canMatch: [GuestCanMatch],
     loadComponent: () => import('./features/docs/docs.component').then(m => m.DocsComponent),
     title: 'Documentation - EliteSchool'
   },
   {
     path: 'games',
+    canMatch: [GuestCanMatch],
     loadChildren: () => import('./features/games/games.routes').then(m => m.GAMES_ROUTES),
     title: 'Games - EliteSchool'
   },
 
+  /* Signed-in shell: sidebar + top header stay visible */
   {
     path: '',
     loadComponent: () => import('./layouts/main-layout/main-layout.component').then(m => m.MainLayoutComponent),
@@ -110,6 +115,18 @@ export const routes: Routes = [
         loadComponent: () => import('./features/admin/admin-audit.component').then(m => m.AdminAuditComponent),
         canActivate: [AdminGuard],
         title: 'School Audit - EliteSchool'
+      },
+      {
+        path: 'docs',
+        loadComponent: () => import('./features/docs/docs.component').then(m => m.DocsComponent),
+        data: { embedded: true },
+        title: 'Documentation - EliteSchool'
+      },
+      {
+        path: 'games',
+        loadChildren: () => import('./features/games/games.routes').then(m => m.GAMES_ROUTES),
+        data: { embedded: true },
+        title: 'Games - EliteSchool'
       },
     ]
   },

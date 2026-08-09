@@ -60,21 +60,24 @@
     min-width: 150px;
 
     &.p-button-primary {
-      background: linear-gradient(135deg, var(--primary-color, #00b4d8), var(--primary-light-color, #00d4ff));
-      border: none;
+      background: var(--btn-primary-bg) !important;
+      color: var(--btn-primary-color) !important;
+      border: 1px solid color-mix(in srgb, var(--primary-dark-color) 35%, transparent) !important;
+      box-shadow: var(--btn-primary-shadow) !important;
 
       &:hover {
-        background: linear-gradient(135deg, var(--primary-light-color, #00d4ff), var(--primary-color, #00b4d8));
+        filter: brightness(1.05);
+        box-shadow: var(--btn-primary-shadow-hover) !important;
       }
     }
 
     &.p-button-secondary {
-      background: color-mix(in srgb, var(--primary-color) 15%, transparent);
-      border: 1px solid var(--primary-color, #00b4d8);
-      color: var(--primary-light-color, #00d4ff);
+      background: var(--btn-secondary-bg) !important;
+      border: 1px solid var(--btn-secondary-border) !important;
+      color: var(--btn-secondary-color) !important;
 
       &:hover {
-        background: var(--surface-border);
+        background: var(--btn-secondary-hover-bg) !important;
       }
     }
   }

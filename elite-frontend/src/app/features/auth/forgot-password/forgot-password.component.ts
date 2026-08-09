@@ -5,15 +5,16 @@ import { Router, RouterModule } from '@angular/router';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { AuthService } from '../../../core/services/auth.service';
+import { ThemeService } from '../../../core/services/theme.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { finalize } from 'rxjs';
+import { BrandMarkComponent } from '../../../shared/brand-mark.component';
 
 @Component({
     selector: 'app-forgot-password',
-    imports: [CommonModule, ReactiveFormsModule, RouterModule, InputTextModule, ButtonModule],
+    imports: [CommonModule, ReactiveFormsModule, RouterModule, InputTextModule, ButtonModule, BrandMarkComponent],
     templateUrl: './forgot-password.component.html',
-    changeDetection: ChangeDetectionStrategy.Eager,
-    styleUrls: ['./forgot-password.component.scss']
+    changeDetection: ChangeDetectionStrategy.Eager
 })
 export class ForgotPasswordComponent {
   forgotPasswordForm: FormGroup;
@@ -24,11 +25,16 @@ export class ForgotPasswordComponent {
     private fb: FormBuilder,
     private authService: AuthService,
     private toastService: ToastService,
-    private router: Router
+    private router: Router,
+    public themeService: ThemeService
   ) {
     this.forgotPasswordForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]]
     });
+  }
+
+  toggleTheme(): void {
+    this.themeService.toggle();
   }
 
   get email() {

@@ -14,4 +14,6 @@ import java.util.UUID;
 public class WalletDto {
     private UUID studentId;
     private int balance;
+    private String studentName;
+    private String role;
 } 

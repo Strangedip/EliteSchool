@@ -1,4 +1,11 @@
 <div class="auth-container">
+  <button
+    type="button"
+    class="auth-theme-toggle"
+    (click)="toggleTheme()"
+    [title]="themeService.isDark() ? 'Switch to light mode' : 'Switch to dark mode'">
+    <i class="pi" [class.pi-sun]="themeService.isDark()" [class.pi-moon]="!themeService.isDark()"></i>
+  </button>
   <div class="auth-wrapper">
     <a routerLink="/home" class="back-link">
       <i class="pi pi-arrow-left"></i>
@@ -6,7 +13,7 @@
     </a>
 
     <div class="auth-brand">
-      <img src="assets/images/brand-mark.svg" width="48" height="48" alt="EliteSchool" />
+      <app-brand-mark [size]="48" alt="EliteSchool" />
       <span class="auth-wordmark">EliteSchool</span>
       <p class="auth-tag">Achievement first. Rewards that support every student.</p>
     </div>

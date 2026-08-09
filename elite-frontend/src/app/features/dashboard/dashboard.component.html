@@ -1,11 +1,14 @@
 @if (loaded) {
   @if (isAdmin) {
     <app-admin-dashboard></app-admin-dashboard>
-  }
-  @if (isFaculty) {
+  } @else if (isFaculty) {
     <app-faculty-dashboard></app-faculty-dashboard>
-  }
-  @if (isStudent) {
+  } @else if (isStudent) {
     <app-student-dashboard></app-student-dashboard>
   }
+} @else {
+  <div class="dashboard-boot">
+    <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
+    <span>Opening your workspace…</span>
+  </div>
 }

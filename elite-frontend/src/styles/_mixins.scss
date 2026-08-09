@@ -172,13 +172,3 @@ $bp-xl: 1200px;
   background-clip: text;
 }
 
-@mixin pill-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.3rem 0.75rem;
-  border-radius: var(--radius-pill);
-  background: var(--surface-hover);
-  color: var(--text-color);
-  font-size: 0.8rem;
-}

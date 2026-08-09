@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { tap, catchError } from 'rxjs/operators';
+import { tap, catchError, finalize, shareReplay } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { User } from '../models/user.model';
 import { CommonResponseDto } from '../models/common-response.model';
@@ -20,6 +20,7 @@ export class UserService {
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
   private USER_DATA_KEY = 'user_data';
+  private profileInFlight$: Observable<CommonResponseDto<User>> | null = null;
 
   constructor(private http: HttpClient) {
     this.loadUserFromStorage();
@@ -49,6 +50,7 @@ export class UserService {
   clearCurrentUser(): void {
     localStorage.removeItem(this.USER_DATA_KEY);
     this.currentUserSubject.next(null);
+    this.profileInFlight$ = null;
   }
 
   getCurrentUser(): User | null {
@@ -64,29 +66,40 @@ export class UserService {
     return this.getCurrentUser()?.role?.toUpperCase() === String(role).toUpperCase();
   }
 
+  /** Shared in-flight request so AuthGuard / layout / pages don't stack duplicate profile calls. */
   getUserProfile(): Observable<CommonResponseDto<User>> {
     const headers = this.getAuthHeaders();
     if (!headers.has('Authorization')) {
       return of({ success: false, message: 'No token available' });
     }
 
-    return this.http.get<CommonResponseDto<User>>(`${this.authUrl}/profile`, { headers }).pipe(
+    if (this.profileInFlight$) {
+      return this.profileInFlight$;
+    }
+
+    this.profileInFlight$ = this.http.get<CommonResponseDto<User>>(`${this.authUrl}/profile`, { headers }).pipe(
       tap(response => {
         if (response.success && response.data) {
           this.setCurrentUser(response.data);
         }
       }),
-      catchError(() => {
-        return this.http.get<CommonResponseDto<User>>(`${this.authUrl}/validate-token`, { headers }).pipe(
+      catchError(() =>
+        this.http.get<CommonResponseDto<User>>(`${this.authUrl}/validate-token`, { headers }).pipe(
           tap(response => {
             if (response.success && response.data) {
               this.setCurrentUser(response.data);
             }
           }),
           catchError(() => of({ success: false, message: 'Failed to get profile' }))
-        );
-      })
+        )
+      ),
+      finalize(() => {
+        this.profileInFlight$ = null;
+      }),
+      shareReplay(1)
     );
+
+    return this.profileInFlight$;
   }
 
   updateUserProfile(userId: string, userData: Partial<User>): Observable<CommonResponseDto<User>> {

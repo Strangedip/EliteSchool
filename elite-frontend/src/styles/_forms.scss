@@ -82,13 +82,16 @@
 
 .p-inputtext,
 .p-password,
-.p-select {
+.p-select,
+.p-textarea {
   width: 100%;
 }
 
 .p-inputtext,
 .p-password .p-inputtext,
-.p-select {
+.p-select,
+.p-textarea,
+textarea.p-textarea {
   background-color: var(--surface-input) !important;
   border: 1px solid var(--surface-border) !important;
   border-radius: var(--radius-md) !important;
@@ -104,6 +107,14 @@
     border-color: var(--primary-light-color) !important;
     box-shadow: var(--focus-ring) !important;
   }
+}
+
+.p-textarea,
+textarea.p-textarea {
+  min-height: 6.5rem !important;
+  padding: 0.85rem 1rem !important;
+  line-height: 1.5 !important;
+  resize: vertical;
 }
 
 .p-select {
@@ -243,19 +254,22 @@ p-floatlabel[variant='on'] {
 
 /* Generic theme-aware inputs used outside PrimeNG (plain <input>/<textarea>) */
 .theme-input,
-.theme-textarea {
+.theme-textarea,
+.p-textarea.theme-textarea,
+textarea.theme-textarea {
   width: 100%;
-  background: var(--surface-input);
-  border: 1px solid var(--surface-border);
-  color: var(--text-color);
-  border-radius: var(--radius-sm);
-  padding: var(--space-3);
+  background: var(--surface-input) !important;
+  border: 1px solid var(--surface-border) !important;
+  color: var(--text-color) !important;
+  border-radius: var(--radius-md) !important;
+  padding: 0.85rem 1rem !important;
   transition: all 0.25s ease;
   font-family: var(--font-secondary);
+  box-sizing: border-box;
 
   &:focus {
-    border-color: var(--primary-color);
-    box-shadow: var(--focus-ring);
+    border-color: var(--primary-color) !important;
+    box-shadow: var(--focus-ring) !important;
     outline: none;
   }
 
@@ -264,35 +278,42 @@ p-floatlabel[variant='on'] {
   }
 }
 
-.theme-textarea {
-  min-height: 100px;
+.theme-textarea,
+.p-textarea.theme-textarea,
+textarea.theme-textarea {
+  min-height: 6.5rem;
   resize: vertical;
+  line-height: 1.5;
 }
 
 /* Dropdown / InputNumber theme hooks used by store & nominations */
 .theme-dropdown,
 .theme-input-number {
   width: 100%;
+  display: block;
 
   .p-select,
   .p-inputnumber,
   .p-inputnumber-input {
-    width: 100%;
+    width: 100% !important;
   }
 }
 
 .p-inputnumber {
-  width: 100%;
-  display: inline-flex !important;
+  width: 100% !important;
+  display: flex !important;
   align-items: stretch !important;
 
   .p-inputnumber-input {
+    flex: 1 1 auto !important;
+    width: 100% !important;
     background-color: var(--surface-input) !important;
     border: 1px solid var(--surface-border) !important;
     border-radius: var(--radius-md) !important;
     color: var(--text-color) !important;
     font-family: var(--font-secondary) !important;
-    min-height: 3rem !important;
+    min-height: 3.1rem !important;
+    padding: 0.75rem 1rem !important;
 
     &:focus {
       border-color: var(--primary-light-color) !important;

@@ -1,29 +1,27 @@
-<div class="docs-page">
-  <nav class="docs-nav">
-    <div class="docs-nav-inner">
-      <a routerLink="/home" class="brand-link">
-        <img src="assets/images/brand-mark.svg" width="36" height="36" alt="" />
-        <span>EliteSchool</span>
-      </a>
-      <div class="docs-nav-links">
-        <button
-          type="button"
-          class="theme-toggle-btn"
-          (click)="toggleTheme()"
-          [title]="themeService.isDark() ? 'Switch to light mode' : 'Switch to dark mode'">
-          <i class="pi" [class.pi-sun]="themeService.isDark()" [class.pi-moon]="!themeService.isDark()"></i>
-        </button>
-        <a routerLink="/home">Home</a>
-        <a routerLink="/games">Games</a>
-        @if (isLoggedIn) {
-          <a routerLink="/dashboard" class="nav-cta">Dashboard</a>
-        } @else {
+<div class="docs-page" [class.embedded]="embedded">
+  @if (!embedded) {
+    <nav class="docs-nav">
+      <div class="docs-nav-inner">
+        <a routerLink="/home" class="brand-link">
+          <app-brand-mark [size]="36" />
+          <span>EliteSchool</span>
+        </a>
+        <div class="docs-nav-links">
+          <button
+            type="button"
+            class="theme-toggle-btn"
+            (click)="toggleTheme()"
+            [title]="themeService.isDark() ? 'Switch to light mode' : 'Switch to dark mode'">
+            <i class="pi" [class.pi-sun]="themeService.isDark()" [class.pi-moon]="!themeService.isDark()"></i>
+          </button>
+          <a routerLink="/home">Home</a>
+          <a routerLink="/games">Games</a>
           <a routerLink="/login">Sign In</a>
           <a routerLink="/register" class="nav-cta">Get Started</a>
-        }
+        </div>
       </div>
-    </div>
-  </nav>
+    </nav>
+  }
 
   <header class="docs-hero">
     <p class="eyebrow">Product documentation</p>
@@ -141,6 +139,31 @@
             </tbody>
           </table>
         </div>
+
+        <div class="access-cards" aria-label="Capability matrix">
+          @for (row of capabilities; track row.name) {
+            <article class="access-card">
+              <h3>{{ row.name }}</h3>
+              @if (row.note) {
+                <span class="row-note">{{ row.note }}</span>
+              }
+              <ul>
+                <li>
+                  <span class="role">Student</span>
+                  <span class="value" [attr.data-yes]="row.student">{{ row.student ? 'Yes' : '—' }}</span>
+                </li>
+                <li>
+                  <span class="role">Faculty</span>
+                  <span class="value" [attr.data-yes]="row.faculty">{{ row.faculty ? 'Yes' : '—' }}</span>
+                </li>
+                <li>
+                  <span class="role">Admin</span>
+                  <span class="value" [attr.data-yes]="row.admin">{{ row.admin ? 'Yes' : '—' }}</span>
+                </li>
+              </ul>
+            </article>
+          }
+        </div>
       </section>
 
       <section id="rules" class="docs-section">
@@ -173,23 +196,21 @@
     </div>
   </div>
 
-  <footer class="docs-footer">
-    <div class="footer-inner">
-      <a routerLink="/home" class="brand-link">
-        <img src="assets/images/brand-mark.svg" width="32" height="32" alt="" />
-        <span>EliteSchool</span>
-      </a>
-      <p>Achievement management for schools — rewards that keep every student moving forward.</p>
-      <div class="footer-links">
-        <a routerLink="/home">Home</a>
-        <a routerLink="/games">Games</a>
-        @if (!isLoggedIn) {
+  @if (!embedded) {
+    <footer class="docs-footer">
+      <div class="footer-inner">
+        <a routerLink="/home" class="brand-link">
+          <app-brand-mark [size]="32" />
+          <span>EliteSchool</span>
+        </a>
+        <p>Achievement management for schools — rewards that keep every student moving forward.</p>
+        <div class="footer-links">
+          <a routerLink="/home">Home</a>
+          <a routerLink="/games">Games</a>
           <a routerLink="/login">Sign In</a>
-        } @else {
-          <a routerLink="/dashboard">Dashboard</a>
-        }
+        </div>
+        <p class="copy">© {{ currentYear }} EliteSchool</p>
       </div>
-      <p class="copy">© {{ currentYear }} EliteSchool</p>
-    </div>
-  </footer>
+    </footer>
+  }
 </div>

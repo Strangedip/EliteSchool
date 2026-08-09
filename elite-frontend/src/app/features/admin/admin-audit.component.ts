@@ -29,7 +29,7 @@ export class AdminAuditComponent implements OnInit {
   claims: StorePurchase[] = [];
   tickets: SupportTicket[] = [];
   nominations: ContributionNomination[] = [];
-  adminCredits: { studentId: string; studentName: string; points: number; description: string; createdAt: string }[] = [];
+  adminCredits: Transaction[] = [];
   private studentNames = new Map<string, string>();
   loading = true;
 
@@ -51,9 +51,10 @@ export class AdminAuditComponent implements OnInit {
       claims: this.storeService.getAllPurchases().pipe(catchError(() => of([] as StorePurchase[]))),
       tickets: this.supportService.getAllTickets().pipe(catchError(() => of([] as SupportTicket[]))),
       nominations: this.walletService.listNominations().pipe(catchError(() => of([] as ContributionNomination[]))),
-      students: this.userService.getAllStudents().pipe(catchError(() => of({ success: false, data: [] as User[] })))
+      students: this.userService.getAllStudents().pipe(catchError(() => of({ success: false, data: [] as User[] }))),
+      adjustments: this.walletService.getAdminAdjustments().pipe(catchError(() => of([] as Transaction[])))
     }).subscribe({
-      next: ({ claims, tickets, nominations, students }) => {
+      next: ({ claims, tickets, nominations, students, adjustments }) => {
         this.claims = claims || [];
         this.tickets = (tickets || []).filter(t =>
           t.status === 'RESOLVED' || t.status === 'CLOSED'
@@ -67,7 +68,7 @@ export class AdminAuditComponent implements OnInit {
             .filter(s => s.eliteId)
             .map(s => [s.eliteId!, s.name || s.username || s.eliteId!])
         );
-        this.loadAdminCredits(studentList);
+        this.adminCredits = adjustments || [];
         this.loading = false;
       },
       error: () => {
@@ -81,41 +82,12 @@ export class AdminAuditComponent implements OnInit {
     return this.studentNames.get(studentId) || studentId;
   }
 
-  private loadAdminCredits(students: User[]): void {
-    if (!students.length) {
-      this.adminCredits = [];
-      return;
-    }
-    const limited = students.slice(0, 40);
-    forkJoin(
-      limited.map(s =>
-        this.walletService.getTransactionHistory(s.eliteId!).pipe(
-          catchError(() => of([] as Transaction[])),
-        )
-      )
-    ).subscribe(histories => {
-      const rows: typeof this.adminCredits = [];
-      histories.forEach((txs, idx) => {
-        const student = limited[idx];
-        (txs || [])
-          .filter(t => t.transactionType === 'CREDIT')
-          .filter(t => {
-            const d = (t.description || '').toLowerCase();
-            return d.includes('admin') || d.includes('adjust') || d.includes('grant') || d.includes('manual');
-          })
-          .forEach(t => {
-            rows.push({
-              studentId: student.eliteId || '',
-              studentName: student.name || student.username || '',
-              points: t.points,
-              description: t.description || '',
-              createdAt: t.createdAt || ''
-            });
-          });
-      });
-      this.adminCredits = rows.sort((a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      );
-    });
+  adjustmentName(row: Transaction): string {
+    return row.studentName || this.studentLabel(row.studentId) || row.studentId;
+  }
+
+  pointsLabel(row: Transaction): string {
+    const sign = row.transactionType === 'DEBIT' ? '-' : '+';
+    return `${sign}${row.points}`;
   }
 }

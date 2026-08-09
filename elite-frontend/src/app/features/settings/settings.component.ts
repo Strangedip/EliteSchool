@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { PasswordModule } from 'primeng/password';
 import { ToastModule } from 'primeng/toast';
@@ -14,7 +14,7 @@ import { ThemeService, ThemeMode } from '../../core/services/theme.service';
 
 @Component({
     selector: 'app-settings',
-    imports: [FormsModule, RouterLink, ButtonModule, PasswordModule, ToastModule],
+    imports: [FormsModule, ButtonModule, PasswordModule, ToastModule],
     providers: [MessageService],
     templateUrl: './settings.component.html',
     changeDetection: ChangeDetectionStrategy.Eager,
@@ -27,16 +27,29 @@ export class SettingsComponent implements OnInit {
   newPassword = '';
   confirmPassword = '';
   changingPassword = false;
+  passwordOpen = false;
 
   constructor(
     private authService: AuthService,
     private userService: UserService,
     private messageService: MessageService,
+    private router: Router,
     public themeService: ThemeService
   ) { }
 
   ngOnInit(): void {
     this.currentUser = this.userService.getCurrentUser();
+    if (!this.currentUser) {
+      this.userService.getUserProfile().subscribe({
+        next: (res) => {
+          this.currentUser = res.data || this.userService.getCurrentUser();
+        }
+      });
+    }
+  }
+
+  openProfile(): void {
+    this.router.navigate(['/profile'], { queryParams: { edit: '1' } });
   }
 
   setTheme(mode: ThemeMode): void {

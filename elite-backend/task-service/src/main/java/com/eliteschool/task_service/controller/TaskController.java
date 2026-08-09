@@ -9,7 +9,6 @@ import com.eliteschool.task_service.service.TaskService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +19,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/tasks")
 @RequiredArgsConstructor
-@Slf4j
 public class TaskController {
 
     private final TaskService taskService;
@@ -37,7 +35,6 @@ public class TaskController {
         GatewayAuth.requireRoles(request, "FACULTY", "ADMIN", "MANAGEMENT");
         UUID creatorId = GatewayAuth.requireUserId(request);
         taskDto.setCreatedBy(creatorId);
-        log.info("Creating task: {}", taskDto.getTitle());
         return ResponseUtil.success("Task created successfully", taskService.createTask(taskDto));
     }
 
@@ -47,7 +44,6 @@ public class TaskController {
             HttpServletRequest request) {
         GatewayAuth.requireRoles(request, "FACULTY", "ADMIN", "MANAGEMENT");
         UUID creatorId = GatewayAuth.requireUserId(request);
-        log.info("Creating task from template: {}", templateId);
         return taskService.createTaskFromTemplate(templateId, creatorId)
                 .map(task -> ResponseUtil.success("Task created from template successfully", task))
                 .orElseGet(() -> ResponseUtil.error(HttpStatus.NOT_FOUND, "TEMPLATE_NOT_FOUND",

@@ -1,20 +1,25 @@
-<div class="games-page">
+<div class="games-page" [class.embedded]="embedded">
   <div class="games-shell">
-    <header class="games-topbar">
-      <a routerLink="/home" class="brand-link">
-        <img src="assets/images/brand-mark.svg" width="32" height="32" alt="" />
-        <span>EliteSchool</span>
-      </a>
-      <nav class="games-nav">
-        <a routerLink="/home">Home</a>
-        <a routerLink="/docs">Docs</a>
-        @if (isLoggedIn) {
-          <a routerLink="/dashboard">Dashboard</a>
-        } @else {
+    @if (!embedded) {
+      <header class="games-topbar">
+        <a routerLink="/home" class="brand-link">
+          <app-brand-mark [size]="32" />
+          <span>EliteSchool</span>
+        </a>
+        <nav class="games-nav">
+          <button
+            type="button"
+            class="theme-toggle-btn"
+            (click)="toggleTheme()"
+            [title]="themeService.isDark() ? 'Switch to light mode' : 'Switch to dark mode'">
+            <i class="pi" [class.pi-sun]="themeService.isDark()" [class.pi-moon]="!themeService.isDark()"></i>
+          </button>
+          <a routerLink="/home">Home</a>
+          <a routerLink="/docs">Docs</a>
           <a routerLink="/login">Sign In</a>
-        }
-      </nav>
-    </header>
+        </nav>
+      </header>
+    }
 
     @if (!isPlaying) {
       <div class="games-header">

@@ -4,6 +4,7 @@
       <i class="pi pi-book" aria-hidden="true"></i>
       <div class="page-header-copy">
         <h1>Courses</h1>
+        <p class="page-subtitle">School subjects linked to contribution work and achievement.</p>
       </div>
     </div>
     <div class="header-actions">
@@ -16,7 +17,7 @@
       <p-select [options]="gradeOptions" optionLabel="label" optionValue="value" [(ngModel)]="gradeFilter" (onChange)="applyFilters()"
       placeholder="All Grades" [showClear]="true" class="filter-dropdown"></p-select>
       @if (isManager()) {
-        <p-button type="button" icon="pi pi-plus" label="Add Course" styleClass="action-button" (click)="addCourse()"></p-button>
+        <p-button type="button" icon="pi pi-plus" label="Add Course" styleClass="action-button" (onClick)="addCourse()"></p-button>
       }
     </div>
   </header>
@@ -26,7 +27,7 @@
       <h3>No courses found</h3>
       <p>There are currently no courses available or no courses match your search.</p>
       @if (isManager()) {
-        <p-button type="button" label="Add First Course" icon="pi pi-plus" (click)="addCourse()"></p-button>
+        <p-button type="button" label="Add First Course" icon="pi pi-plus" (onClick)="addCourse()"></p-button>
       }
     </div>
   }
@@ -50,9 +51,9 @@
           @if (isManager()) {
             <ng-template #footer>
               <div class="course-actions">
-                <p-button type="button" icon="pi pi-pencil" label="Edit" (click)="editCourse(course)" [outlined]="true"></p-button>
-                <p-button type="button" [icon]="course.active ? 'pi pi-eye-slash' : 'pi pi-eye'" [label]="course.active ? 'Deactivate' : 'Activate'" (click)="toggleActive(course)" [outlined]="true" severity="secondary"></p-button>
-                <p-button type="button" icon="pi pi-trash" label="Delete" (click)="deleteCourse(course)" [outlined]="true" severity="danger"></p-button>
+                <p-button type="button" icon="pi pi-pencil" label="Edit" (onClick)="editCourse(course)" [outlined]="true"></p-button>
+                <p-button type="button" [icon]="course.active ? 'pi pi-eye-slash' : 'pi pi-eye'" [label]="course.active ? 'Deactivate' : 'Activate'" (onClick)="toggleActive(course)" [outlined]="true" severity="secondary"></p-button>
+                <p-button type="button" icon="pi pi-trash" label="Delete" (onClick)="deleteCourse(course)" [outlined]="true" severity="danger"></p-button>
               </div>
             </ng-template>
           }
@@ -61,7 +62,7 @@
     </div>
   }
 </div>
-<p-dialog [header]="editMode ? 'Edit Course' : 'Add Course'" [(visible)]="courseDialogVisible" [modal]="true" [style]="{width: '500px'}" [draggable]="false" [resizable]="false" class="custom-dialog">
+<p-dialog [header]="editMode ? 'Edit Course' : 'Add Course'" [(visible)]="courseDialogVisible" [modal]="true" [style]="{width: '500px'}" [draggable]="false" [resizable]="false" styleClass="custom-dialog">
   @if (selectedCourse) {
     <form #courseForm="ngForm" (ngSubmit)="saveCourse()">
       <div class="field">
@@ -74,18 +75,19 @@
       </div>
       <div class="field">
         <label for="grade">Grade <span class="text-danger">*</span></label>
-        <p-select id="grade" [options]="gradeOptions" optionLabel="label" optionValue="value" [(ngModel)]="selectedCourse.grade" name="grade" required placeholder="Select grade" class="w-full"></p-select>
+        <p-select id="grade" [options]="gradeOptions" optionLabel="label" optionValue="value" [(ngModel)]="selectedCourse.grade" name="grade" required placeholder="Select grade" styleClass="w-full theme-dropdown"></p-select>
       </div>
       <div class="field">
         <label for="description">Description</label>
         <textarea pTextarea [(ngModel)]="selectedCourse.description" name="description" rows="4" class="theme-textarea"></textarea>
       </div>
       <div class="dialog-footer">
-        <p-button type="button" label="Cancel" icon="pi pi-times" (click)="courseDialogVisible = false" [text]="true"></p-button>
+        <p-button type="button" label="Cancel" icon="pi pi-times" (onClick)="courseDialogVisible = false" [text]="true"></p-button>
         <p-button type="submit" label="Save" icon="pi pi-check" [disabled]="!courseForm.valid"></p-button>
       </div>
     </form>
   }
 </p-dialog>
-<p-confirmdialog header="Confirmation" icon="pi pi-exclamation-triangle" class="custom-dialog"></p-confirmdialog>
+<p-confirmdialog header="Confirmation" icon="pi pi-exclamation-triangle" styleClass="custom-dialog"></p-confirmdialog>
 <p-toast position="top-right"></p-toast>
+

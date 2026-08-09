@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from 'primeng/tabs';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
@@ -55,6 +55,7 @@ interface ContributionEvent {
 })
 export class UserProfileComponent implements OnInit {
   user: User | null = null;
+  loadError = false;
   rewardPoints = 0;
   transactions: Transaction[] = [];
   userTasks: UserTaskDisplay[] = [];
@@ -85,6 +86,7 @@ export class UserProfileComponent implements OnInit {
     private taskService: TaskService,
     private storeService: StoreService,
     private router: Router,
+    private route: ActivatedRoute,
     private messageService: MessageService
   ) { }
 
@@ -92,23 +94,44 @@ export class UserProfileComponent implements OnInit {
     this.loadUserProfile();
   }
 
+  get isStudent(): boolean {
+    return (this.user?.role || '').toUpperCase() === 'STUDENT';
+  }
+
   loadUserProfile(): void {
+    this.loadError = false;
     this.user = this.userService.getCurrentUser();
     if (!this.user) {
       this.userService.getUserProfile().subscribe({
         next: (res) => {
           if (res.success && res.data) {
             this.user = res.data;
-            this.syncEditForm();
-            this.loadRoleData();
+            this.afterUserLoaded();
+            return;
           }
+          this.loadError = true;
+        },
+        error: () => {
+          this.loadError = true;
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to load profile'
+          });
         }
       });
       return;
     }
 
+    this.afterUserLoaded();
+  }
+
+  private afterUserLoaded(): void {
     this.syncEditForm();
     this.loadRoleData();
+    if (this.route.snapshot.queryParamMap.get('edit') === '1') {
+      this.startEdit();
+    }
   }
 
   private syncEditForm(): void {
@@ -125,7 +148,7 @@ export class UserProfileComponent implements OnInit {
   }
 
   private loadRoleData(): void {
-    if (!this.user || this.user.role !== 'STUDENT' || !this.user.eliteId) {
+    if (!this.user || !this.isStudent || !this.user.eliteId) {
       return;
     }
     this.loadRewardPoints(this.user.eliteId);

@@ -10,7 +10,6 @@ import com.eliteschool.task_service.model.enums.TaskStatus;
 import com.eliteschool.task_service.service.TaskSubmissionService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +20,6 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/task-submissions")
-@Slf4j
 public class TaskSubmissionController {
 
     private final TaskSubmissionService taskSubmissionService;
@@ -39,9 +37,6 @@ public class TaskSubmissionController {
         UUID studentId = GatewayAuth.requireUserId(request);
         submissionDto.setStudentId(studentId);
 
-        log.info("Received request to submit task with ID: {} by student: {}",
-                submissionDto.getTaskId(), studentId);
-
         TaskSubmissionDto savedSubmission = taskSubmissionService.submitTask(submissionDto);
         return ResponseUtil.success("Task submitted successfully", savedSubmission);
     }
@@ -51,7 +46,6 @@ public class TaskSubmissionController {
             @PathVariable UUID taskId,
             HttpServletRequest request) {
         GatewayAuth.requireRoles(request, "FACULTY", "ADMIN", "MANAGEMENT");
-        log.info("Received request to get submissions for task with ID: {}", taskId);
         List<TaskSubmissionDto> submissions = taskSubmissionService.getSubmissionsByTask(taskId);
         return ResponseUtil.success("Submissions retrieved successfully", submissions);
     }
@@ -61,7 +55,6 @@ public class TaskSubmissionController {
             @PathVariable UUID studentId,
             HttpServletRequest request) {
         GatewayAuth.requireSelfOrRoles(request, studentId, "FACULTY", "ADMIN", "MANAGEMENT");
-        log.info("Received request to get submissions for student with ID: {}", studentId);
         List<TaskSubmissionDto> submissions = taskSubmissionService.getSubmissionsByStudent(studentId);
         return ResponseUtil.success("Submissions retrieved successfully", submissions);
     }
@@ -71,7 +64,6 @@ public class TaskSubmissionController {
             @PathVariable TaskStatus status,
             HttpServletRequest request) {
         GatewayAuth.requireRoles(request, "FACULTY", "ADMIN", "MANAGEMENT");
-        log.info("Received request to get submissions with status: {}", status);
         List<TaskSubmissionDto> submissions = taskSubmissionService.getSubmissionsByStatus(status);
         return ResponseUtil.success("Submissions retrieved successfully", submissions);
     }
@@ -85,9 +77,6 @@ public class TaskSubmissionController {
 
         GatewayAuth.requireRoles(request, "FACULTY", "ADMIN", "MANAGEMENT");
         UUID verifierId = GatewayAuth.requireUserId(request);
-
-        log.info("Received request to verify submission with ID: {} by verifier: {}, approved: {}",
-                submissionId, verifierId, approved);
 
         return taskSubmissionService.verifySubmission(submissionId, verifierId, approved, feedback)
                 .map(submission -> ResponseUtil.success(

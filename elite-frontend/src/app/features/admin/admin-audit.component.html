@@ -17,7 +17,6 @@
   }
 
   @if (!loading) {
-    @defer (on idle) {
     <p-tabs value="0">
       <p-tablist>
         <p-tab value="0"><i class="pi pi-shopping-bag"></i> Store claims</p-tab>
@@ -78,12 +77,13 @@
           </p-table>
         </p-tabpanel>
         <p-tabpanel value="2">
-          <p class="hint">Rare management credits (not student-requested). Verified task awards are separate.</p>
+          <p class="hint">Staff wallet credits and debits from Elite Points admin (not task awards or nominations).</p>
           <p-table [value]="adminCredits" [paginator]="true" [rows]="10" styleClass="p-datatable-sm" [rowHover]="true">
             <ng-template #header>
               <tr>
                 <th>When</th>
                 <th>Student</th>
+                <th>Type</th>
                 <th>Points</th>
                 <th>Description</th>
               </tr>
@@ -91,13 +91,14 @@
             <ng-template #body let-r>
               <tr>
                 <td>{{ r.createdAt | date:'medium' }}</td>
-                <td>{{ r.studentName }}</td>
-                <td>+{{ r.points }}</td>
+                <td>{{ adjustmentName(r) }}</td>
+                <td><p-tag [value]="r.transactionType" [severity]="r.transactionType === 'CREDIT' ? 'success' : 'danger'"></p-tag></td>
+                <td>{{ pointsLabel(r) }}</td>
                 <td>{{ r.description }}</td>
               </tr>
             </ng-template>
             <ng-template #emptymessage>
-              <tr><td colspan="4" class="text-center">No matching admin adjustments found in recent student wallets.</td></tr>
+              <tr><td colspan="5" class="text-center">No admin adjustments recorded yet.</td></tr>
             </ng-template>
           </p-table>
         </p-tabpanel>
@@ -128,7 +129,6 @@
         </p-tabpanel>
       </p-tabpanels>
     </p-tabs>
-    }
   }
 </div>
 <p-toast></p-toast>

@@ -1,18 +1,20 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { ThemeService } from '../../core/services/theme.service';
+import { BrandMarkComponent } from '../../shared/brand-mark.component';
 
 @Component({
   selector: 'app-home',
-  imports: [RouterModule],
+  imports: [RouterModule, BrandMarkComponent, NgTemplateOutlet],
   templateUrl: './home.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit, OnDestroy {
   isLoggedIn = false;
   navSolid = false;
+  mobileNavOpen = false;
   currentYear = new Date().getFullYear();
   private authSub?: { unsubscribe(): void };
 
@@ -25,9 +27,29 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.themeService.toggle();
   }
 
+  toggleMobileNav(): void {
+    this.setMobileNav(!this.mobileNavOpen);
+  }
+
+  closeMobileNav(): void {
+    this.setMobileNav(false);
+  }
+
   @HostListener('window:scroll')
   onScroll(): void {
     this.navSolid = window.scrollY > 48;
+  }
+
+  @HostListener('window:resize')
+  onResize(): void {
+    if (window.innerWidth > 768) {
+      this.closeMobileNav();
+    }
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    this.closeMobileNav();
   }
 
   ngOnInit(): void {
@@ -39,6 +61,12 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.authSub?.unsubscribe();
+    this.setMobileNav(false);
+  }
+
+  private setMobileNav(open: boolean): void {
+    this.mobileNavOpen = open;
+    document.body.style.overflow = open ? 'hidden' : '';
   }
 
   features = [

@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { forkJoin, of } from 'rxjs';
@@ -9,11 +9,11 @@ import { UserService } from '../../../core/services/user.service';
 import { TaskSubmission, Task } from '../../../core/models/task.model';
 
 @Component({
-    selector: 'app-faculty-dashboard',
-    imports: [CommonModule, RouterLink],
-    templateUrl: './faculty-dashboard.component.html',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    styleUrls: ['../dashboard-shared.scss', './faculty-dashboard.component.scss']
+  selector: 'app-faculty-dashboard',
+  imports: [CommonModule, RouterLink],
+  templateUrl: './faculty-dashboard.component.html',
+  changeDetection: ChangeDetectionStrategy.Default,
+  styleUrls: ['../dashboard-shared.scss']
 })
 export class FacultyDashboardComponent implements OnInit {
   loading = true;
@@ -25,10 +25,10 @@ export class FacultyDashboardComponent implements OnInit {
   myOpenTaskCount = 0;
   activeCourseCount = 0;
 
-  constructor(private taskService: TaskService,
+  constructor(
+    private taskService: TaskService,
     private courseService: CourseService,
-    private userService: UserService,
-    private cdr: ChangeDetectorRef
+    private userService: UserService
   ) {}
 
   ngOnInit(): void {
@@ -51,9 +51,11 @@ export class FacultyDashboardComponent implements OnInit {
         this.myOpenTaskCount = mine.length;
         this.myOpenTasks = mine.slice(0, 6);
         this.activeCourseCount = courses.filter(c => c.active).length;
+        this.loading = false;
       },
-      error: () => {},
-      complete: () => { this.loading = false; this.cdr.markForCheck(); }
+      error: () => {
+        this.loading = false;
+      }
     });
   }
 }

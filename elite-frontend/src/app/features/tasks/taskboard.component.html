@@ -1,22 +1,27 @@
-<div class="taskboard-container">
-    <div class="taskboard-header">
-        <h2>Task Board</h2>
+<div class="taskboard-container page-shell page-shell-wide">
+    <header class="page-header taskboard-header">
+        <div class="page-header-title">
+            <i class="pi pi-check-square" aria-hidden="true"></i>
+            <div class="page-header-copy">
+                <h1>Tasks</h1>
+                <p class="page-subtitle">
+                    Students claim and submit contribution work. Faculty verify before Elite Points are credited.
+                </p>
+            </div>
+        </div>
         <div class="header-actions">
             <div class="search-box">
                 <input type="text" placeholder="Search tasks..." (input)="onSearch($event)" />
                 <i class="pi pi-search"></i>
             </div>
-            <div class="wallet-info" *ngIf="currentUserRole === 'STUDENT'">
+            <a routerLink="/wallet" class="wallet-info" *ngIf="currentUserRole === 'STUDENT'" title="Elite Points">
                 <i class="pi pi-wallet"></i>
                 <span>{{ rewardPoints }}</span>
-                <a routerLink="/wallet" class="view-wallet-link">
-                    <i class="pi pi-chart-bar"></i> View Wallet
-                </a>
-            </div>
-            <p-button type="button" icon="pi pi-bookmark" label="Templates" styleClass="p-button-outlined action-button" (click)="openTemplatesDialog()" *ngIf="canCreateTasks()"></p-button>
-            <p-button type="button" icon="pi pi-plus" label="Add Task" styleClass="p-button-primary action-button" (click)="addNewTask()" *ngIf="canCreateTasks()"></p-button>
+            </a>
+            <p-button type="button" icon="pi pi-bookmark" label="Templates" styleClass="p-button-outlined action-button" (onClick)="openTemplatesDialog()" *ngIf="canCreateTasks()"></p-button>
+            <p-button type="button" icon="pi pi-plus" label="Add Task" styleClass="p-button-primary action-button" (onClick)="addNewTask()" *ngIf="canCreateTasks()"></p-button>
         </div>
-    </div>
+    </header>
     <div class="loading-overlay" *ngIf="isLoading">
         <div class="loading-spinner">
             <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
@@ -24,114 +29,76 @@
         </div>
     </div>
 
-    <div class="task-columns">
-        <div class="task-column">
-            <div class="column-header">
-                <h3>Open Tasks</h3>
-                <span class="task-count">{{ openTasks.length }}</span>
-            </div>
-            <div class="column-content">
-                <div class="task-card" *ngFor="let task of openTasks"
-                     [class.task-highlight]="highlightTaskId === task.id">
-                    <div class="task-status status-open"></div>
-                    <div class="task-content">
-                        <h4 class="task-title">{{ task.title }}</h4>
-                        <p class="task-description">{{ task.description }}</p>
-                        <div class="task-meta">
-                            <span class="task-points"><i class="pi pi-wallet"></i> {{ task.rewardPoints }} Points</span>
-                            <span class="task-type">{{ task.taskType }}</span>
-                        </div>
-                        <div class="task-actions" *ngIf="currentUserRole === 'STUDENT'">
-                            <p-button type="button" icon="pi pi-send" label="Submit Work" styleClass="p-button-sm p-button-primary" (click)="openSubmitDialog(task)"></p-button>
-                        </div>
-                        <div class="task-actions" *ngIf="canManageTask(task)">
-                            <p-button type="button" icon="pi pi-pencil" label="Edit" styleClass="p-button-sm p-button-primary" (click)="editTask(task)"></p-button>
-                            <p-button type="button" icon="pi pi-trash" label="Delete" styleClass="p-button-sm p-button-danger" (click)="deleteTask(task)"></p-button>
-                        </div>
-                    </div>
-                </div>
-                <div class="elite-empty" *ngIf="openTasks.length === 0 && !isLoading">
-                    <div class="elite-empty-icon"><i class="pi pi-check-square"></i></div>
-                    <p>No open tasks yet. Faculty can add contribution work for students.</p>
-                </div>
-            </div>
-        </div>
+    <p class="flow-hint" *ngIf="!isLoading">
+        <span>Open</span>
+        <i class="pi pi-arrow-right" aria-hidden="true"></i>
+        <span>Submit</span>
+        <i class="pi pi-arrow-right" aria-hidden="true"></i>
+        <span>Faculty verify</span>
+        <i class="pi pi-arrow-right" aria-hidden="true"></i>
+        <span>Elite Points credited</span>
+    </p>
 
-        <div class="task-column">
-            <div class="column-header">
-                <h3>Submitted</h3>
-                <span class="task-count">{{ submittedTasks.length }}</span>
-            </div>
-            <div class="column-content">
-                <div class="task-card" *ngFor="let task of submittedTasks">
-                    <div class="task-status status-submitted"></div>
-                    <div class="task-content">
-                        <h4 class="task-title">{{ task.title }}</h4>
-                        <p class="task-description">{{ task.submissionDetails || task.description }}</p>
-                        <div class="task-meta">
-                            <span class="task-points"><i class="pi pi-wallet"></i> {{ task.rewardPoints }} Points</span>
-                            <span class="task-status-text">Pending Verification</span>
-                        </div>
-                        <div class="task-actions" *ngIf="canVerifyTasks()">
-                            <p-button type="button" icon="pi pi-check" label="Approve" styleClass="p-button-primary p-button-sm custom-btn-sm" [disabled]="isVerifying" (click)="openVerifyDialog(task, true)"></p-button>
-                            <p-button type="button" icon="pi pi-times" label="Reject" styleClass="p-button-danger p-button-sm custom-btn-sm" [disabled]="isVerifying" (click)="openVerifyDialog(task, false)"></p-button>
-                        </div>
-                    </div>
-                </div>
-                <div class="elite-empty" *ngIf="submittedTasks.length === 0 && !isLoading">
-                    <div class="elite-empty-icon"><i class="pi pi-inbox"></i></div>
-                    <p>No submissions waiting for verification.</p>
-                </div>
-            </div>
-        </div>
+    <div class="status-filters" *ngIf="!isLoading" role="tablist" aria-label="Task status">
+        <button
+            type="button"
+            class="status-filter"
+            *ngFor="let f of filters"
+            [class.active]="activeFilter === f.id"
+            (click)="setFilter(f.id)"
+            role="tab"
+            [attr.aria-selected]="activeFilter === f.id">
+            <span>{{ f.label }}</span>
+            <span class="filter-count">{{ countFor(f.id) }}</span>
+        </button>
+    </div>
 
-        <div class="task-column">
-            <div class="column-header">
-                <h3>Completed</h3>
-                <span class="task-count">{{ completedTasks.length }}</span>
-            </div>
-            <div class="column-content">
-                <div class="task-card task-completed" *ngFor="let task of completedTasks">
-                    <div class="task-status status-completed"></div>
-                    <div class="task-content">
-                        <h4 class="task-title">{{ task.title }}</h4>
-                        <p class="task-description">{{ task.description }}</p>
-                        <div class="task-meta">
-                            <span class="task-points"><i class="pi pi-wallet"></i> {{ task.rewardPoints }} Points</span>
-                            <span class="task-completed-date" *ngIf="task.completedAt">{{ formatDate(task.completedAt) }}</span>
-                        </div>
-                        <p class="task-feedback" *ngIf="task.feedbackNotes">{{ task.feedbackNotes }}</p>
-                    </div>
+    <div class="task-list" *ngIf="!isLoading">
+        <article
+            class="task-row"
+            *ngFor="let task of visibleTasks; trackBy: trackTask"
+            [attr.data-status]="rowStatus(task)"
+            [class.task-highlight]="highlightTaskId === task.id">
+            <div class="task-main">
+                <div class="task-title-row">
+                    <h3 class="task-title">{{ task.title }}</h3>
+                    <span class="status-pill" [attr.data-status]="rowStatus(task)">{{ statusLabel(task) }}</span>
                 </div>
-                <div class="elite-empty" *ngIf="completedTasks.length === 0 && !isLoading">
-                    <div class="elite-empty-icon"><i class="pi pi-verified"></i></div>
-                    <p>No completed tasks in this board yet.</p>
+                <p class="task-description">
+                    {{ activeFilter === 'review' || activeFilter === 'revision'
+                        ? (task.submissionDetails || task.description)
+                        : task.description }}
+                </p>
+                <p class="task-feedback" *ngIf="task.feedbackNotes && (activeFilter === 'approved' || activeFilter === 'revision')">
+                    {{ task.feedbackNotes }}
+                </p>
+                <div class="task-meta">
+                    <span class="task-points"><i class="pi pi-wallet"></i> {{ task.rewardPoints }} pts</span>
+                    <span class="task-type">{{ task.taskType === 'SINGLE' ? 'One student' : 'Open to many' }}</span>
+                    <span class="task-date" *ngIf="task.completedAt && activeFilter === 'approved'">{{ formatDate(task.completedAt) }}</span>
                 </div>
             </div>
-        </div>
+            <div class="task-actions">
+                <ng-container *ngIf="currentUserRole === 'STUDENT' && activeFilter === 'available'">
+                    <p-button type="button" icon="pi pi-send" label="Submit work" styleClass="p-button-sm p-button-primary" (onClick)="openSubmitDialog(task)"></p-button>
+                </ng-container>
+                <ng-container *ngIf="currentUserRole === 'STUDENT' && activeFilter === 'revision'">
+                    <p-button type="button" icon="pi pi-refresh" label="Resubmit" styleClass="p-button-sm p-button-primary" (onClick)="openSubmitDialog(task)"></p-button>
+                </ng-container>
+                <ng-container *ngIf="canVerifyTasks() && activeFilter === 'review'">
+                    <p-button type="button" icon="pi pi-check" label="Approve" styleClass="p-button-primary p-button-sm" [disabled]="isVerifying" (onClick)="openVerifyDialog(task, true)"></p-button>
+                    <p-button type="button" icon="pi pi-times" label="Reject" styleClass="p-button-danger p-button-sm" [disabled]="isVerifying" (onClick)="openVerifyDialog(task, false)"></p-button>
+                </ng-container>
+                <ng-container *ngIf="canManageTask(task) && activeFilter === 'available'">
+                    <p-button type="button" icon="pi pi-pencil" label="Edit" styleClass="p-button-sm p-button-outlined" (onClick)="editTask(task)"></p-button>
+                    <p-button type="button" icon="pi pi-trash" label="Delete" styleClass="p-button-sm p-button-danger p-button-outlined" (onClick)="deleteTask(task)"></p-button>
+                </ng-container>
+            </div>
+        </article>
 
-        <div class="task-column">
-            <div class="column-header">
-                <h3>Rejected</h3>
-                <span class="task-count">{{ rejectedTasks.length }}</span>
-            </div>
-            <div class="column-content">
-                <div class="task-card" *ngFor="let task of rejectedTasks">
-                    <div class="task-status status-rejected"></div>
-                    <div class="task-content">
-                        <h4 class="task-title">{{ task.title }}</h4>
-                        <p class="task-description">{{ task.description }}</p>
-                        <p class="task-feedback" *ngIf="task.feedbackNotes">{{ task.feedbackNotes }}</p>
-                        <div class="task-actions" *ngIf="currentUserRole === 'STUDENT'">
-                            <p-button type="button" icon="pi pi-refresh" label="Resubmit" styleClass="p-button-sm p-button-primary" (click)="openSubmitDialog(task)"></p-button>
-                        </div>
-                    </div>
-                </div>
-                <div class="elite-empty" *ngIf="rejectedTasks.length === 0 && !isLoading">
-                    <div class="elite-empty-icon"><i class="pi pi-times-circle"></i></div>
-                    <p>No rejected submissions.</p>
-                </div>
-            </div>
+        <div class="elite-empty" *ngIf="visibleTasks.length === 0">
+            <div class="elite-empty-icon"><i class="pi" [ngClass]="emptyIcon()"></i></div>
+            <p>{{ emptyMessage() }}</p>
         </div>
     </div>
 </div>
@@ -144,7 +111,7 @@
         </p>
         <div class="field">
             <label for="submissionDetails">Submission Details</label>
-            <textarea id="submissionDetails" pInputTextarea [(ngModel)]="taskSubmission.submissionDetails"
+            <textarea id="submissionDetails" pTextarea [(ngModel)]="taskSubmission.submissionDetails"
                       name="submissionDetails" required rows="5" class="theme-textarea"></textarea>
         </div>
         <div class="field">
@@ -164,7 +131,7 @@
             </div>
         </div>
         <div class="dialog-footer">
-            <p-button type="button" label="Cancel" icon="pi pi-times" styleClass="p-button-text" [disabled]="isSubmitting" (click)="submissionDialogVisible = false"></p-button>
+            <p-button type="button" label="Cancel" icon="pi pi-times" styleClass="p-button-text" [disabled]="isSubmitting" (onClick)="submissionDialogVisible = false"></p-button>
             <p-button type="submit" label="Submit" icon="pi pi-check" styleClass="p-button-primary" [disabled]="!submissionForm.valid || isSubmitting"></p-button>
         </div>
     </form>
@@ -182,13 +149,13 @@
     </div>
     <div class="field">
         <label for="verifyFeedback">Feedback {{ verifyApproved ? '(optional)' : '(required)' }}</label>
-        <textarea id="verifyFeedback" pInputTextarea [(ngModel)]="verifyFeedback"
+        <textarea id="verifyFeedback" pTextarea [(ngModel)]="verifyFeedback"
                   name="verifyFeedback" rows="4" class="theme-textarea"
                   [required]="!verifyApproved"></textarea>
     </div>
     <div class="dialog-footer">
-        <p-button type="button" label="Cancel" icon="pi pi-times" styleClass="p-button-text" [disabled]="isVerifying" (click)="verifyDialogVisible = false"></p-button>
-        <p-button type="button" [label]="verifyApproved ? 'Approve' : 'Reject'" [icon]="verifyApproved ? 'pi pi-check' : 'pi pi-times'" [class]="verifyApproved ? 'p-button-primary' : 'p-button-danger'" [disabled]="isVerifying" (click)="confirmVerify()"></p-button>
+        <p-button type="button" label="Cancel" icon="pi pi-times" styleClass="p-button-text" [disabled]="isVerifying" (onClick)="verifyDialogVisible = false"></p-button>
+        <p-button type="button" [label]="verifyApproved ? 'Approve' : 'Reject'" [icon]="verifyApproved ? 'pi pi-check' : 'pi pi-times'" [class]="verifyApproved ? 'p-button-primary' : 'p-button-danger'" [disabled]="isVerifying" (onClick)="confirmVerify()"></p-button>
     </div>
 </p-dialog>
 
@@ -220,7 +187,7 @@
             </div>
             <div class="field">
                 <label for="description">Description <span class="text-danger">*</span></label>
-                <textarea id="description" pInputTextarea [(ngModel)]="taskToEdit.description" name="description" required rows="3" class="theme-textarea"></textarea>
+                <textarea id="description" pTextarea [(ngModel)]="taskToEdit.description" name="description" required rows="3" class="theme-textarea"></textarea>
             </div>
             <div class="field">
                 <label for="taskType">Task Type <span class="text-danger">*</span></label>
@@ -266,7 +233,7 @@
                 </div>
                 <div class="field">
                     <label for="taskRubric">Verification rubric (one item per line)</label>
-                    <textarea id="taskRubric" pInputTextarea [(ngModel)]="taskRubricText" name="taskRubricText"
+                    <textarea id="taskRubric" pTextarea [(ngModel)]="taskRubricText" name="taskRubricText"
                               rows="3" class="theme-textarea"
                               placeholder="Attached photos of the work&#10;Cited sources&#10;Peer review completed"></textarea>
                 </div>
@@ -274,7 +241,7 @@
         </div>
 
         <div class="dialog-footer">
-            <p-button type="button" label="Cancel" icon="pi pi-times" styleClass="p-button-text" (click)="taskDialogVisible = false"></p-button>
+            <p-button type="button" label="Cancel" icon="pi pi-times" styleClass="p-button-text" (onClick)="taskDialogVisible = false"></p-button>
             <p-button type="submit" label="Save" icon="pi pi-check" styleClass="p-button-primary" [disabled]="!taskForm.valid"></p-button>
         </div>
     </form>
@@ -283,7 +250,7 @@
 <p-dialog header="Manage Templates" [(visible)]="templatesDialogVisible" [modal]="true" [style]="{width: '640px'}" styleClass="custom-dialog">
     <div *ngIf="!templateFormVisible">
         <div class="dialog-footer" style="justify-content: flex-start; margin-bottom: 1rem;">
-            <p-button type="button" icon="pi pi-plus" label="New Template" styleClass="p-button-primary p-button-sm" (click)="addNewTemplate()"></p-button>
+            <p-button type="button" icon="pi pi-plus" label="New Template" styleClass="p-button-primary p-button-sm" (onClick)="addNewTemplate()"></p-button>
         </div>
         <div class="template-list" *ngIf="templates.length > 0">
             <div class="template-item" *ngFor="let template of templates"
@@ -294,8 +261,8 @@
                     <small>{{ template.taskType }} · {{ template.rewardPoints }} pts · Level {{ template.minLevel }}+</small>
                 </div>
                 <div style="display: flex; gap: 0.5rem; flex-shrink: 0;">
-                    <p-button type="button" icon="pi pi-pencil" styleClass="p-button-sm p-button-text" (click)="editTemplate(template)"></p-button>
-                    <p-button type="button" icon="pi pi-trash" styleClass="p-button-sm p-button-text p-button-danger" (click)="deleteTemplate(template)"></p-button>
+                    <p-button type="button" icon="pi pi-pencil" styleClass="p-button-sm p-button-text" (onClick)="editTemplate(template)"></p-button>
+                    <p-button type="button" icon="pi pi-trash" styleClass="p-button-sm p-button-text p-button-danger" (onClick)="deleteTemplate(template)"></p-button>
                 </div>
             </div>
         </div>
@@ -303,7 +270,7 @@
             No templates yet. Create one to reuse task setups.
         </div>
         <div class="dialog-footer">
-            <p-button type="button" label="Close" icon="pi pi-times" styleClass="p-button-text" (click)="templatesDialogVisible = false"></p-button>
+            <p-button type="button" label="Close" icon="pi pi-times" styleClass="p-button-text" (onClick)="templatesDialogVisible = false"></p-button>
         </div>
     </div>
 
@@ -315,27 +282,29 @@
         </div>
         <div class="field">
             <label for="templateDescription">Description <span class="text-danger">*</span></label>
-            <textarea id="templateDescription" pInputTextarea [(ngModel)]="templateToEdit.description"
+            <textarea id="templateDescription" pTextarea [(ngModel)]="templateToEdit.description"
                       name="templateDescription" required rows="4" class="theme-textarea" style="width: 100%;"></textarea>
         </div>
-        <div class="form-row" style="display: flex; gap: 20px;">
-            <div class="field" style="flex: 1;">
+        <div class="form-row">
+            <div class="field">
                 <label for="templateTaskType">Task Type <span class="text-danger">*</span></label>
                 <p-select id="templateTaskType" [options]="taskTypeOptions"
                             [(ngModel)]="templateToEdit.taskType"
                             optionLabel="label" optionValue="value"
-                            name="templateTaskType" required></p-select>
+                            name="templateTaskType" required styleClass="w-full theme-dropdown"></p-select>
             </div>
-            <div class="field" style="flex: 1;">
+            <div class="field">
                 <label for="templateRewardPoints">Points <span class="text-danger">*</span></label>
                 <p-inputnumber id="templateRewardPoints" [(ngModel)]="templateToEdit.rewardPoints"
-                               name="templateRewardPoints" [min]="1" [showButtons]="true" required></p-inputnumber>
+                               name="templateRewardPoints" [min]="1" [showButtons]="true" required
+                               styleClass="theme-input-number"></p-inputnumber>
             </div>
         </div>
         <div class="field">
             <label for="templateMinLevel">Minimum Level <span class="text-danger">*</span></label>
             <p-inputnumber id="templateMinLevel" [(ngModel)]="templateToEdit.minLevel"
-                           name="templateMinLevel" [min]="1" [showButtons]="true" required></p-inputnumber>
+                           name="templateMinLevel" [min]="1" [showButtons]="true" required
+                           styleClass="theme-input-number"></p-inputnumber>
         </div>
         <div class="field">
             <label>
@@ -346,18 +315,20 @@
         <div class="field">
             <label for="templateMinNotes">Minimum notes length</label>
             <p-inputnumber id="templateMinNotes" [(ngModel)]="templateToEdit.minNotesLength"
-                           name="templateMinNotes" [min]="0" [showButtons]="true"></p-inputnumber>
+                           name="templateMinNotes" [min]="0" [showButtons]="true"
+                           styleClass="theme-input-number"></p-inputnumber>
         </div>
         <div class="field">
             <label for="templateRubric">Verification rubric (one item per line)</label>
-            <textarea id="templateRubric" pInputTextarea [(ngModel)]="templateRubricText"
+            <textarea id="templateRubric" pTextarea [(ngModel)]="templateRubricText"
                       name="templateRubricText" rows="3" class="theme-textarea"></textarea>
         </div>
         <div class="dialog-footer">
-            <p-button type="button" label="Back" icon="pi pi-arrow-left" styleClass="p-button-text" (click)="cancelTemplateForm()"></p-button>
+            <p-button type="button" label="Back" icon="pi pi-arrow-left" styleClass="p-button-text" (onClick)="cancelTemplateForm()"></p-button>
             <p-button type="submit" label="Save Template" icon="pi pi-check" styleClass="p-button-primary" [disabled]="!templateForm.valid"></p-button>
         </div>
     </form>
 </p-dialog>
 
 <p-confirmdialog styleClass="custom-dialog"></p-confirmdialog>
+

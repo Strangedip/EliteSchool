@@ -24,7 +24,7 @@
         </p-select>
       }
       @if (isStudent()) {
-        <p-button type="button" icon="pi pi-plus" label="New Ticket" styleClass="action-button" (click)="openCreateDialog()"></p-button>
+        <p-button type="button" icon="pi pi-plus" label="New Ticket" styleClass="action-button" (onClick)="openCreateDialog()"></p-button>
       }
     </div>
   </header>
@@ -57,7 +57,7 @@
           }
           <td>{{ ticket.createdAt | date:'medium' }}</td>
           <td>
-            <p-button type="button" icon="pi pi-eye" label="Open" (click)="openTicket(ticket)" [outlined]="true" size="small"></p-button>
+            <p-button type="button" icon="pi pi-eye" label="Open" (onClick)="openTicket(ticket)" [outlined]="true" size="small"></p-button>
           </td>
         </tr>
       </ng-template>
@@ -68,7 +68,7 @@
               <div class="elite-empty-icon"><i class="pi pi-inbox"></i></div>
               <p>No support tickets yet.</p>
               @if (isStudent()) {
-                <p-button type="button" label="Create a ticket" icon="pi pi-plus" (click)="openCreateDialog()"></p-button>
+                <p-button type="button" label="Create a ticket" icon="pi pi-plus" (onClick)="openCreateDialog()"></p-button>
               }
             </div>
           </td>
@@ -80,7 +80,7 @@
 
 <!-- Create ticket (student) -->
 <p-dialog header="New Support Ticket" [(visible)]="createDialogVisible" [modal]="true"
-  [style]="{width: '560px'}" [draggable]="false" [resizable]="false" class="custom-dialog">
+  [style]="{width: '560px'}" [draggable]="false" [resizable]="false" styleClass="custom-dialog">
   <p class="dialog-hint">
     Share a concern, issue, or misalignment. This channel is not for requesting Elite Points.
   </p>
@@ -93,7 +93,7 @@
       <div class="field">
         <label for="category">Category <span class="text-danger">*</span></label>
         <p-select id="category" [options]="categoryOptions" optionLabel="label" optionValue="value"
-          [(ngModel)]="newTicket.category" name="category" required class="w-full"
+          [(ngModel)]="newTicket.category" name="category" required styleClass="w-full theme-dropdown"
         placeholder="Select category"></p-select>
       </div>
       <div class="field">
@@ -102,7 +102,7 @@
         class="theme-textarea" placeholder="Describe the concern, issue, or misalignment"></textarea>
       </div>
       <div class="dialog-footer">
-        <p-button type="button" label="Cancel" icon="pi pi-times" (click)="createDialogVisible = false" [text]="true"></p-button>
+        <p-button type="button" label="Cancel" icon="pi pi-times" (onClick)="createDialogVisible = false" [text]="true"></p-button>
         <p-button type="submit" label="Submit" icon="pi pi-check" [disabled]="!createForm.valid || saving"></p-button>
       </div>
     </form>
@@ -110,7 +110,7 @@
 
   <!-- Ticket detail / thread -->
   <p-dialog [(visible)]="detailDialogVisible" [modal]="true" [style]="{width: '720px'}"
-    [draggable]="false" [resizable]="false" class="custom-dialog" [header]="selectedTicket?.subject || 'Ticket'">
+    [draggable]="false" [resizable]="false" styleClass="custom-dialog" [header]="selectedTicket?.subject || 'Ticket'">
     @if (selectedTicket) {
       <div class="ticket-detail">
         <div class="ticket-meta">
@@ -154,7 +154,7 @@
             <label for="reply">Reply</label>
             <textarea id="reply" pTextarea [(ngModel)]="replyBody" rows="3"
             class="theme-textarea" placeholder="Write a reply..."></textarea>
-            <p-button type="button" label="Send Reply" icon="pi pi-send" styleClass="mt-2" [disabled]="!replyBody.trim() || saving" (click)="sendReply()"></p-button>
+            <p-button type="button" label="Send Reply" icon="pi pi-send" styleClass="mt-2" [disabled]="!replyBody.trim() || saving" (onClick)="sendReply()"></p-button>
           </div>
         }
         @if (isStaff()) {
@@ -162,14 +162,14 @@
             <h4>Update status</h4>
             <div class="field">
               <p-select [options]="staffStatusOptions" optionLabel="label" optionValue="value"
-              [(ngModel)]="statusUpdate" class="w-full"></p-select>
+              [(ngModel)]="statusUpdate" styleClass="w-full theme-dropdown"></p-select>
             </div>
             <div class="field">
               <label for="resolutionNotes">Resolution notes (optional)</label>
               <textarea id="resolutionNotes" pTextarea [(ngModel)]="resolutionNotes" rows="3"
               class="theme-textarea" placeholder="Optional notes when resolving or closing"></textarea>
             </div>
-            <p-button type="button" label="Update Status" icon="pi pi-check" [disabled]="saving" (click)="updateStatus()" [outlined]="true"></p-button>
+            <p-button type="button" label="Update Status" icon="pi pi-check" [disabled]="saving" (onClick)="updateStatus()" [outlined]="true"></p-button>
           </div>
         }
       </div>
@@ -177,3 +177,4 @@
   </p-dialog>
 
   <p-toast position="top-right"></p-toast>
+

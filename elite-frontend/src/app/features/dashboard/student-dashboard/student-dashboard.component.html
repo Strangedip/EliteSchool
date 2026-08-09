@@ -1,100 +1,156 @@
 <div class="dashboard-container">
-  <div class="dashboard-header">
-    <div>
-      <h1 class="dashboard-title">Welcome back, {{ currentUserName }}</h1>
-      <p class="dashboard-subtitle">Contribute through tasks, earn Elite Points after verification, and use the school store.</p>
+  <header class="dash-welcome">
+    <p class="welcome-kicker">Student workspace</p>
+    <h1 class="welcome-title">Welcome back, {{ currentUserName }}</h1>
+    <p class="welcome-lede">
+      Pick open work, submit for faculty review, then spend verified Elite Points in the school store.
+    </p>
+  </header>
+
+  @if (loading) {
+    <div class="loading-state">
+      <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
+      <span>Loading your progress…</span>
     </div>
-    <span class="role-badge"><i class="pi pi-user"></i> {{ roleLabel }}</span>
-  </div>
+  }
 
-  <div class="loading-state" *ngIf="loading">
-    <i class="pi pi-spin pi-spinner"></i>
-    <span>Loading your progress...</span>
-  </div>
+  @if (!loading) {
+    @if (openTaskCount > 0) {
+      <section class="focus-banner" aria-label="Next step">
+        <div class="focus-copy">
+          <p class="focus-label">Next step</p>
+          <h2 class="focus-title">{{ openTaskCount }} open {{ openTaskCount === 1 ? 'task' : 'tasks' }} ready for you</h2>
+          <p class="focus-detail">Claim work, submit evidence, and earn points after faculty verification.</p>
+        </div>
+        <a routerLink="/tasks" class="focus-cta">View tasks</a>
+      </section>
+    } @else {
+      <section class="focus-banner" data-tone="calm" aria-label="Status">
+        <div class="focus-copy">
+          <p class="focus-label">You’re caught up</p>
+          <h2 class="focus-title">No open tasks right now</h2>
+          <p class="focus-detail">Check the leaderboard or brain training while new work is posted.</p>
+        </div>
+        <a routerLink="/leaderboard" class="focus-cta">See leaderboard</a>
+      </section>
+    }
 
-  <ng-container *ngIf="!loading">
-    <div class="stat-grid">
-      <div class="stat-card">
-        <div class="stat-icon icon-success"><i class="pi pi-wallet"></i></div>
-        <div class="stat-body">
-          <div class="stat-value stat-value-kpi">{{ walletBalance }}</div>
-          <div class="stat-label">Elite Points</div>
-        </div>
+    <div class="metric-rail" aria-label="Your metrics">
+      <div class="metric">
+        <p class="metric-label">Elite Points</p>
+        <p class="metric-value is-kpi">{{ walletBalance }}</p>
+        <p class="metric-note">Verified balance</p>
       </div>
-      <div class="stat-card">
-        <div class="stat-icon"><i class="pi pi-trophy"></i></div>
-        <div class="stat-body">
-          <div class="stat-value">{{ leaderboardRank ? '#' + leaderboardRank : '—' }}</div>
-          <div class="stat-label">Leaderboard Rank{{ leaderboardTotal ? ' of ' + leaderboardTotal : '' }}</div>
-        </div>
+      <div class="metric">
+        <p class="metric-label">Leaderboard</p>
+        <p class="metric-value">{{ leaderboardRank ? '#' + leaderboardRank : '—' }}</p>
+        <p class="metric-note">{{ leaderboardTotal ? 'of ' + leaderboardTotal + ' students' : 'Rank pending' }}</p>
       </div>
-      <div class="stat-card">
-        <div class="stat-icon icon-warning"><i class="pi pi-list-check"></i></div>
-        <div class="stat-body">
-          <div class="stat-value">{{ openTaskCount }}</div>
-          <div class="stat-label">Open Tasks</div>
-        </div>
+      <div class="metric">
+        <p class="metric-label">Open tasks</p>
+        <p class="metric-value">{{ openTaskCount }}</p>
+        <p class="metric-note">Available to claim</p>
       </div>
-      <div class="stat-card">
-        <div class="stat-icon"><i class="pi pi-book"></i></div>
-        <div class="stat-body">
-          <div class="stat-value">{{ activeCourseCount }}</div>
-          <div class="stat-label">Active Courses</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="dashboard-columns">
-      <div class="panel-card">
-        <div class="panel-header">
-          <h2>Available Tasks</h2>
-          <a routerLink="/tasks" class="view-all">View All</a>
-        </div>
-        <div class="list-row" *ngFor="let t of openTasks">
-          <div class="list-icon"><i class="pi pi-bookmark"></i></div>
-          <div class="list-content">
-            <h4>{{ t.title }}</h4>
-            <p>{{ t.description }}</p>
-          </div>
-          <div class="list-meta">+{{ t.rewardPoints }} pts</div>
-        </div>
-        <div class="empty-state" *ngIf="!openTasks.length">
-          <i class="pi pi-check-circle"></i>
-          <p>No open tasks right now — check back soon!</p>
-        </div>
-      </div>
-
-      <div class="panel-card">
-        <div class="panel-header">
-          <h2>Quick Actions</h2>
-        </div>
-        <div class="quick-links">
-          <a routerLink="/tasks" class="quick-link"><i class="pi pi-check-square"></i> Tasks</a>
-          <a routerLink="/courses" class="quick-link"><i class="pi pi-book"></i> Courses</a>
-          <a routerLink="/store" class="quick-link"><i class="pi pi-shopping-cart"></i> Store</a>
-          <a routerLink="/wallet" class="quick-link"><i class="pi pi-wallet"></i> Wallet</a>
-          <a routerLink="/leaderboard" class="quick-link"><i class="pi pi-trophy"></i> Leaderboard</a>
-          <a routerLink="/games" class="quick-link"><i class="pi pi-play"></i> Games</a>
-        </div>
-
-        <div class="panel-header" style="margin-top: 1.5rem;">
-          <h2>Recent Transactions</h2>
-        </div>
-        <div class="list-row" *ngFor="let tx of recentTransactions">
-          <div class="list-icon"><i class="pi" [class.pi-arrow-down]="tx.transactionType === 'CREDIT'" [class.pi-arrow-up]="tx.transactionType === 'DEBIT'"></i></div>
-          <div class="list-content">
-            <h4>{{ tx.description }}</h4>
-            <p>{{ tx.createdAt | date:'medium' }}</p>
-          </div>
-          <div class="list-meta" [style.color]="tx.transactionType === 'CREDIT' ? 'var(--success-color)' : 'var(--danger-color)'">
-            {{ tx.transactionType === 'CREDIT' ? '+' : '-' }}{{ tx.points }}
-          </div>
-        </div>
-        <div class="empty-state" *ngIf="!recentTransactions.length">
-          <i class="pi pi-wallet"></i>
-          <p>No wallet activity yet</p>
-        </div>
+      <div class="metric">
+        <p class="metric-label">Courses</p>
+        <p class="metric-value">{{ activeCourseCount }}</p>
+        <p class="metric-note">Active this term</p>
       </div>
     </div>
-  </ng-container>
+
+    <div class="dash-grid">
+      <section class="dash-panel">
+        <div class="panel-head">
+          <h2 class="panel-title">Available tasks</h2>
+          <a routerLink="/tasks" class="panel-link">Open taskboard</a>
+        </div>
+        <div class="work-list">
+          @for (t of openTasks; track t.id || t.title) {
+            <a routerLink="/tasks" class="work-item">
+              <div>
+                <h3 class="work-title">{{ t.title }}</h3>
+                <p class="work-meta">{{ t.description }}</p>
+              </div>
+              <span class="work-aside">+{{ t.rewardPoints }} pts</span>
+            </a>
+          }
+          @if (!openTasks.length) {
+            <div class="empty-state">
+              <p>No open tasks at the moment — new work will appear here when faculty posts it.</p>
+            </div>
+          }
+        </div>
+      </section>
+
+      <div>
+        <section class="dash-panel">
+          <div class="panel-head">
+            <h2 class="panel-title">Where to go</h2>
+          </div>
+          <div class="path-list">
+            <a routerLink="/tasks" class="path-link">
+              <i class="pi pi-check-square" aria-hidden="true"></i>
+              <span class="path-copy">
+                <span class="path-label">Tasks</span>
+                <span class="path-hint">Claim and submit contribution work</span>
+              </span>
+              <i class="pi pi-chevron-right path-chevron" aria-hidden="true"></i>
+            </a>
+            <a routerLink="/wallet" class="path-link">
+              <i class="pi pi-wallet" aria-hidden="true"></i>
+              <span class="path-copy">
+                <span class="path-label">Elite Points</span>
+                <span class="path-hint">Balance and verified credit history</span>
+              </span>
+              <i class="pi pi-chevron-right path-chevron" aria-hidden="true"></i>
+            </a>
+            <a routerLink="/store" class="path-link">
+              <i class="pi pi-shopping-cart" aria-hidden="true"></i>
+              <span class="path-copy">
+                <span class="path-label">Rewards store</span>
+                <span class="path-hint">Spend points on school rewards</span>
+              </span>
+              <i class="pi pi-chevron-right path-chevron" aria-hidden="true"></i>
+            </a>
+            <a routerLink="/games" class="path-link">
+              <i class="pi pi-play" aria-hidden="true"></i>
+              <span class="path-copy">
+                <span class="path-label">Brain training</span>
+                <span class="path-hint">Practice only — never awards points</span>
+              </span>
+              <i class="pi pi-chevron-right path-chevron" aria-hidden="true"></i>
+            </a>
+          </div>
+        </section>
+
+        <section class="dash-panel">
+          <div class="panel-head">
+            <h2 class="panel-title">Recent activity</h2>
+            <a routerLink="/wallet" class="panel-link">Wallet</a>
+          </div>
+          <div class="work-list">
+            @for (tx of recentTransactions; track tx.id || tx.createdAt) {
+              <div class="work-item">
+                <div>
+                  <h3 class="work-title">{{ tx.description }}</h3>
+                  <p class="work-meta">{{ tx.createdAt | date:'medium' }}</p>
+                </div>
+                <span
+                  class="work-aside"
+                  [class.is-credit]="tx.transactionType === 'CREDIT'"
+                  [class.is-debit]="tx.transactionType === 'DEBIT'">
+                  {{ tx.transactionType === 'CREDIT' ? '+' : '-' }}{{ tx.points }}
+                </span>
+              </div>
+            }
+            @if (!recentTransactions.length) {
+              <div class="empty-state">
+                <p>No wallet activity yet. Points appear here after faculty verifies your work.</p>
+              </div>
+            }
+          </div>
+        </section>
+      </div>
+    </div>
+  }
 </div>

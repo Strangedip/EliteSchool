@@ -69,9 +69,17 @@ export class WalletComponent implements OnInit {
         } else if (this.currentUserId) {
           this.loadWalletBalance();
           this.loadTransactions();
+        } else {
+          this.loading = false;
+          this.transactionLoading = false;
+          this.toastService.showError('Could not resolve your student account for Elite Points');
         }
       },
-      error: () => this.toastService.showError('Failed to load user profile')
+      error: () => {
+        this.loading = false;
+        this.transactionLoading = false;
+        this.toastService.showError('Failed to load user profile');
+      }
     });
   }
 

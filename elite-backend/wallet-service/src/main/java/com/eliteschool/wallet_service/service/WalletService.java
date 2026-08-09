@@ -14,12 +14,14 @@ import com.eliteschool.wallet_service.exception.ItemOutOfStockException;
 import com.eliteschool.wallet_service.exception.TasksNotCompletedException;
 import com.eliteschool.wallet_service.model.Transaction;
 import com.eliteschool.wallet_service.model.Wallet;
+import com.eliteschool.wallet_service.model.enums.TransactionSource;
 import com.eliteschool.wallet_service.model.enums.TransactionType;
 import com.eliteschool.wallet_service.repository.TransactionRepository;
 import com.eliteschool.wallet_service.repository.WalletRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -48,11 +50,17 @@ public class WalletService {
 
     @Transactional
     public void creditPoints(UUID studentId, int points, String description) {
-        creditPoints(studentId, points, description, null);
+        creditPoints(studentId, points, description, null, TransactionSource.OTHER);
     }
 
     @Transactional
     public void creditPoints(UUID studentId, int points, String description, String referenceId) {
+        creditPoints(studentId, points, description, referenceId, TransactionSource.OTHER);
+    }
+
+    @Transactional
+    public void creditPoints(UUID studentId, int points, String description, String referenceId,
+                             TransactionSource source) {
         if (points <= 0) {
             throw new IllegalArgumentException("Points must be positive");
         }
@@ -71,6 +79,7 @@ public class WalletService {
         transactionRepository.save(Transaction.builder()
                 .studentId(studentId)
                 .transactionType(TransactionType.CREDIT)
+                .source(source != null ? source : TransactionSource.OTHER)
                 .points(points)
                 .description(description)
                 .referenceId(referenceId)
@@ -79,6 +88,11 @@ public class WalletService {
 
     @Transactional
     public boolean debitPoints(UUID studentId, int points, String description) {
+        return debitPoints(studentId, points, description, TransactionSource.OTHER);
+    }
+
+    @Transactional
+    public boolean debitPoints(UUID studentId, int points, String description, TransactionSource source) {
         if (points <= 0) {
             throw new IllegalArgumentException("Points must be positive");
         }
@@ -95,6 +109,7 @@ public class WalletService {
         transactionRepository.save(Transaction.builder()
                 .studentId(studentId)
                 .transactionType(TransactionType.DEBIT)
+                .source(source != null ? source : TransactionSource.OTHER)
                 .points(points)
                 .description(description)
                 .build());
@@ -145,7 +160,7 @@ public class WalletService {
             String debitDescription = "POINTS_AND_TASKS".equals(acquisition)
                     ? "Store (tasks + points): " + item.getName()
                     : "Purchase: " + item.getName();
-            debitPoints(studentId, price, debitDescription);
+            debitPoints(studentId, price, debitDescription, TransactionSource.STORE);
         } else if ("TASKS".equals(acquisition) && price > 0) {
             log.warn("TASKS item {} has price {} — points not charged", itemId, price);
         } else if (!"TASKS".equals(acquisition) && !"POINTS".equals(acquisition)
@@ -170,6 +185,7 @@ public class WalletService {
             transactionRepository.save(Transaction.builder()
                     .studentId(studentId)
                     .transactionType(TransactionType.DEBIT)
+                    .source(TransactionSource.STORE)
                     .points(0)
                     .description("Claimed via tasks: " + item.getName())
                     .build());
@@ -209,20 +225,14 @@ public class WalletService {
     }
 
     private String resolveStudentName(UUID studentId) {
-        try {
-            ResponseEntity<CommonResponseDto<AuthServiceClient.UserNameView>> response =
-                    authServiceClient.getUser(studentId);
-            if (response.getBody() != null && response.getBody().getData() != null) {
-                AuthServiceClient.UserNameView u = response.getBody().getData();
-                if (u.getName() != null && !u.getName().isBlank()) {
-                    return u.getName();
-                }
-                return u.getUsername();
-            }
-        } catch (Exception ex) {
-            log.warn("Could not resolve student name for {}: {}", studentId, ex.getMessage());
+        AuthServiceClient.UserNameView profile = resolveStudentProfile(studentId);
+        if (profile == null) {
+            return null;
         }
-        return null;
+        if (profile.getName() != null && !profile.getName().isBlank()) {
+            return profile.getName();
+        }
+        return profile.getUsername();
     }
 
     private void ensureTasksCompleted(UUID studentId, List<UUID> requiredTasks) {
@@ -258,10 +268,53 @@ public class WalletService {
         );
     }
 
-    public List<WalletDto> getLeaderboard(int limit) {
-        return walletRepository.findAllByOrderByBalanceDesc().stream()
-                .limit(limit)
-                .map(WalletMapper::toDto)
+    public List<TransactionDto> getAdminAdjustments(int limit) {
+        int safeLimit = Math.max(1, Math.min(limit, 200));
+        return transactionRepository
+                .findBySourceOrderByCreatedAtDesc(TransactionSource.ADMIN_ADJUSTMENT, PageRequest.of(0, safeLimit))
+                .stream()
+                .map(tx -> {
+                    TransactionDto dto = TransactionMapper.toDto(tx);
+                    String name = resolveStudentName(tx.getStudentId());
+                    if (name != null) {
+                        dto.setStudentName(name);
+                    }
+                    return dto;
+                })
                 .toList();
+    }
+
+    public List<WalletDto> getLeaderboard(int limit) {
+        int safeLimit = Math.max(1, Math.min(limit, 100));
+        return walletRepository.findAllByOrderByBalanceDesc().stream()
+                .filter(wallet -> wallet.getBalance() > 0)
+                .limit(safeLimit)
+                .map(wallet -> {
+                    WalletDto dto = WalletMapper.toDto(wallet);
+                    AuthServiceClient.UserNameView profile = resolveStudentProfile(wallet.getStudentId());
+                    if (profile != null) {
+                        if (profile.getName() != null && !profile.getName().isBlank()) {
+                            dto.setStudentName(profile.getName());
+                        } else {
+                            dto.setStudentName(profile.getUsername());
+                        }
+                        dto.setRole(profile.getRole());
+                    }
+                    return dto;
+                })
+                .toList();
+    }
+
+    private AuthServiceClient.UserNameView resolveStudentProfile(UUID studentId) {
+        try {
+            ResponseEntity<CommonResponseDto<AuthServiceClient.UserNameView>> response =
+                    authServiceClient.getUser(studentId);
+            if (response.getBody() != null) {
+                return response.getBody().getData();
+            }
+        } catch (Exception ex) {
+            log.warn("Could not resolve student profile for {}: {}", studentId, ex.getMessage());
+        }
+        return null;
     }
 }

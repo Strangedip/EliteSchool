@@ -24,7 +24,7 @@
             }
           </div>
         </div>
-        @if (user.role === 'STUDENT') {
+        @if (isStudent) {
           <div class="elite-points-card">
             <div class="points-header">Elite Points</div>
             <div class="points-value">
@@ -43,7 +43,7 @@
       <p-tabs value="0" class="profile-tabs">
         <p-tablist>
           <p-tab value="0"><i class="pi pi-user"></i> Personal Information</p-tab>
-          @if (user.role === 'STUDENT') {
+          @if (isStudent) {
             <p-tab value="1"><i class="pi pi-star"></i> Points history</p-tab>
             <p-tab value="2"><i class="pi pi-bolt"></i> Contribution</p-tab>
             <p-tab value="3"><i class="pi pi-check-square"></i> Tasks</p-tab>
@@ -57,7 +57,7 @@
                   <i class="pi pi-user"></i>
                   <span>Personal Details</span>
                   @if (!editing) {
-                    <p-button type="button" label="Edit" icon="pi pi-pencil" (click)="startEdit()" [text]="true" size="small"></p-button>
+                    <p-button type="button" label="Edit" icon="pi pi-pencil" (onClick)="startEdit()" [text]="true" size="small"></p-button>
                   }
                 </div>
                 @if (!editing) {
@@ -132,13 +132,13 @@
                     </div>
                     <div class="field">
                       <label>Age</label>
-                      <p-inputnumber [(ngModel)]="editForm.age" [min]="1" [showButtons]="true"></p-inputnumber>
+<p-inputnumber [(ngModel)]="editForm.age" [min]="1" [showButtons]="true" styleClass="theme-input-number"></p-inputnumber>
                     </div>
                     <div class="field">
                       <label>Gender</label>
                       <p-select [options]="genderOptions" [(ngModel)]="editForm.gender"
-                        optionLabel="label" optionValue="value" placeholder="Select gender"
-                      class="w-full"></p-select>
+                      optionLabel="label" optionValue="value" placeholder="Select gender"
+                      styleClass="w-full theme-dropdown"></p-select>
                     </div>
                     <div class="field">
                       <label>Address</label>
@@ -149,15 +149,15 @@
                       <input pInputText [(ngModel)]="editForm.emergencyContact" class="w-full theme-input" />
                     </div>
                     <div class="dialog-footer" style="display:flex; gap:0.75rem; justify-content:flex-end; margin-top:1rem;">
-                      <p-button type="button" label="Cancel" (click)="cancelEdit()" [disabled]="saving" [text]="true"></p-button>
-                      <p-button type="button" label="Save Changes" icon="pi pi-check" (click)="saveProfile()" [loading]="saving"></p-button>
+                      <p-button type="button" label="Cancel" (onClick)="cancelEdit()" [disabled]="saving" [text]="true"></p-button>
+                      <p-button type="button" label="Save Changes" icon="pi pi-check" (onClick)="saveProfile()" [loading]="saving"></p-button>
                     </div>
                   </div>
                 }
               </div>
             </div>
           </p-tabpanel>
-          @if (user.role === 'STUDENT') {
+          @if (isStudent) {
             <p-tabpanel value="1">
               <div class="profile-card wallet-history-card">
                 <div class="card-header">
@@ -299,11 +299,20 @@
   </div>
 }
 
-@if (!user) {
+@if (!user && !loadError) {
   <div class="profile-loading">
     <i class="pi pi-spin pi-spinner"></i>
     <span>Loading profile...</span>
   </div>
 }
 
+@if (!user && loadError) {
+  <div class="profile-loading">
+    <i class="pi pi-exclamation-circle"></i>
+    <span>Could not load your profile.</span>
+    <p-button type="button" label="Retry" icon="pi pi-refresh" (onClick)="loadUserProfile()" [outlined]="true"></p-button>
+  </div>
+}
+
 <p-toast position="top-right"></p-toast>
+

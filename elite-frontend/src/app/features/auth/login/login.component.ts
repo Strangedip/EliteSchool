@@ -6,12 +6,13 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { PasswordModule } from 'primeng/password';
 import { CardModule } from 'primeng/card';
-import { RippleModule } from 'primeng/ripple';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
+import { ThemeService } from '../../../core/services/theme.service';
 import { CommonResponseDto } from '../../../core/models/common-response.model';
+import { BrandMarkComponent } from '../../../shared/brand-mark.component';
 
 @Component({
     selector: 'app-login',
@@ -24,9 +25,9 @@ import { CommonResponseDto } from '../../../core/models/common-response.model';
         ButtonModule,
         PasswordModule,
         CardModule,
-        RippleModule,
         RouterModule,
-        ToastModule
+        ToastModule,
+        BrandMarkComponent
     ],
     changeDetection: ChangeDetectionStrategy.Eager,
     providers: [MessageService]
@@ -39,8 +40,13 @@ export class LoginComponent implements OnInit {
   constructor(
     private router: Router,
     private authService: AuthService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    public themeService: ThemeService
   ) {}
+
+  toggleTheme(): void {
+    this.themeService.toggle();
+  }
 
   ngOnInit(): void {
     if (this.authService.getAuthStatus()) {

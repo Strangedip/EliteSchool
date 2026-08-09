@@ -1,8 +1,13 @@
-<div class="settings-container">
-  <div class="settings-header">
-    <h2>Settings</h2>
-    <p>Manage your account settings and preferences</p>
-  </div>
+<div class="settings-container page-shell">
+  <header class="page-header settings-header">
+    <div class="page-header-title">
+      <i class="pi pi-cog" aria-hidden="true"></i>
+      <div class="page-header-copy">
+        <h1>Settings</h1>
+        <p class="page-subtitle">Account details, password, and how EliteSchool looks on this device.</p>
+      </div>
+    </div>
+  </header>
 
   <div class="settings-grid">
     <div class="settings-card">
@@ -19,39 +24,55 @@
             <div class="summary-row"><span class="label">Role</span><span class="value">{{ currentUser.role }}</span></div>
           </div>
         }
-        <a routerLink="/profile" class="settings-btn">View & Edit Profile</a>
+        <button type="button" class="settings-btn" (click)="openProfile()">View &amp; Edit Profile</button>
       </div>
     </div>
 
     <div class="settings-card security-card">
-      <div class="card-header">
-        <i class="pi pi-shield"></i>
-        <h3>Change Password</h3>
-      </div>
-      <div class="card-content">
-        <p>Update your password regularly to keep your account secure.</p>
-        <form #passwordForm="ngForm" (ngSubmit)="changePassword()" class="password-form">
-          <div class="field">
-            <label for="currentPassword">Current Password</label>
-            <p-password id="currentPassword" [(ngModel)]="currentPassword" name="currentPassword"
-            [toggleMask]="true" [feedback]="false" required class="w-full" inputStyleClass="w-full theme-input"></p-password>
-          </div>
-          <div class="field">
-            <label for="newPassword">New Password</label>
-            <p-password id="newPassword" [(ngModel)]="newPassword" name="newPassword"
-            [toggleMask]="true" required [minlength]="8" class="w-full" inputStyleClass="w-full theme-input"></p-password>
-          </div>
-          <div class="field">
-            <label for="confirmPassword">Confirm New Password</label>
-            <p-password id="confirmPassword" [(ngModel)]="confirmPassword" name="confirmPassword"
-            [toggleMask]="true" [feedback]="false" required class="w-full" inputStyleClass="w-full theme-input"></p-password>
-            @if (passwordsMismatch) {
-              <small class="error-text">Passwords do not match</small>
-            }
-          </div>
-          <p-button type="submit" label="Update Password" icon="pi pi-lock" [disabled]="!passwordForm.valid || passwordsMismatch || changingPassword" [loading]="changingPassword"></p-button>
-        </form>
-      </div>
+      <button
+        type="button"
+        class="card-header card-header-toggle"
+        (click)="passwordOpen = !passwordOpen"
+        [attr.aria-expanded]="passwordOpen">
+        <span class="card-header-main">
+          <i class="pi pi-shield" aria-hidden="true"></i>
+          <h3>Change Password</h3>
+        </span>
+        <i class="pi" [class.pi-chevron-down]="!passwordOpen" [class.pi-chevron-up]="passwordOpen" aria-hidden="true"></i>
+      </button>
+      @if (passwordOpen) {
+        <div class="card-content">
+          <p>Update your password regularly to keep your account secure.</p>
+          <form #passwordForm="ngForm" (ngSubmit)="changePassword()" class="password-form">
+            <div class="field">
+              <label for="currentPassword">Current Password</label>
+              <p-password id="currentPassword" [(ngModel)]="currentPassword" name="currentPassword"
+              [toggleMask]="true" [feedback]="false" required styleClass="w-full settings-password"
+              inputStyleClass="w-full theme-input"></p-password>
+            </div>
+            <div class="field">
+              <label for="newPassword">New Password</label>
+              <p-password id="newPassword" [(ngModel)]="newPassword" name="newPassword"
+              [toggleMask]="true" [feedback]="false" required [minlength]="8"
+              styleClass="w-full settings-password" inputStyleClass="w-full theme-input"></p-password>
+            </div>
+            <div class="field">
+              <label for="confirmPassword">Confirm New Password</label>
+              <p-password id="confirmPassword" [(ngModel)]="confirmPassword" name="confirmPassword"
+              [toggleMask]="true" [feedback]="false" required styleClass="w-full settings-password"
+              inputStyleClass="w-full theme-input"></p-password>
+              @if (passwordsMismatch) {
+                <small class="error-text">Passwords do not match</small>
+              }
+            </div>
+            <p-button type="submit" label="Update Password" icon="pi pi-lock" [disabled]="!passwordForm.valid || passwordsMismatch || changingPassword" [loading]="changingPassword"></p-button>
+          </form>
+        </div>
+      } @else {
+        <div class="card-content card-content-collapsed">
+          <p>Keep your account secure. Expand to update your password.</p>
+        </div>
+      }
     </div>
 
     <div class="settings-card">
@@ -77,3 +98,4 @@
 </div>
 
 <p-toast position="top-right"></p-toast>
+

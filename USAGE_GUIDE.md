@@ -51,7 +51,7 @@ Prefer **native** on 16GB machines ([README](./README.md)). Docker Compose is op
 8. **Manage Users** → create Faculty (and students if needed)
 9. Register or create a **Student**
 
-Skip **Forgot password** unless real SMTP (`EMAIL_*`) is configured.
+Skip **Forgot password** unless SMTP is configured in `.env`: set `EMAIL_USERNAME` / `EMAIL_PASSWORD` (Gmail App Password) and usually `EMAIL_FROM` to the same address. With valid credentials, reset emails send immediately.
 
 **Tip:** When creating users in Manage Users, password must be at least **8 characters**. Mobile is optional; if filled, use a valid number (e.g. `9876543210` or `+919876543210`).
 

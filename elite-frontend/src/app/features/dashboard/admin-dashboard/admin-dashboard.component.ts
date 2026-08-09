@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-
 import { RouterLink } from '@angular/router';
-import { forkJoin } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { UserService } from '../../../core/services/user.service';
 import { CourseService } from '../../../core/services/course.service';
 import { WalletService, WalletBalanceEntry } from '../../../core/services/wallet.service';
@@ -17,8 +17,8 @@ interface RoleCount {
     selector: 'app-admin-dashboard',
     imports: [RouterLink],
     templateUrl: './admin-dashboard.component.html',
-    changeDetection: ChangeDetectionStrategy.Eager,
-    styleUrls: ['../dashboard-shared.scss', './admin-dashboard.component.scss']
+    changeDetection: ChangeDetectionStrategy.Default,
+    styleUrls: ['../dashboard-shared.scss']
 })
 export class AdminDashboardComponent implements OnInit {
   loading = true;
@@ -58,9 +58,13 @@ export class AdminDashboardComponent implements OnInit {
 
   private loadData(): void {
     forkJoin({
-      users: this.userService.getAllUsers(),
-      courses: this.courseService.getCourses(),
-      leaderboard: this.walletService.getLeaderboard(100)
+      users: this.userService.getAllUsers().pipe(
+        catchError(() => of({ success: false, data: [] as User[], message: '' }))
+      ),
+      courses: this.courseService.getCourses().pipe(catchError(() => of([]))),
+      leaderboard: this.walletService.getLeaderboard(100).pipe(
+        catchError(() => of([] as WalletBalanceEntry[]))
+      )
     }).subscribe({
       next: ({ users, courses, leaderboard }) => {
         const allUsers = users.data ?? [];
@@ -77,11 +81,14 @@ export class AdminDashboardComponent implements OnInit {
         this.topEarner = leaderboard[0] || null;
         if (this.topEarner) {
           const match = allUsers.find(u => u.eliteId === this.topEarner!.studentId);
-          this.topEarnerName = match?.name || 'Unknown';
+          this.topEarnerName = this.topEarner.studentName || match?.name || 'Unknown';
         }
+        this.loading = false;
       },
-      error: (error) => console.error('Error loading admin dashboard data', error),
-      complete: () => this.loading = false
+      error: (error) => {
+        console.error('Error loading admin dashboard data', error);
+        this.loading = false;
+      }
     });
   }
 

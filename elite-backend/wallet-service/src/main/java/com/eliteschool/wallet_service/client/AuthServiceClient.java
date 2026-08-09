@@ -26,5 +26,6 @@ public interface AuthServiceClient {
         private UUID eliteId;
         private String name;
         private String username;
+        private String role;
     }
 }

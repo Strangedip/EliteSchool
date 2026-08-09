@@ -7,23 +7,23 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { PasswordModule } from 'primeng/password';
 import { CardModule } from 'primeng/card';
-import { RippleModule } from 'primeng/ripple';
 import { ToastModule } from 'primeng/toast';
 import { SelectItem, MessageService } from 'primeng/api';
 import { finalize } from 'rxjs';
 import { AuthService, UserRegistrationData } from '../../../core/services/auth.service';
+import { ThemeService } from '../../../core/services/theme.service';
 import { CommonResponseDto } from '../../../core/models/common-response.model';
+import { BrandMarkComponent } from '../../../shared/brand-mark.component';
 
-export enum Gender { MALE = 'MALE', FEMALE = 'FEMALE', OTHER = 'OTHER' }
-export enum Role { STUDENT = 'STUDENT' }
+enum Gender { MALE = 'MALE', FEMALE = 'FEMALE', OTHER = 'OTHER' }
+enum Role { STUDENT = 'STUDENT' }
 
 @Component({
     selector: 'app-register',
     templateUrl: './register.component.html',
-    styleUrls: ['./register.component.scss'],
     imports: [
         CommonModule, FormsModule, Select, InputTextModule, ButtonModule,
-        PasswordModule, CardModule, RippleModule, ToastModule, RouterModule
+        PasswordModule, CardModule, ToastModule, RouterModule, BrandMarkComponent
     ],
     changeDetection: ChangeDetectionStrategy.Eager,
     providers: [MessageService]
@@ -33,6 +33,7 @@ export class RegisterComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private router = inject(Router);
   private messageService = inject(MessageService);
+  themeService = inject(ThemeService);
 
   loading = false;
   userData: UserRegistrationData = {
@@ -45,6 +46,10 @@ export class RegisterComponent implements OnInit {
     { label: 'Female', value: Gender.FEMALE },
     { label: 'Other', value: Gender.OTHER }
   ];
+
+  toggleTheme(): void {
+    this.themeService.toggle();
+  }
 
   ngOnInit(): void {
     this.userData.role = Role.STUDENT;

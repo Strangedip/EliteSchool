@@ -1,5 +1,6 @@
 package com.eliteschool.wallet_service.model;
 
+import com.eliteschool.wallet_service.model.enums.TransactionSource;
 import com.eliteschool.wallet_service.model.enums.TransactionType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -8,7 +9,9 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "transactions")
+@Table(name = "transactions", indexes = {
+        @Index(name = "idx_transactions_source_created", columnList = "source, createdAt")
+})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -21,14 +24,19 @@ public class Transaction {
     private UUID id;
 
     @Column(nullable = false)
-    private UUID studentId; // Student who earned/spent points
+    private UUID studentId;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private TransactionType transactionType; // CREDIT or DEBIT
+    private TransactionType transactionType;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 32)
+    @Builder.Default
+    private TransactionSource source = TransactionSource.OTHER;
 
     @Column(nullable = false)
-    private int points; // Points added or deducted
+    private int points;
 
     @Column(nullable = false)
     private String description;
@@ -43,5 +51,8 @@ public class Transaction {
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
+        if (this.source == null) {
+            this.source = TransactionSource.OTHER;
+        }
     }
 }

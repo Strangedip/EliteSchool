@@ -5,6 +5,7 @@ import com.eliteschool.wallet_service.dto.NominationDto;
 import com.eliteschool.wallet_service.dto.NominationMapper;
 import com.eliteschool.wallet_service.model.ContributionNomination;
 import com.eliteschool.wallet_service.model.enums.NominationStatus;
+import com.eliteschool.wallet_service.model.enums.TransactionSource;
 import com.eliteschool.wallet_service.repository.ContributionNominationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -84,7 +85,12 @@ public class NominationService {
         String referenceId = "nomination-" + nomination.getId();
         String description = "Nomination approved: " + truncate(nomination.getReason(), 180);
 
-        walletService.creditPoints(nomination.getStudentId(), points, description, referenceId);
+        walletService.creditPoints(
+                nomination.getStudentId(),
+                points,
+                description,
+                referenceId,
+                TransactionSource.NOMINATION);
 
         nomination.setStatus(NominationStatus.APPROVED);
         nomination.setReviewedBy(adminId);
