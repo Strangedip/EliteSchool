@@ -24,29 +24,29 @@ spring:
               enabled: true
               lower-case-service-id: true
           routes:
-            - id: auth-service-auth
-              uri: lb://auth-service
+            - id: identity-service-identity
+              uri: lb://identity-service
               predicates:
-                - Path=/api/auth/**
+                - Path=/api/identity/**
               filters:
                 - PreserveHostHeader
 
-            - id: auth-service-user
-              uri: lb://auth-service
+            - id: identity-service-user
+              uri: lb://identity-service
               predicates:
                 - Path=/api/user/**
               filters:
                 - PreserveHostHeader
 
-            - id: auth-service-courses
-              uri: lb://auth-service
+            - id: task-service-courses
+              uri: lb://task-service
               predicates:
                 - Path=/api/courses/**
               filters:
                 - PreserveHostHeader
 
-            - id: auth-service-support
-              uri: lb://auth-service
+            - id: identity-service-support
+              uri: lb://identity-service
               predicates:
                 - Path=/api/support/**
               filters:
@@ -73,17 +73,17 @@ spring:
               filters:
                 - PreserveHostHeader
 
-            - id: wallet-service
-              uri: lb://wallet-service
+            - id: points-service
+              uri: lb://points-service
               predicates:
-                - Path=/api/wallet/**
+                - Path=/api/points/**
               filters:
                 - PreserveHostHeader
 
-            - id: store-service
-              uri: lb://store-service
+            - id: rewards-service
+              uri: lb://rewards-service
               predicates:
-                - Path=/api/store/**
+                - Path=/api/rewards/**
               filters:
                 - PreserveHostHeader
 

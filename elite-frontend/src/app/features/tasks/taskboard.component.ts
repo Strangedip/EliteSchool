@@ -7,7 +7,7 @@ import { catchError } from 'rxjs/operators';
 import { Task, TaskSubmission, TaskTemplate } from '../../core/models/task.model';
 import { TaskService } from '../../core/services/task.service';
 import { UserService } from '../../core/services/user.service';
-import { WalletService } from '../../core/services/wallet.service';
+import { PointsService } from '../../core/services/points.service';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { Textarea } from 'primeng/textarea';
@@ -107,7 +107,7 @@ export class TaskboardComponent implements OnInit {
   constructor(
     private taskService: TaskService,
     private userService: UserService,
-    private walletService: WalletService,
+    private pointsService: PointsService,
     private toastService: ToastService,
     private confirmationService: ConfirmationService,
     private route: ActivatedRoute
@@ -233,7 +233,7 @@ export class TaskboardComponent implements OnInit {
   }
 
   loadRewardPoints(userId: string): void {
-    this.walletService.getWalletBalance(userId).subscribe({
+    this.pointsService.getPointsBalance(userId).subscribe({
       next: (points) => this.rewardPoints = points,
       error: () => {}
     });

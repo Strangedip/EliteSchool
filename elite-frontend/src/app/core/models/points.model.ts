@@ -1,4 +1,4 @@
-export interface Wallet {
+export interface PointsAccount {
   studentId: string;
   balance: number;
 }

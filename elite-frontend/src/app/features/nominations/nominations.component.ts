@@ -14,7 +14,7 @@ import { MessageService } from 'primeng/api';
 
 import { ContributionNomination, NominationStatus } from '../../core/models/nomination.model';
 import { User } from '../../core/models/user.model';
-import { WalletService } from '../../core/services/wallet.service';
+import { PointsService } from '../../core/services/points.service';
 import { UserService } from '../../core/services/user.service';
 
 @Component({
@@ -62,7 +62,7 @@ export class NominationsComponent implements OnInit {
   reviewPoints: number | null = null;
 
   constructor(
-    private walletService: WalletService,
+    private pointsService: PointsService,
     private userService: UserService,
     private messageService: MessageService
   ) {}
@@ -94,7 +94,7 @@ export class NominationsComponent implements OnInit {
 
   load(): void {
     this.loading = true;
-    this.walletService.listNominations(this.statusFilter).subscribe({
+    this.pointsService.listNominations(this.statusFilter).subscribe({
       next: (list) => {
         this.nominations = list || [];
         this.loading = false;
@@ -132,7 +132,7 @@ export class NominationsComponent implements OnInit {
       return;
     }
     this.saving = true;
-    this.walletService.createNomination(this.draft).subscribe({
+    this.pointsService.createNomination(this.draft).subscribe({
       next: () => {
         this.saving = false;
         this.createVisible = false;
@@ -166,7 +166,7 @@ export class NominationsComponent implements OnInit {
 
     if (this.reviewMode === 'APPROVE') {
       const points = this.reviewPoints && this.reviewPoints > 0 ? this.reviewPoints : undefined;
-      this.walletService.approveNomination(id, points, notes).subscribe({
+      this.pointsService.approveNomination(id, points, notes).subscribe({
         next: () => {
           this.saving = false;
           this.reviewVisible = false;
@@ -185,7 +185,7 @@ export class NominationsComponent implements OnInit {
       return;
     }
 
-    this.walletService.rejectNomination(id, notes).subscribe({
+    this.pointsService.rejectNomination(id, notes).subscribe({
       next: () => {
         this.saving = false;
         this.reviewVisible = false;

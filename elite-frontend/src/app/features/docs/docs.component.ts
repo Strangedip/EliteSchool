@@ -119,7 +119,7 @@ export class DocsComponent implements OnInit, OnDestroy {
 
   readonly rules = [
     'Elite Points recognise verified school effort — they are not a fintech or payment product.',
-    'Staff credit points only through Wallet adjustment or Admin-approved nomination — never through Support.',
+    'Staff credit points only through Elite Points adjustment or Admin-approved nomination — never through Support.',
     'Support is for concerns, issues, and misalignments only.',
     'Public signup creates student accounts. Faculty and Admin accounts are created by school management.',
     'Games never earn Elite Points.'

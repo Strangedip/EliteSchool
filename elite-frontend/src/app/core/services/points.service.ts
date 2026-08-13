@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { Transaction } from '../models/wallet.model';
+import { Transaction } from '../models/points.model';
 import { CommonResponseDto } from '../models/common-response.model';
 import { ContributionNomination, NominationStatus } from '../models/nomination.model';
 
@@ -12,7 +12,7 @@ export interface PurchaseResponse {
   remainingBalance: number;
 }
 
-export interface WalletBalanceEntry {
+export interface PointsBalanceEntry {
   studentId: string;
   balance: number;
   studentName?: string;
@@ -20,12 +20,12 @@ export interface WalletBalanceEntry {
 }
 
 @Injectable({ providedIn: 'root' })
-export class WalletService {
-  private apiUrl = `${environment.apiUrl}/wallet`;
+export class PointsService {
+  private apiUrl = `${environment.apiUrl}/points`;
 
   constructor(private http: HttpClient) { }
 
-  getWalletBalance(studentId: string): Observable<number> {
+  getPointsBalance(studentId: string): Observable<number> {
     return this.http.get<CommonResponseDto<number>>(`${this.apiUrl}/${studentId}/balance`)
       .pipe(map(response => response.data ?? 0));
   }
@@ -58,8 +58,8 @@ export class WalletService {
       .pipe(map(response => response.data ?? { success: false, message: 'No data returned', remainingBalance: 0 }));
   }
 
-  getLeaderboard(limit: number = 10): Observable<WalletBalanceEntry[]> {
-    return this.http.get<CommonResponseDto<WalletBalanceEntry[]>>(`${this.apiUrl}/leaderboard`, { params: { limit } })
+  getLeaderboard(limit: number = 10): Observable<PointsBalanceEntry[]> {
+    return this.http.get<CommonResponseDto<PointsBalanceEntry[]>>(`${this.apiUrl}/leaderboard`, { params: { limit } })
       .pipe(map(response => response.data ?? []));
   }
 

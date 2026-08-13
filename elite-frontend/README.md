@@ -77,7 +77,7 @@ Configured in `src/environments/environment.development.ts` and `environment.pro
 ```
 src/app/
 ├── core/          # guards, interceptors, models, services, theme
-├── features/      # auth, dashboard, tasks, store, wallet, nominations,
+├── features/      # auth, dashboard, tasks, rewards, points, nominations,
 │                  # support, admin, profile, courses, leaderboard, games, home
 ├── layouts/       # main shell (sidebar + header)
 └── shared/

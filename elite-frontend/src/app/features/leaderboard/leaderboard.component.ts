@@ -5,7 +5,7 @@ import { TagModule } from 'primeng/tag';
 import { of } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
 
-import { WalletService, WalletBalanceEntry } from '../../core/services/wallet.service';
+import { PointsService, PointsBalanceEntry } from '../../core/services/points.service';
 import { UserService } from '../../core/services/user.service';
 import { User } from '../../core/models/user.model';
 
@@ -30,7 +30,7 @@ export class LeaderboardComponent implements OnInit {
   currentUserId = '';
 
   constructor(
-    private walletService: WalletService,
+    private pointsService: PointsService,
     private userService: UserService
   ) { }
 
@@ -41,8 +41,8 @@ export class LeaderboardComponent implements OnInit {
 
   loadLeaderboard(): void {
     this.loading = true;
-    this.walletService.getLeaderboard(20).pipe(
-      catchError(() => of([] as WalletBalanceEntry[])),
+    this.pointsService.getLeaderboard(20).pipe(
+      catchError(() => of([] as PointsBalanceEntry[])),
       finalize(() => {
         this.loading = false;
       })

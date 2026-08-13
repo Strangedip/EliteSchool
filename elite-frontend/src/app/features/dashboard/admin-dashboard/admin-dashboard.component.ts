@@ -4,7 +4,7 @@ import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { UserService } from '../../../core/services/user.service';
 import { CourseService } from '../../../core/services/course.service';
-import { WalletService, WalletBalanceEntry } from '../../../core/services/wallet.service';
+import { PointsService, PointsBalanceEntry } from '../../../core/services/points.service';
 import { User } from '../../../core/models/user.model';
 
 interface RoleCount {
@@ -29,7 +29,7 @@ export class AdminDashboardComponent implements OnInit {
   activeCourseCount = 0;
   totalCourseCount = 0;
   totalPointsInCirculation = 0;
-  topEarner: WalletBalanceEntry | null = null;
+  topEarner: PointsBalanceEntry | null = null;
   topEarnerName = '';
 
   roleCounts: RoleCount[] = [];
@@ -46,7 +46,7 @@ export class AdminDashboardComponent implements OnInit {
   constructor(
     private userService: UserService,
     private courseService: CourseService,
-    private walletService: WalletService
+    private pointsService: PointsService
   ) {}
 
   ngOnInit(): void {
@@ -62,8 +62,8 @@ export class AdminDashboardComponent implements OnInit {
         catchError(() => of({ success: false, data: [] as User[], message: '' }))
       ),
       courses: this.courseService.getCourses().pipe(catchError(() => of([]))),
-      leaderboard: this.walletService.getLeaderboard(100).pipe(
-        catchError(() => of([] as WalletBalanceEntry[]))
+      leaderboard: this.pointsService.getLeaderboard(100).pipe(
+        catchError(() => of([] as PointsBalanceEntry[]))
       )
     }).subscribe({
       next: ({ users, courses, leaderboard }) => {

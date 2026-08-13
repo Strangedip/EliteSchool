@@ -19,8 +19,8 @@ Platform for schools to manage **student achievement** through verified contribu
 |-----------|---------|
 | Achievement first | Tasks and verification build a clear record of student contribution |
 | Elite Points | School measure of verified effort — not a payment system |
-| Rewards that include everyone | Store materials & opportunities help students who need support stay equipped |
-| Staff-initiated credits | Wallet adjustment or Admin-approved nomination — never via Support |
+| Rewards that include everyone | Rewards materials & opportunities help students who need support stay equipped |
+| Staff-initiated credits | Elite Points adjustment or Admin-approved nomination — never via Support |
 | Recreation separate | Games do not earn points |
 
 ---
@@ -29,9 +29,9 @@ Platform for schools to manage **student achievement** through verified contribu
 
 | Role | Responsibility |
 |------|----------------|
-| **Student** | Tasks, wallet, store, support (concerns), contribution profile |
+| **Student** | Tasks, Elite Points, Rewards, support (concerns), contribution profile |
 | **Faculty** | Tasks/templates, verify work, nominate contributions |
-| **Admin / Management** | Users, store, courses, audit, point adjustments; **Admin only** approves nomination credits |
+| **Admin / Management** | Users, Rewards, courses, audit, point adjustments; **Admin only** approves nomination credits |
 | **Visitors** | Home, Docs, Games (no login) |
 
 Public signup = **students only**. Fresh database seeds demo Admin: username **`admin`** / password **`Admin@123`** (change after first login).
@@ -42,10 +42,10 @@ Public signup = **students only**. Fresh database seeds demo Admin: username **`
 
 ```
 Angular (:4200) → API Gateway (:8080)
-                    ├── Auth (:8081)
+                    ├── Identity (:8081)
                     ├── Task (:8082)
-                    ├── Wallet (:8083)
-                    └── Store (:8084)
+                    ├── Points (:8083)
+                    └── Rewards (:8084)
 Consul (:8500) · PostgreSQL (:5432 native / :5433 host port in Docker)
 ```
 

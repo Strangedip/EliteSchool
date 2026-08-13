@@ -69,10 +69,10 @@
         </button>
 
         @if (isStudent) {
-          <a routerLink="/wallet" class="points-chip" title="Elite Points">
+          <a routerLink="/points" class="points-chip" title="Elite Points">
             <i class="pi pi-wallet" aria-hidden="true"></i>
             <span class="points-label">Points</span>
-            <span class="points-value">{{ walletBalance() ?? '—' }}</span>
+            <span class="points-value">{{ pointsBalance() ?? '—' }}</span>
           </a>
         }
 

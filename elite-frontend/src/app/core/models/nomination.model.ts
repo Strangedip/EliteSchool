@@ -13,6 +13,6 @@ export interface ContributionNomination {
   reviewedBy?: string;
   reviewedAt?: string;
   reviewNotes?: string;
-  walletReferenceId?: string;
+  pointsReferenceId?: string;
   createdAt?: string;
 }

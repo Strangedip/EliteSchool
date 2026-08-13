@@ -14,7 +14,7 @@ Verified school work earns **Elite Points**, a trusted measure of effort. Those 
 
 **Flow:** contribute → faculty verifies → earn Elite Points → claim school rewards when offered.
 
-- Staff credit points only when the school decides (Wallet or Admin-approved nomination).
+- Staff credit points only when the school decides (Elite Points adjustment or Admin-approved nomination).
 - **Support is never for asking for points.**
 - **Games are recreation only** — they do not earn points.
 
@@ -24,9 +24,9 @@ Verified school work earns **Elite Points**, a trusted measure of effort. Those 
 
 | Role | What they do | How they get an account |
 |------|----------------|-------------------------|
-| **Student** | Tasks, wallet, store, profile, support | Self-register or Admin creates |
+| **Student** | Tasks, Elite Points, Rewards, profile, support | Self-register or Admin creates |
 | **Faculty** | Tasks, verification, nominations | Admin creates (Manage Users) |
-| **Admin / Management** | Users, store, courses, audit, adjustments | Fresh install seeds demo Admin; more staff via Manage Users |
+| **Admin / Management** | Users, Rewards, courses, audit, adjustments | Fresh install seeds demo Admin; more staff via Manage Users |
 
 **Visitors** (not logged in): Home, Docs, Games, Login, Register, Forgot password.
 
@@ -61,7 +61,7 @@ Skip **Forgot password** unless SMTP is configured in `.env`: set `EMAIL_USERNAM
 
 ### Student
 
-Tasks (submit with notes / evidence / rubric when required) → Wallet → Store (Materials / Opportunities, first-come stock) → Profile → Contribution → Support (concerns only).
+Tasks (submit with notes / evidence / rubric when required) → Elite Points → Rewards (Materials / Opportunities, first-come stock) → Profile → Contribution → Support (concerns only).
 
 No Nominations, Audit, or Manage Users.
 
@@ -69,13 +69,13 @@ No Nominations, Audit, or Manage Users.
 
 Create tasks and templates (optional evidence, min notes, rubric) → verify submissions → optionally **Nominate** a contribution.
 
-Cannot credit the wallet directly; **Admin** approves nominations.
+Cannot credit Elite Points directly; **Admin** approves nominations.
 
 ### Admin / Management
 
-Manage Users · Store (Materials & Opportunities — brief/checklist for Opportunities, claim windows, stock) · Nominations (**Admin only** approves credit) · Wallet adjustments · Courses · Audit · Support queue.
+Manage Users · Rewards (Materials & Opportunities — brief/checklist for Opportunities, claim windows, stock) · Nominations (**Admin only** approves credit) · Elite Points adjustments · Courses · Audit · Support queue.
 
-Management can nominate and run most operations; **nomination wallet credit is Admin-only**.
+Management can nominate and run most operations; **nomination Elite Points credit is Admin-only**.
 
 ---
 
@@ -93,10 +93,10 @@ Students never see this as a self-serve “request points” tool. Support is no
 ## Suggested 10–15 minute client demo
 
 1. **Visitor (Home)** — brand story on the landing page; open **Docs** for the product guide; open Games briefly (recreation only, no points).
-2. **Admin** (`admin` / `Admin@123`) — Manage Users → create Faculty; Store → add a **Material** (points) and an **Opportunity** (brief, checklist, window, stock).
+2. **Admin** (`admin` / `Admin@123`) — Manage Users → create Faculty; Rewards → add a **Material** (points) and an **Opportunity** (brief, checklist, window, stock).
 3. **Faculty** — create a task with verification standards; approve a student submission; optionally nominate.
-4. **Student** — submit work → get approved → Wallet → claim store item → Profile → Contribution timeline.
-5. **Admin** — approve nomination if used; show Claimed / Expired store state; remind that Support is for concerns only.
+4. **Student** — submit work → get approved → Elite Points → claim a reward → Profile → Contribution timeline.
+5. **Admin** — approve nomination if used; show Claimed / Expired Rewards state; remind that Support is for concerns only.
 
 ---
 
@@ -107,8 +107,8 @@ Students never see this as a self-serve “request points” tool. Support is no
 | Dashboard | ✓ | ✓ | ✓ |
 | Tasks | ✓ | ✓ | ✓ |
 | Courses | ✓ | ✓ | ✓ |
-| Store | ✓ | — | ✓ |
-| Wallet | ✓ | — | ✓ |
+| Rewards | ✓ | — | ✓ |
+| Elite Points | ✓ | — | ✓ |
 | Support | ✓ | ✓ | ✓ |
 | Nominations | — | ✓ | ✓ |
 | Leaderboard | ✓ | ✓ | ✓ |
@@ -124,8 +124,8 @@ Students never see this as a self-serve “request points” tool. Support is no
 
 - Create staff accounts via Admin only.
 - Use real contribution tasks; give clear reject feedback; set verification standards when needed.
-- Store: FCFS via stock (no waitlist); Opportunities need a brief.
-- Credits: Wallet or Admin-approved nomination — never Support.
+- Rewards: FCFS via stock (no waitlist); Opportunities need a brief.
+- Credits: Elite Points adjustment or Admin-approved nomination — never Support.
 - Games do not score Elite Points.
 
 ---

@@ -1,6 +1,6 @@
 # EliteSchool Backend
 
-Spring Boot **4.1** / Java **25** microservices for Elite Points, tasks, school store, nominations, and support. Clients talk only to the **API Gateway**.
+Spring Boot **4.1** / Java **25** microservices for Elite Points, tasks, rewards, nominations, and support. Clients talk only to the **API Gateway**.
 
 | Related docs | |
 |--------------|--|
@@ -15,10 +15,10 @@ Spring Boot **4.1** / Java **25** microservices for Elite Points, tasks, school 
 
 ```
 Client → API Gateway (:8080)
-           ├── Auth (:8081) — users, login, courses, support
-           ├── Task (:8082) — tasks, templates, submissions
-           ├── Wallet (:8083) — points, nominations, purchases
-           └── Store (:8084) — catalog, claims
+           ├── Identity (:8081) — login, users, profiles, support
+           ├── Task (:8082) — tasks, templates, submissions, courses
+           ├── Points (:8083) — Elite Points ledger, nominations, purchase orchestration
+           └── Rewards (:8084) — catalog, claim windows, stock, claims
 Consul (:8500) · PostgreSQL (:5432)
 ```
 
@@ -29,10 +29,10 @@ Consul (:8500) · PostgreSQL (:5432)
 | Service | Port | Responsibility |
 |---------|------|----------------|
 | **api-gateway** | 8080 | JWT validation, routing, CORS |
-| **auth-service** | 8081 | Auth, users, courses, support; demo Admin bootstrap; SMTP for password reset |
-| **task-service** | 8082 | Tasks, templates, submissions, evidence / min-notes / rubric |
-| **wallet-service** | 8083 | Balances, credits/debits, nominations, store purchase orchestration |
-| **store-service** | 8084 | Materials / Opportunities, claim windows, stock, purchases |
+| **identity-service** | 8081 | Login, users, roles, profiles, support; demo Admin bootstrap; SMTP for password reset |
+| **task-service** | 8082 | Tasks, templates, submissions, courses, evidence / min-notes / rubric |
+| **points-service** | 8083 | Balances, credits/debits, nominations, rewards purchase orchestration |
+| **rewards-service** | 8084 | Materials / Opportunities, claim windows, stock, claims |
 | **common-utils** | — | Shared DTOs / exceptions (`com.eliteschool`) |
 | **Consul** | 8500 | Discovery + KV (`consul/config/*.yml`) |
 
@@ -54,7 +54,7 @@ start-all.bat
 ```
 
 `build-all.bat` prefers JDK 25 when installed under `C:\Program Files\Java\jdk-25.0.4`.  
-`start-all.bat` starts Consul → seeds KV → auth/task/wallet/store → gateway. It does **not** start PostgreSQL.
+`start-all.bat` starts Consul → seeds KV → identity/task/points/rewards → gateway. It does **not** start PostgreSQL.
 
 ```bat
 stop-all.bat
@@ -94,12 +94,12 @@ Consul KV stores YAML with `${…}` placeholders; **Spring resolves them at runt
 
 ## API (via gateway `http://localhost:8080`)
 
-### Auth / users / courses
+### Identity / users / courses
 
 ```
-POST /api/auth/signup | login | logout
-GET  /api/auth/validate-token | profile
-POST /api/auth/forgot-password | reset-password | change-password
+POST /api/identity/signup | login | logout
+GET  /api/identity/validate-token | profile
+POST /api/identity/forgot-password | reset-password | change-password
 GET  /api/user | /api/user/{id} | /api/user/students
 POST /api/user/create
 PUT  /api/user/{id} | /{id}/status | /{id}/role
@@ -117,23 +117,23 @@ POST /api/task-submissions
 PUT  /api/task-submissions/{id}/verify
 ```
 
-### Wallet / nominations
+### Points / nominations
 
 ```
-GET  /api/wallet/{userId}/balance | transactions
-POST /api/wallet/{userId}/credit | debit
-POST /api/wallet/{userId}/purchase/{itemId}
-GET  /api/wallet/leaderboard
-POST|GET /api/wallet/nominations
-PUT  /api/wallet/nominations/{id}/approve   # Admin only
-PUT  /api/wallet/nominations/{id}/reject    # Admin only
+GET  /api/points/{userId}/balance | transactions
+POST /api/points/{userId}/credit | debit
+POST /api/points/{userId}/purchase/{itemId}
+GET  /api/points/leaderboard
+POST|GET /api/points/nominations
+PUT  /api/points/nominations/{id}/approve   # Admin only
+PUT  /api/points/nominations/{id}/reject    # Admin only
 ```
 
-### Store / support
+### Rewards / support
 
 ```
-GET|POST|PUT|DELETE /api/store/items
-GET  /api/store/purchases | /purchases/student/{id}
+GET|POST|PUT|DELETE /api/rewards/items
+GET  /api/rewards/purchases | /purchases/student/{id}
 GET|POST /api/support/tickets
 POST /api/support/tickets/{id}/messages
 PUT  /api/support/tickets/{id}/status
@@ -156,7 +156,7 @@ PUT  /api/support/tickets/{id}/status
 
 - Per-service infra (port, DB, Consul) lives in `application.properties` / `application.yml`.
 - Shared JWT / mail / frontend URL also live under `consul/config/` and can be overridden by env.
-- Inter-service (Feign): **Wallet → Store** (purchase), **Task → Wallet** (award points).
+- Inter-service (Feign): **Points → Rewards** (purchase), **Task → Points** (award points).
 
 ---
 

@@ -14,7 +14,7 @@ export interface ClaimInfo {
   claimedAt?: string;
 }
 
-export interface StoreItem {
+export interface RewardItem {
   id: string;
   name: string;
   description: string;
@@ -36,7 +36,7 @@ export interface StoreItem {
   claims?: ClaimInfo[];
 }
 
-export interface StorePurchase {
+export interface RewardClaim {
   id: string;
   studentId: string;
   studentName?: string;

@@ -13,11 +13,11 @@ import { MessageService } from 'primeng/api';
 
 import { UserService } from '../../core/services/user.service';
 import { User } from '../../core/models/user.model';
-import { WalletService } from '../../core/services/wallet.service';
-import { Transaction } from '../../core/models/wallet.model';
+import { PointsService } from '../../core/services/points.service';
+import { Transaction } from '../../core/models/points.model';
 import { TaskService } from '../../core/services/task.service';
-import { StoreService } from '../../core/services/store.service';
-import { StorePurchase } from '../../core/models/store-item.model';
+import { RewardsService } from '../../core/services/rewards.service';
+import { RewardClaim } from '../../core/models/reward-item.model';
 
 interface UserTaskDisplay {
   id: string;
@@ -59,7 +59,7 @@ export class UserProfileComponent implements OnInit {
   rewardPoints = 0;
   transactions: Transaction[] = [];
   userTasks: UserTaskDisplay[] = [];
-  storeClaims: StorePurchase[] = [];
+  storeClaims: RewardClaim[] = [];
   contributionTimeline: ContributionEvent[] = [];
 
   editing = false;
@@ -82,9 +82,9 @@ export class UserProfileComponent implements OnInit {
 
   constructor(
     private userService: UserService,
-    private walletService: WalletService,
+    private pointsService: PointsService,
     private taskService: TaskService,
-    private storeService: StoreService,
+    private rewardsService: RewardsService,
     private router: Router,
     private route: ActivatedRoute,
     private messageService: MessageService
@@ -158,13 +158,13 @@ export class UserProfileComponent implements OnInit {
   }
 
   loadRewardPoints(userId: string): void {
-    this.walletService.getWalletBalance(userId).subscribe((points) => {
+    this.pointsService.getPointsBalance(userId).subscribe((points) => {
       this.rewardPoints = points;
     });
   }
 
   loadTransactions(userId: string): void {
-    this.walletService.getTransactionHistory(userId).subscribe((transactions) => {
+    this.pointsService.getTransactionHistory(userId).subscribe((transactions) => {
       this.transactions = transactions;
       this.rebuildContributionTimeline();
     });
@@ -185,7 +185,7 @@ export class UserProfileComponent implements OnInit {
   }
 
   loadStoreClaims(userId: string): void {
-    this.storeService.getPurchasesForStudent(userId).subscribe({
+    this.rewardsService.getPurchasesForStudent(userId).subscribe({
       next: (claims) => {
         this.storeClaims = claims || [];
         this.rebuildContributionTimeline();
@@ -289,6 +289,6 @@ export class UserProfileComponent implements OnInit {
   }
 
   navigateToStore(): void {
-    this.router.navigate(['/store']);
+    this.router.navigate(['/rewards']);
   }
 }

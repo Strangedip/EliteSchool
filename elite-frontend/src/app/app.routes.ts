@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { AuthGuard, GuestCanMatch } from './core/guards/auth.guard';
-import { AdminGuard, StaffGuard, StoreWalletGuard } from './core/guards/role.guard';
+import { AdminGuard, StaffGuard, RewardsPointsGuard } from './core/guards/role.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -78,15 +78,15 @@ export const routes: Routes = [
         title: 'Nominations - EliteSchool'
       },
       {
-        path: 'store',
-        loadComponent: () => import('./features/store/store.component').then(m => m.StoreComponent),
-        canActivate: [StoreWalletGuard],
+        path: 'rewards',
+        loadComponent: () => import('./features/rewards/rewards.component').then(m => m.RewardsComponent),
+        canActivate: [RewardsPointsGuard],
         title: 'Rewards - EliteSchool'
       },
       {
-        path: 'wallet',
-        loadComponent: () => import('./features/wallet/wallet.component').then(m => m.WalletComponent),
-        canActivate: [StoreWalletGuard],
+        path: 'points',
+        loadComponent: () => import('./features/points/points.component').then(m => m.PointsComponent),
+        canActivate: [RewardsPointsGuard],
         title: 'Elite Points - EliteSchool'
       },
       {

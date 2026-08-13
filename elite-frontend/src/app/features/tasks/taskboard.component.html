@@ -14,7 +14,7 @@
                 <input type="text" placeholder="Search tasks..." (input)="onSearch($event)" />
                 <i class="pi pi-search"></i>
             </div>
-            <a routerLink="/wallet" class="wallet-info" *ngIf="currentUserRole === 'STUDENT'" title="Elite Points">
+            <a routerLink="/points" class="points-info" *ngIf="currentUserRole === 'STUDENT'" title="Elite Points">
                 <i class="pi pi-wallet"></i>
                 <span>{{ rewardPoints }}</span>
             </a>

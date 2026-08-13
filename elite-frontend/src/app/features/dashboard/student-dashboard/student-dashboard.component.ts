@@ -3,11 +3,11 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { WalletService } from '../../../core/services/wallet.service';
+import { PointsService } from '../../../core/services/points.service';
 import { TaskService } from '../../../core/services/task.service';
 import { CourseService } from '../../../core/services/course.service';
 import { UserService } from '../../../core/services/user.service';
-import { Transaction } from '../../../core/models/wallet.model';
+import { Transaction } from '../../../core/models/points.model';
 import { Task } from '../../../core/models/task.model';
 
 @Component({
@@ -23,7 +23,7 @@ export class StudentDashboardComponent implements OnInit {
   currentUserId = '';
   roleLabel = 'Student';
 
-  walletBalance = 0;
+  pointsBalance = 0;
   recentTransactions: Transaction[] = [];
   leaderboardRank: number | null = null;
   leaderboardTotal = 0;
@@ -32,7 +32,7 @@ export class StudentDashboardComponent implements OnInit {
   activeCourseCount = 0;
 
   constructor(
-    private walletService: WalletService,
+    private pointsService: PointsService,
     private taskService: TaskService,
     private courseService: CourseService,
     private userService: UserService
@@ -69,15 +69,15 @@ export class StudentDashboardComponent implements OnInit {
     }
 
     forkJoin({
-      balance: this.walletService.getWalletBalance(this.currentUserId).pipe(catchError(() => of(0))),
-      transactions: this.walletService.getTransactionHistory(this.currentUserId).pipe(catchError(() => of([]))),
-      leaderboard: this.walletService.getLeaderboard(100).pipe(catchError(() => of([]))),
+      balance: this.pointsService.getPointsBalance(this.currentUserId).pipe(catchError(() => of(0))),
+      transactions: this.pointsService.getTransactionHistory(this.currentUserId).pipe(catchError(() => of([]))),
+      leaderboard: this.pointsService.getLeaderboard(100).pipe(catchError(() => of([]))),
       tasks: this.taskService.getOpenTasks().pipe(catchError(() => of([]))),
       submissions: this.taskService.getSubmissionsByStudent(this.currentUserId).pipe(catchError(() => of([]))),
       courses: this.courseService.getCourses().pipe(catchError(() => of([])))
     }).subscribe({
       next: ({ balance, transactions, leaderboard, tasks, submissions, courses }) => {
-        this.walletBalance = balance;
+        this.pointsBalance = balance;
         this.recentTransactions = transactions.slice(0, 5);
         this.leaderboardTotal = leaderboard.length;
         const rankIndex = leaderboard.findIndex(w => w.studentId === this.currentUserId);

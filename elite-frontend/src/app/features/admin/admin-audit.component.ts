@@ -5,13 +5,13 @@ import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
-import { StoreService } from '../../core/services/store.service';
+import { RewardsService } from '../../core/services/rewards.service';
 import { SupportService } from '../../core/services/support.service';
-import { WalletService } from '../../core/services/wallet.service';
+import { PointsService } from '../../core/services/points.service';
 import { UserService } from '../../core/services/user.service';
-import { StorePurchase } from '../../core/models/store-item.model';
+import { RewardClaim } from '../../core/models/reward-item.model';
 import { SupportTicket } from '../../core/models/support.model';
-import { Transaction } from '../../core/models/wallet.model';
+import { Transaction } from '../../core/models/points.model';
 import { User } from '../../core/models/user.model';
 import { ContributionNomination } from '../../core/models/nomination.model';
 import { forkJoin, of } from 'rxjs';
@@ -26,7 +26,7 @@ import { catchError } from 'rxjs/operators';
     styleUrls: ['./admin-audit.component.scss']
 })
 export class AdminAuditComponent implements OnInit {
-  claims: StorePurchase[] = [];
+  claims: RewardClaim[] = [];
   tickets: SupportTicket[] = [];
   nominations: ContributionNomination[] = [];
   adminCredits: Transaction[] = [];
@@ -34,9 +34,9 @@ export class AdminAuditComponent implements OnInit {
   loading = true;
 
   constructor(
-    private storeService: StoreService,
+    private rewardsService: RewardsService,
     private supportService: SupportService,
-    private walletService: WalletService,
+    private pointsService: PointsService,
     private userService: UserService,
     private messageService: MessageService
   ) {}
@@ -48,11 +48,11 @@ export class AdminAuditComponent implements OnInit {
   load(): void {
     this.loading = true;
     forkJoin({
-      claims: this.storeService.getAllPurchases().pipe(catchError(() => of([] as StorePurchase[]))),
+      claims: this.rewardsService.getAllPurchases().pipe(catchError(() => of([] as RewardClaim[]))),
       tickets: this.supportService.getAllTickets().pipe(catchError(() => of([] as SupportTicket[]))),
-      nominations: this.walletService.listNominations().pipe(catchError(() => of([] as ContributionNomination[]))),
+      nominations: this.pointsService.listNominations().pipe(catchError(() => of([] as ContributionNomination[]))),
       students: this.userService.getAllStudents().pipe(catchError(() => of({ success: false, data: [] as User[] }))),
-      adjustments: this.walletService.getAdminAdjustments().pipe(catchError(() => of([] as Transaction[])))
+      adjustments: this.pointsService.getAdminAdjustments().pipe(catchError(() => of([] as Transaction[])))
     }).subscribe({
       next: ({ claims, tickets, nominations, students, adjustments }) => {
         this.claims = claims || [];

@@ -7,10 +7,10 @@ REM Usage   : build-all.bat
 REM
 REM Build order (dependencies first):
 REM   1. common-utils    → installed to local .m2 (shared library)
-REM   2. auth-service    → uses common-utils
+REM   2. identity-service    → uses common-utils
 REM   3. task-service    → uses common-utils
-REM   4. wallet-service  → uses common-utils
-REM   5. store-service   → uses common-utils
+REM   4. points-service  → uses common-utils
+REM   5. rewards-service   → uses common-utils
 REM   6. api-gateway     → uses common-utils
 REM ==============================================================================
 
@@ -161,16 +161,16 @@ call :build_service "common-utils"  "common-utils"  "true"
 if %ERRORLEVEL% neq 0 goto :build_summary
 
 REM 2. Auth Service
-call :build_service "auth-service"  "auth-service"  "false"
+call :build_service "identity-service"  "identity-service"  "false"
 
 REM 3. Task Service
 call :build_service "task-service"  "task-service"  "false"
 
 REM 4. Wallet Service
-call :build_service "wallet-service" "wallet-service" "false"
+call :build_service "points-service" "points-service" "false"
 
 REM 5. Store Service
-call :build_service "store-service" "store-service" "false"
+call :build_service "rewards-service" "rewards-service" "false"
 
 REM 6. API Gateway — must come last (depends on common-utils)
 call :build_service "api-gateway"   "api-gateway"   "false"

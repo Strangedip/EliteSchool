@@ -5,7 +5,7 @@ import { Subscription, filter } from 'rxjs';
 import { AuthService } from '../../core/services/auth.service';
 import { UserService } from '../../core/services/user.service';
 import { ThemeService } from '../../core/services/theme.service';
-import { WalletService } from '../../core/services/wallet.service';
+import { PointsService } from '../../core/services/points.service';
 import { BrandMarkComponent } from '../../shared/brand-mark.component';
 
 interface NavItem {
@@ -40,7 +40,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   roleKey = '';
   userInitials = '';
   isStudent = false;
-  readonly walletBalance = signal<number | null>(null);
+  readonly pointsBalance = signal<number | null>(null);
   navGroups: NavGroup[] = [];
   private routerSubscription?: Subscription;
 
@@ -56,8 +56,8 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     { label: 'Tasks', icon: 'pi pi-check-square', route: '/tasks', hint: 'Choose work, submit, and track review', group: 'mission' },
     { label: 'Nominations', icon: 'pi pi-star', route: '/nominations', hint: 'Recognise contribution outside tasks', group: 'mission', roles: ['FACULTY', 'ADMIN', 'MANAGEMENT'] },
     { label: 'Courses', icon: 'pi pi-book', route: '/courses', hint: 'School courses and subjects', group: 'mission' },
-    { label: 'Rewards', icon: 'pi pi-gift', route: '/store', hint: 'Materials and opportunities to claim', group: 'recognition', roles: ['STUDENT', 'ADMIN', 'MANAGEMENT'] },
-    { label: 'Elite Points', icon: 'pi pi-wallet', route: '/wallet', hint: 'Balance and verified credit history', group: 'recognition', roles: ['STUDENT', 'ADMIN', 'MANAGEMENT'] },
+    { label: 'Rewards', icon: 'pi pi-gift', route: '/rewards', hint: 'Materials and opportunities to claim', group: 'recognition', roles: ['STUDENT', 'ADMIN', 'MANAGEMENT'] },
+    { label: 'Elite Points', icon: 'pi pi-wallet', route: '/points', hint: 'Balance and verified credit history', group: 'recognition', roles: ['STUDENT', 'ADMIN', 'MANAGEMENT'] },
     { label: 'Leaderboard', icon: 'pi pi-trophy', route: '/leaderboard', hint: 'See how contribution ranks', group: 'recognition', roles: ['STUDENT', 'FACULTY', 'ADMIN', 'MANAGEMENT'] },
     { label: 'Support', icon: 'pi pi-headphones', route: '/support', hint: 'Concerns and issues — not point requests', group: 'school', roles: ['STUDENT', 'FACULTY', 'ADMIN', 'MANAGEMENT'] },
     { label: 'Manage Users', icon: 'pi pi-users', route: '/admin/users', hint: 'Create and manage school accounts', group: 'school', roles: ['ADMIN', 'MANAGEMENT'] },
@@ -72,7 +72,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     private router: Router,
     private authService: AuthService,
     private userService: UserService,
-    private walletService: WalletService,
+    private pointsService: PointsService,
     private cdr: ChangeDetectorRef,
     public themeService: ThemeService
   ) {}
@@ -111,18 +111,18 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     this.setActiveFromUrl(this.router.url);
 
     if (this.isStudent && user?.eliteId) {
-      this.walletService.getWalletBalance(user.eliteId).subscribe({
+      this.pointsService.getPointsBalance(user.eliteId).subscribe({
         next: (balance) => {
-          this.walletBalance.set(balance);
+          this.pointsBalance.set(balance);
           this.cdr.markForCheck();
         },
         error: () => {
-          this.walletBalance.set(null);
+          this.pointsBalance.set(null);
           this.cdr.markForCheck();
         }
       });
     } else {
-      this.walletBalance.set(null);
+      this.pointsBalance.set(null);
     }
     this.cdr.markForCheck();
   }

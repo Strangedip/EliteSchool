@@ -126,16 +126,16 @@ if %ERRORLEVEL% neq 0 (
 echo.
 
 REM ==========================================================================
-REM STEP 3 — Auth Service
+REM STEP 3 — Identity Service
 REM ==========================================================================
 echo ================================================================
-echo [%time%] STEP 3/7 — Starting Auth Service (port 8081)...
+echo [%time%] STEP 3/7 — Starting Identity Service (port 8081)...
 echo ================================================================
-if not exist "%SCRIPT_DIR%\auth-service\target\auth-service.jar" (
-    echo [WARNING] auth-service.jar not found, skipping...
+if not exist "%SCRIPT_DIR%\identity-service\target\identity-service.jar" (
+    echo [WARNING] identity-service.jar not found, skipping...
 ) else (
-    start "Auth Service [8081]" cmd /k "cd /d "%SCRIPT_DIR%\auth-service\target" && set CONSUL_HOST=%CONSUL_HOST%&& set CONSUL_PORT=%CONSUL_PORT%&& set SPRING_PROFILES_ACTIVE=%SPRING_PROFILES_ACTIVE%&& java -jar auth-service.jar --spring.profiles.active=%SPRING_PROFILES_ACTIVE%"
-    echo [OK]   Auth Service window opened
+    start "Identity Service [8081]" cmd /k "cd /d "%SCRIPT_DIR%\identity-service\target" && set CONSUL_HOST=%CONSUL_HOST%&& set CONSUL_PORT=%CONSUL_PORT%&& set SPRING_PROFILES_ACTIVE=%SPRING_PROFILES_ACTIVE%&& java -jar identity-service.jar --spring.profiles.active=%SPRING_PROFILES_ACTIVE%"
+    echo [OK]   Identity Service window opened
     echo [WAIT] Waiting 15 seconds...
     timeout /t 15 /nobreak >nul
 )
@@ -158,32 +158,32 @@ if not exist "%SCRIPT_DIR%\task-service\target\task-service.jar" (
 echo.
 
 REM ==========================================================================
-REM STEP 5 — Wallet Service
+REM STEP 5 — Points Service
 REM ==========================================================================
 echo ================================================================
-echo [%time%] STEP 5/7 — Starting Wallet Service (port 8083)...
+echo [%time%] STEP 5/7 — Starting Points Service (port 8083)...
 echo ================================================================
-if not exist "%SCRIPT_DIR%\wallet-service\target\wallet-service.jar" (
-    echo [WARNING] wallet-service.jar not found, skipping...
+if not exist "%SCRIPT_DIR%\points-service\target\points-service.jar" (
+    echo [WARNING] points-service.jar not found, skipping...
 ) else (
-    start "Wallet Service [8083]" cmd /k "cd /d "%SCRIPT_DIR%\wallet-service\target" && set CONSUL_HOST=%CONSUL_HOST%&& set CONSUL_PORT=%CONSUL_PORT%&& set SPRING_PROFILES_ACTIVE=%SPRING_PROFILES_ACTIVE%&& java -jar wallet-service.jar --spring.profiles.active=%SPRING_PROFILES_ACTIVE%"
-    echo [OK]   Wallet Service window opened
+    start "Points Service [8083]" cmd /k "cd /d "%SCRIPT_DIR%\points-service\target" && set CONSUL_HOST=%CONSUL_HOST%&& set CONSUL_PORT=%CONSUL_PORT%&& set SPRING_PROFILES_ACTIVE=%SPRING_PROFILES_ACTIVE%&& java -jar points-service.jar --spring.profiles.active=%SPRING_PROFILES_ACTIVE%"
+    echo [OK]   Points Service window opened
     echo [WAIT] Waiting 15 seconds...
     timeout /t 15 /nobreak >nul
 )
 echo.
 
 REM ==========================================================================
-REM STEP 6 — Store Service
+REM STEP 6 — Rewards Service
 REM ==========================================================================
 echo ================================================================
-echo [%time%] STEP 6/7 — Starting Store Service (port 8084)...
+echo [%time%] STEP 6/7 — Starting Rewards Service (port 8084)...
 echo ================================================================
-if not exist "%SCRIPT_DIR%\store-service\target\store-service.jar" (
-    echo [WARNING] store-service.jar not found, skipping...
+if not exist "%SCRIPT_DIR%\rewards-service\target\rewards-service.jar" (
+    echo [WARNING] rewards-service.jar not found, skipping...
 ) else (
-    start "Store Service [8084]" cmd /k "cd /d "%SCRIPT_DIR%\store-service\target" && set CONSUL_HOST=%CONSUL_HOST%&& set CONSUL_PORT=%CONSUL_PORT%&& set SPRING_PROFILES_ACTIVE=%SPRING_PROFILES_ACTIVE%&& java -jar store-service.jar --spring.profiles.active=%SPRING_PROFILES_ACTIVE%"
-    echo [OK]   Store Service window opened
+    start "Rewards Service [8084]" cmd /k "cd /d "%SCRIPT_DIR%\rewards-service\target" && set CONSUL_HOST=%CONSUL_HOST%&& set CONSUL_PORT=%CONSUL_PORT%&& set SPRING_PROFILES_ACTIVE=%SPRING_PROFILES_ACTIVE%&& java -jar rewards-service.jar --spring.profiles.active=%SPRING_PROFILES_ACTIVE%"
+    echo [OK]   Rewards Service window opened
     echo [WAIT] Waiting 15 seconds...
     timeout /t 15 /nobreak >nul
 )
@@ -217,10 +217,10 @@ echo   Service              URL
 echo   -------              ---
 echo   Consul UI         :  http://localhost:8500
 echo   API Gateway       :  http://localhost:8080
-echo   Auth Service      :  http://localhost:8081
+echo   Identity Service      :  http://localhost:8081
 echo   Task Service      :  http://localhost:8082
-echo   Wallet Service    :  http://localhost:8083
-echo   Store Service     :  http://localhost:8084
+echo   Points Service    :  http://localhost:8083
+echo   Rewards Service     :  http://localhost:8084
 echo.
 echo [TIP] Open the Consul UI to verify all services are registered and healthy.
 echo [TIP] Each service runs in its own CMD window — close it to stop that service.

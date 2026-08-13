@@ -261,7 +261,7 @@ public class TaskSubmissionService {
         try {
             webClientBuilder.build()
                     .post()
-                    .uri("http://wallet-service/api/wallet/award")
+                    .uri("http://points-service/api/points/award")
                     .header("e-internal-service", "task-service")
                     .bodyValue(new RewardRequest(
                             studentId,
@@ -273,9 +273,9 @@ public class TaskSubmissionService {
                     .block();
         } catch (Exception e) {
             log.error("Failed to award points for submission {}: {}", submissionId, e.getMessage(), e);
-            throw new AppException("Wallet award failed",
+            throw new AppException("Points award failed",
                     "Could not credit Elite Points. Try verifying again later.",
-                    "WALLET_AWARD_FAILED", HttpStatus.BAD_GATEWAY);
+                    "POINTS_AWARD_FAILED", HttpStatus.BAD_GATEWAY);
         }
     }
 

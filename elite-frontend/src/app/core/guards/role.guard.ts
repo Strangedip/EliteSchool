@@ -56,7 +56,7 @@ export const StaffGuard: CanActivateFn = () => {
   });
 };
 
-export const StoreWalletGuard: CanActivateFn = () => {
+export const RewardsPointsGuard: CanActivateFn = () => {
   const userService = inject(UserService);
   const router = inject(Router);
   const toast = inject(ToastService);

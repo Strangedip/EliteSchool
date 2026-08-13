@@ -16,7 +16,7 @@ export enum Role {
 @Injectable({ providedIn: 'root' })
 export class UserService {
   private apiUrl = `${environment.apiUrl}/user`;
-  private authUrl = `${environment.apiUrl}/auth`;
+  private authUrl = `${environment.apiUrl}/identity`;
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
   private USER_DATA_KEY = 'user_data';

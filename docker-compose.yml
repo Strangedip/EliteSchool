@@ -1,5 +1,5 @@
 # Tuned for ~16GB hosts: containers ≈ 4GB total so Windows + browser + IDE stay usable.
-# Override heaps via JAVA_OPTS / AUTH_JAVA_OPTS / GATEWAY_JAVA_OPTS in .env if needed.
+# Override heaps via JAVA_OPTS / IDENTITY_JAVA_OPTS / GATEWAY_JAVA_OPTS in .env if needed.
 x-java-service: &java-service
   mem_limit: 512m
   cpus: 0.75
@@ -67,13 +67,13 @@ services:
     mem_limit: 96m
     cpus: 0.15
 
-  auth-service:
+  identity-service:
     <<: *java-service
     mem_limit: 640m
     cpus: 0.85
     build:
       context: ./elite-backend
-      dockerfile: auth-service/Dockerfile
+      dockerfile: identity-service/Dockerfile
     depends_on:
       postgres:
         condition: service_healthy
@@ -81,9 +81,9 @@ services:
         condition: service_completed_successfully
     environment:
       <<: *java-env
-      JAVA_OPTS: ${AUTH_JAVA_OPTS:--Xms64m -Xmx384m -XX:+UseG1GC -XX:+UseCompactObjectHeaders -XX:MaxGCPauseMillis=50 -XX:+ExitOnOutOfMemoryError}
+      JAVA_OPTS: ${IDENTITY_JAVA_OPTS:--Xms64m -Xmx384m -XX:+UseG1GC -XX:+UseCompactObjectHeaders -XX:MaxGCPauseMillis=50 -XX:+ExitOnOutOfMemoryError}
       CONSUL_HOST: consul
-      SERVICE_HOSTNAME: auth-service
+      SERVICE_HOSTNAME: identity-service
       DB_HOST: postgres
       DB_NAME: ${DB_NAME:-EliteSchool}
       DB_USERNAME: ${DB_USERNAME:-postgres}
@@ -121,11 +121,11 @@ services:
     ports:
       - "8082:8082"
 
-  wallet-service:
+  points-service:
     <<: *java-service
     build:
       context: ./elite-backend
-      dockerfile: wallet-service/Dockerfile
+      dockerfile: points-service/Dockerfile
     depends_on:
       postgres:
         condition: service_healthy
@@ -134,7 +134,7 @@ services:
     environment:
       <<: *java-env
       CONSUL_HOST: consul
-      SERVICE_HOSTNAME: wallet-service
+      SERVICE_HOSTNAME: points-service
       DB_HOST: postgres
       DB_NAME: ${DB_NAME:-EliteSchool}
       DB_USERNAME: ${DB_USERNAME:-postgres}
@@ -143,11 +143,11 @@ services:
     ports:
       - "8083:8083"
 
-  store-service:
+  rewards-service:
     <<: *java-service
     build:
       context: ./elite-backend
-      dockerfile: store-service/Dockerfile
+      dockerfile: rewards-service/Dockerfile
     depends_on:
       postgres:
         condition: service_healthy
@@ -156,7 +156,7 @@ services:
     environment:
       <<: *java-env
       CONSUL_HOST: consul
-      SERVICE_HOSTNAME: store-service
+      SERVICE_HOSTNAME: rewards-service
       DB_HOST: postgres
       DB_NAME: ${DB_NAME:-EliteSchool}
       DB_USERNAME: ${DB_USERNAME:-postgres}
@@ -172,13 +172,13 @@ services:
     depends_on:
       consul-seed:
         condition: service_completed_successfully
-      auth-service:
+      identity-service:
         condition: service_started
       task-service:
         condition: service_started
-      wallet-service:
+      points-service:
         condition: service_started
-      store-service:
+      rewards-service:
         condition: service_started
     environment:
       JAVA_OPTS: ${GATEWAY_JAVA_OPTS:--Xms64m -Xmx256m -XX:+UseG1GC -XX:+UseCompactObjectHeaders -XX:MaxGCPauseMillis=50 -XX:+ExitOnOutOfMemoryError}
